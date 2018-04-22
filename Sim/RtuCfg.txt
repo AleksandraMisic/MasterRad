@@ -1,0 +1,9 @@
+STA 1
+TCP 4021
+
+
+DO_REG  30 0     0  0      1     0  DO  @DigOut
+DI_REG  30 1000  0  0      1     0  DI  @DigIn
+IN_REG  40 2000  0  0   16000  2000  AI  @AnaIn
+HR_INT  40 3000  0  0   16000  1200  AO  @AnaOut
+HR_LONG 2 3500  0  0  72000     0  CNT @Counter
