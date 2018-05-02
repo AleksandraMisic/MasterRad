@@ -300,9 +300,9 @@
       <Project>{B726FB71-D295-41EE-9644-B2B0B1BC8911}</Project>
       <Name>NetworkModelGDAContract</Name>
     </ProjectReference>
-    <ProjectReference Include="..\TransactionManagerContract\TransactionManagerContract.csproj">
+    <ProjectReference Include="..\TransactionManagerContract\TMContracts.csproj">
       <Project>{72A5DD5A-5613-49CB-8351-3CE33A86FC01}</Project>
-      <Name>TransactionManagerContract</Name>
+      <Name>TMContracts</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

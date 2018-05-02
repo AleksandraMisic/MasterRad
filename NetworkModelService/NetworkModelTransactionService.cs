@@ -7,13 +7,13 @@ namespace FTN.Services.NetworkModelService
 {
 
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.PerCall)]
-    public class NetworkModelTransactionService : ITransaction
+    public class NetworkModelTransactionService : IDistributedTransaction
     {
         private static GenericDataAccess gda = new GenericDataAccess();
 
         public void Enlist()
         {
-            ITransactionCallback callback = OperationContext.Current.GetCallbackChannel<ITransactionCallback>();
+            IDistributedTransactionCallback callback = OperationContext.Current.GetCallbackChannel<IDistributedTransactionCallback>();
             Console.WriteLine("Pozvan je enlist na NMS-u");
             try
             {
@@ -30,7 +30,7 @@ namespace FTN.Services.NetworkModelService
         public void Prepare(Delta delta)
         {
             Console.WriteLine("Pozvan je prepare na NMS-u");
-            ITransactionCallback callback = OperationContext.Current.GetCallbackChannel<ITransactionCallback>();
+            IDistributedTransactionCallback callback = OperationContext.Current.GetCallbackChannel<IDistributedTransactionCallback>();
 
             try
             {
@@ -63,7 +63,7 @@ namespace FTN.Services.NetworkModelService
                 ResourceIterator.NetworkModel = GenericDataAccess.NewNetworkModel;
             }
 
-            ITransactionCallback callback = OperationContext.Current.GetCallbackChannel<ITransactionCallback>();
+            IDistributedTransactionCallback callback = OperationContext.Current.GetCallbackChannel<IDistributedTransactionCallback>();
             callback.CallbackCommit("Uspjesno je prosao commit na NMS-u");
         }
             
@@ -73,7 +73,7 @@ namespace FTN.Services.NetworkModelService
             GenericDataAccess.NewNetworkModel = null;
             GenericDataAccess.NetworkModel = GenericDataAccess.OldNetworkModel;
             ResourceIterator.NetworkModel = GenericDataAccess.OldNetworkModel;
-            ITransactionCallback callback = OperationContext.Current.GetCallbackChannel<ITransactionCallback>();
+            IDistributedTransactionCallback callback = OperationContext.Current.GetCallbackChannel<IDistributedTransactionCallback>();
             callback.CallbackRollback("Something went wrong on NMS");
         }
     }

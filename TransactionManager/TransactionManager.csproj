@@ -55,14 +55,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Hosts\ClientDMSHost.cs" />
+    <Compile Include="Hosts\ClientGeneralHost.cs" />
+    <Compile Include="Hosts\DistributedTransactionHost.cs" />
     <Compile Include="MappingEngineTransactionManager.cs" />
     <Compile Include="ModelGDATMS.cs" />
     <Compile Include="OMSClient.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\ClientDMSService.cs" />
+    <Compile Include="Services\ClientGeneralService.cs" />
     <Compile Include="TransactionCallback.cs" />
-    <Compile Include="TransactionManager.cs" />
-    <Compile Include="TransactionManagerService.cs" />
+    <Compile Include="Services\DistributedTransactionService.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -105,6 +109,10 @@
       <Project>{32EE9373-A350-42AC-972B-41B2EDABA082}</Project>
       <Name>NMSTestClient</Name>
     </ProjectReference>
+    <ProjectReference Include="..\OMSCommon\OMSCommon.csproj">
+      <Project>{C4572A3C-F667-4434-97BC-825B1D3858E0}</Project>
+      <Name>OMSCommon</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ServiceContracts\NetworkModelQueryContract\NetworkModelGDAContract.csproj">
       <Project>{B726FB71-D295-41EE-9644-B2B0B1BC8911}</Project>
       <Name>NetworkModelGDAContract</Name>
@@ -113,10 +121,11 @@
       <Project>{91FA4DB9-E3E0-4A3C-B0AB-29DCEC746770}</Project>
       <Name>SCADAContracts</Name>
     </ProjectReference>
-    <ProjectReference Include="..\TransactionManagerContract\TransactionManagerContract.csproj">
+    <ProjectReference Include="..\TransactionManagerContract\TMContracts.csproj">
       <Project>{72A5DD5A-5613-49CB-8351-3CE33A86FC01}</Project>
-      <Name>TransactionManagerContract</Name>
+      <Name>TMContracts</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

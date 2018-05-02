@@ -7,9 +7,9 @@ using System.ServiceModel;
 
 namespace TransactionManagerContract
 {
-    [ServiceContract]
+   [ServiceContract]
    public interface IOMSClient
-    {
+   {
         /*CIMAdapter methods*/
 
         /// <summary>
@@ -23,10 +23,10 @@ namespace TransactionManagerContract
         /*DispatcherApp methods*/
         
         [OperationContract]
-        TMSAnswerToClient GetNetwork();
+        TMSAnswerToClient GetNetwork(string mrid);
 
         [OperationContract]
-        List<Source> GetSources();
+        List<Source> GetAllSources();
 
         [OperationContract]
         void SendCommandToSCADA(TypeOfSCADACommand command, string mrid, OMSSCADACommon.CommandTypes commandtype, float value);

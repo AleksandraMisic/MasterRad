@@ -1,5 +1,6 @@
 ﻿using DMSCommon.Model;
 using DMSService;
+using DMSServiceHost.Hosts;
 using FTN.Common;
 using System;
 using System.Collections.Generic;
@@ -17,27 +18,17 @@ namespace DMSServiceHost
 
             try
             {
-                string message = "Starting Distribution Management System Service...";
-                CommonTrace.WriteTrace(CommonTrace.TraceInfo, message);
-                Console.WriteLine("\n{0}\n", message);
-
                 DMSService.DMSService.Instance.Start();
-                message = "Press <Enter> to stop the service.";
-                CommonTrace.WriteTrace(CommonTrace.TraceInfo, message);
-                Console.WriteLine(message);
+
+                ClientHost clientHost = new ClientHost();
+
+                clientHost.Start();
+
                 Console.ReadLine();
 
+                clientHost.Stop();
             }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-                Console.WriteLine("DMS failed.");
-                Console.WriteLine(ex.StackTrace);
-                CommonTrace.WriteTrace(CommonTrace.TraceError, ex.Message);
-                CommonTrace.WriteTrace(CommonTrace.TraceError, "DMS failed.");
-                CommonTrace.WriteTrace(CommonTrace.TraceError, ex.StackTrace);
-                Console.ReadLine();
-            }
+            catch { }
         }
     }
 }

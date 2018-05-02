@@ -100,9 +100,9 @@
       <Project>{db3da680-83f3-422a-9c7d-7f3f883472a2}</Project>
       <Name>IMSContract</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\TransactionManagerContract\TransactionManagerContract.csproj">
+    <ProjectReference Include="..\..\TransactionManagerContract\TMContracts.csproj">
       <Project>{72A5DD5A-5613-49CB-8351-3CE33A86FC01}</Project>
-      <Name>TransactionManagerContract</Name>
+      <Name>TMContracts</Name>
     </ProjectReference>
     <ProjectReference Include="..\CIMParser\CIMParser.csproj">
       <Project>{3C03A41C-BE4C-40A8-97D5-5DBAC0C34102}</Project>

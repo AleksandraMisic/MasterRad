@@ -17,7 +17,7 @@ using DMSCommon;
 namespace DMSService
 {
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.PerCall)]
-    public class DMSTransactionService : ITransaction
+    public class DMSTransactionService : IDistributedTransaction
     {
         private static Tree<Element> newTree;
         private static Tree<Element> oldTree;
@@ -26,7 +26,7 @@ namespace DMSService
         {
             Console.WriteLine("Pozvan je enlist na DMS-u");
             oldTree = DMSService.Instance.Tree;
-            ITransactionCallback callback = OperationContext.Current.GetCallbackChannel<ITransactionCallback>();
+            IDistributedTransactionCallback callback = OperationContext.Current.GetCallbackChannel<IDistributedTransactionCallback>();
             callback.CallbackEnlist(true);
         }
 
@@ -45,7 +45,7 @@ namespace DMSService
             }
 
 
-            ITransactionCallback callback = OperationContext.Current.GetCallbackChannel<ITransactionCallback>();
+            IDistributedTransactionCallback callback = OperationContext.Current.GetCallbackChannel<IDistributedTransactionCallback>();
             callback.CallbackCommit("Uspjesno je prosao commit na DMS-u");
         }
 
@@ -55,7 +55,7 @@ namespace DMSService
 
             newTree = DMSService.Instance.InitializeNetwork(delta);
             DMSService.updatesCount += 1;
-            ITransactionCallback callback = OperationContext.Current.GetCallbackChannel<ITransactionCallback>();
+            IDistributedTransactionCallback callback = OperationContext.Current.GetCallbackChannel<IDistributedTransactionCallback>();
 
             if (newTree.Data.Values.Count != 0)
             {
@@ -72,7 +72,7 @@ namespace DMSService
             Console.WriteLine("Pozvan je RollBack na DMSu");
             newTree = null;
             DMSService.Instance.Tree = oldTree;
-            ITransactionCallback callback = OperationContext.Current.GetCallbackChannel<ITransactionCallback>();
+            IDistributedTransactionCallback callback = OperationContext.Current.GetCallbackChannel<IDistributedTransactionCallback>();
             callback.CallbackRollback("Something went wrong on DMS");
         }
     }

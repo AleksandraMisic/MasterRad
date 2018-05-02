@@ -48,7 +48,7 @@ namespace FTN.Services.NetworkModelService
 
             ServiceHost svc = new ServiceHost(typeof(NetworkModelTransactionService));
             svc.Description.Name = "NetworkModelTransactionService";
-            svc.AddServiceEndpoint(typeof(ITransaction),
+            svc.AddServiceEndpoint(typeof(IDistributedTransaction),
                                     binding,
                                     new Uri("net.tcp://localhost:8018/NetworkModelTransactionService"));
 

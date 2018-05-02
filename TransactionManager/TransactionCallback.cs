@@ -8,7 +8,7 @@ using TransactionManagerContract;
 
 namespace TransactionManager
 {
-    public class TransactionCallback : ITransactionCallback
+    public class TransactionCallback : IDistributedTransactionCallback
     {
         private TransactionAnswer answerForEnlist;
         private TransactionAnswer answerForPrepare;

@@ -30,7 +30,7 @@ namespace SCADA.ClientHandler
         {
             Console.WriteLine("\nTransaction started -> \nPozvan je Enlist na SCADA");
 
-            ITransactionCallback callback = OperationContext.Current.GetCallbackChannel<ITransactionCallback>();
+            IDistributedTransactionCallback callback = OperationContext.Current.GetCallbackChannel<IDistributedTransactionCallback>();
         
             bool isSuccessfull = false;
 
@@ -59,7 +59,7 @@ namespace SCADA.ClientHandler
         {
             Console.WriteLine("Pozvan je Prepare na SCADA");
 
-            ITransactionCallback callback = OperationContext.Current.GetCallbackChannel<ITransactionCallback>();
+            IDistributedTransactionCallback callback = OperationContext.Current.GetCallbackChannel<IDistributedTransactionCallback>();
 
             if (dbContext.ApplyDelta(delta))
             {
@@ -100,7 +100,7 @@ namespace SCADA.ClientHandler
         public void Commit()
         {
             Console.WriteLine("Pozvan je Commit na SCADA");
-            ITransactionCallback callback = OperationContext.Current.GetCallbackChannel<ITransactionCallback>();
+            IDistributedTransactionCallback callback = OperationContext.Current.GetCallbackChannel<IDistributedTransactionCallback>();
 
             ScadaModelParser parser = new ScadaModelParser();
 
@@ -116,7 +116,7 @@ namespace SCADA.ClientHandler
         public void Rollback()
         {
             Console.WriteLine("Pozvan je Rollback na SCADA");
-            ITransactionCallback callback = OperationContext.Current.GetCallbackChannel<ITransactionCallback>();
+            IDistributedTransactionCallback callback = OperationContext.Current.GetCallbackChannel<IDistributedTransactionCallback>();
 
             ScadaModelParser parser = new ScadaModelParser();
             //parser.SwapConfigs(newConfigFile, currentConfigFile);

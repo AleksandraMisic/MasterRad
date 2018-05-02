@@ -44,6 +44,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Client\ClientProxy.cs" />
+    <Compile Include="Client\IClient.cs" />
     <Compile Include="DMSCallProxy.cs" />
     <Compile Include="ScadaToDMSProxy.cs" />
     <Compile Include="IDMSCallContract.cs" />
@@ -63,6 +65,10 @@
     <ProjectReference Include="..\IMSContract\IMSContract.csproj">
       <Project>{db3da680-83f3-422a-9c7d-7f3f883472a2}</Project>
       <Name>IMSContract</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\OMSCommon\OMSCommon.csproj">
+      <Project>{C4572A3C-F667-4434-97BC-825B1D3858E0}</Project>
+      <Name>OMSCommon</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

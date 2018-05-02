@@ -4,6 +4,8 @@ using System.Linq;
 using System.ServiceModel;
 using System.Text;
 using System.Threading.Tasks;
+using TransactionManager.Hosts;
+using TransactionManager.ServiceImplementations;
 using TransactionManagerContract;
 
 namespace TransactionManager
@@ -13,19 +15,28 @@ namespace TransactionManager
         static void Main(string[] args)
         {
             Console.Title = "Transaction Manager";
-            TransactionManagerService tms = new TransactionManagerService();
-            Console.WriteLine("Transaction Manager is started");
 
-            // PETKOVICU NA OVO MISLIM xD ?
-            //TransactionManager transactionManager = new TransactionManager();
-            //transactionManager.Enlist();
-            //transactionManager.Prepare();
+            try
+            {
+                DistributedTransactionHost distributedTransactionHost = new DistributedTransactionHost();
 
-            tms.Start();
+                ClientGeneralHost clientGeneralHost = new ClientGeneralHost();
+                ClientDMSHost clientDMSHost = new ClientDMSHost();
 
-            Console.ReadLine();
+                distributedTransactionHost.Start();
 
-            tms.Stop();
+                clientGeneralHost.Start();
+                clientDMSHost.Start();
+
+                Console.ReadLine();
+
+                distributedTransactionHost.Stop();
+
+                clientGeneralHost.Stop();
+                clientDMSHost.Stop();
+
+            }
+            catch(Exception e) { }
         }
     }
 }

@@ -785,21 +785,12 @@ namespace DMSService
             hosts = new List<ServiceHost>();
             ServiceHost transactionHost = new ServiceHost(typeof(DMSTransactionService));
             transactionHost.Description.Name = "DMSTransactionService";
-            transactionHost.AddServiceEndpoint(typeof(ITransaction), binding, new
+            transactionHost.AddServiceEndpoint(typeof(IDistributedTransaction), binding, new
             Uri("net.tcp://localhost:8028/DMSTransactionService"));
             transactionHost.Description.Behaviors.Remove(typeof(ServiceDebugBehavior));
             transactionHost.Description.Behaviors.Add(new ServiceDebugBehavior() { IncludeExceptionDetailInFaults = true });
 
             hosts.Add(transactionHost);
-
-            ServiceHost dispatcherHost = new ServiceHost(typeof(DMSDispatcherService));
-            dispatcherHost.Description.Name = "DMSDispatcherService";
-            dispatcherHost.AddServiceEndpoint(typeof(IDMSContract), binding, new
-            Uri("net.tcp://localhost:8029/DMSDispatcherService"));
-            dispatcherHost.Description.Behaviors.Remove(typeof(ServiceDebugBehavior));
-            dispatcherHost.Description.Behaviors.Add(new ServiceDebugBehavior() { IncludeExceptionDetailInFaults = true });
-
-            hosts.Add(dispatcherHost);
 
             scadaHost = new ServiceHost(typeof(DMSServiceForSCADA));
             scadaHost.Description.Name = "DMSServiceForSCADA";

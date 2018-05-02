@@ -14,6 +14,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
 using TransactionManagerContract;
+using TransactionManagerContract.ClientDMS;
 
 namespace DispatcherApp.ViewModel.ShellFillerModelViews
 {
@@ -23,7 +24,7 @@ namespace DispatcherApp.ViewModel.ShellFillerModelViews
         private static ShellPosition position;
         private ObservableCollection<Button> sources;
 
-        private IOMSClient proxyToOMS;
+        private ClientDMSProxy cgProxy;
 
         public override bool IsOpen
         {
@@ -48,14 +49,9 @@ namespace DispatcherApp.ViewModel.ShellFillerModelViews
             Position = ShellPosition.LEFT;
         }
 
-        public IOMSClient ProxyToOMS
-        {
-            get { return proxyToOMS; }
-            set { proxyToOMS = value; }
-        }
-
         public NetworkExplorerViewModel()
         {
+            cgProxy = new ClientDMSProxy();
         }
 
         public NetworkExplorerViewModel(ObservableCollection<Button> sources)
@@ -67,15 +63,10 @@ namespace DispatcherApp.ViewModel.ShellFillerModelViews
         {
             this.sources = new ObservableCollection<Button>();
 
-            if (proxyToOMS == null)
-            {
-                CreateChannel();
-            }
-
             List<Source> sourcesList = new List<Source>();
             try
             {
-                sourcesList = ProxyToOMS.GetSources();
+                sourcesList = cgProxy.GetAllSources();
             }
             catch (Exception e)
             {
@@ -87,13 +78,6 @@ namespace DispatcherApp.ViewModel.ShellFillerModelViews
                 Button but = new Button() { Content = source.MRID, DataContext = viewModel, Command = viewModel.OpenNetworkViewCommand, CommandParameter = source.MRID };
                 this.Sources.Add(but);
             }
-        }
-
-        private void CreateChannel()
-        {
-            ChannelFactory<IOMSClient> factoryToOMS = new ChannelFactory<IOMSClient>(NetTcpBindingCreator.Create(),
-                new EndpointAddress("net.tcp://localhost:6080/TransactionManagerService"));
-            ProxyToOMS = factoryToOMS.CreateChannel();
         }
     }
 }

@@ -11,7 +11,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{D4414E
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NMSCommon", "Common\NMSCommon.csproj", "{892CBE15-9ED7-4540-81FA-0EAABA592138}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NetworkModelService", "NetworkModelService", "{ABC630A2-50D2-4DF5-B4FF-C6E1FABE530E}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NMS", "NMS", "{ABC630A2-50D2-4DF5-B4FF-C6E1FABE530E}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TestClient", "TestClient", "{CD0EE85F-3877-4725-9A29-968A33156D3D}"
 EndProject
@@ -76,11 +76,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TransactionManager", "Trans
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TransactionManager", "TransactionManager\TransactionManager.csproj", "{133321F9-9473-4A5C-B009-B7B11A384BA7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TransactionManagerContract", "TransactionManagerContract\TransactionManagerContract.csproj", "{72A5DD5A-5613-49CB-8351-3CE33A86FC01}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TMContracts", "TransactionManagerContract\TMContracts.csproj", "{72A5DD5A-5613-49CB-8351-3CE33A86FC01}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DMSService", "DMSService\DMSService.csproj", "{1C74A638-26EB-4F71-BE54-D24954BEDB0C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DMSServiceHost", "DMSServiceHost\DMSServiceHost.csproj", "{FF7A4BC6-45A9-41AF-838F-0D5BFE645D38}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DMS", "DMSServiceHost\DMS.csproj", "{FF7A4BC6-45A9-41AF-838F-0D5BFE645D38}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DMSCommon", "Common\DMSCommon\DMSCommon.csproj", "{86D0FD27-8DA2-476E-A046-FCB849F12414}"
 EndProject

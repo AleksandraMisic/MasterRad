@@ -3,7 +3,7 @@ using System.ServiceModel;
 
 namespace TransactionManagerContract
 {
-    [ServiceContract(CallbackContract = typeof(ITransactionCallback))]
+    [ServiceContract(CallbackContract = typeof(IDistributedTransactionCallback))]
     public interface ITransactionSCADA
     {
         [OperationContract]

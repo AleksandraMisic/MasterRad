@@ -3,8 +3,8 @@ using System.ServiceModel;
 
 namespace TransactionManagerContract
 {
-    [ServiceContract(CallbackContract = typeof(ITransactionCallback))]
-    public interface ITransaction
+    [ServiceContract(CallbackContract = typeof(IDistributedTransactionCallback))]
+    public interface IDistributedTransaction
     {
         [OperationContract]
         void Enlist();

@@ -42,6 +42,7 @@
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
+    <Reference Include="System.ServiceModel" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -50,8 +51,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Hosts\ClientHost.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\ClientService.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -66,10 +69,31 @@
       <Project>{86D0FD27-8DA2-476E-A046-FCB849F12414}</Project>
       <Name>DMSCommon</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Common\OMSSCADACommon\OMSSCADACommon.csproj">
+      <Project>{A7F86CA6-39F1-4B61-BF71-C01E327FA861}</Project>
+      <Name>OMSSCADACommon</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DMSContract\DMSContract.csproj">
+      <Project>{C48472D2-BEF9-425D-88B1-4F6B2D31FD8C}</Project>
+      <Name>DMSContract</Name>
+    </ProjectReference>
     <ProjectReference Include="..\DMSService\DMSService.csproj">
       <Project>{1C74A638-26EB-4F71-BE54-D24954BEDB0C}</Project>
       <Name>DMSService</Name>
     </ProjectReference>
+    <ProjectReference Include="..\IMSContract\IMSContract.csproj">
+      <Project>{DB3DA680-83F3-422A-9C7D-7F3F883472A2}</Project>
+      <Name>IMSContract</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\OMSCommon\OMSCommon.csproj">
+      <Project>{C4572A3C-F667-4434-97BC-825B1D3858E0}</Project>
+      <Name>OMSCommon</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\PubSubscribe\PubSubscribe.csproj">
+      <Project>{36299CC7-43BA-4F75-AF82-96A54DD3D0E9}</Project>
+      <Name>PubSubscribe</Name>
+    </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

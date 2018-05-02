@@ -95,7 +95,7 @@ namespace TransactionManager
 
         #region  IOMSClient DispatcherApp Methods
 
-        public TMSAnswerToClient GetNetwork()
+        public TMSAnswerToClient GetNetwork(string mrid)
         {
             // ako se ne podignu svi servisi na DMSu, ovde pada
             List<Element> listOfDMSElement = new List<Element>();
@@ -196,7 +196,7 @@ namespace TransactionManager
             return answer;
         }
 
-        public List<Source> GetSources()
+        public List<Source> GetAllSources()
         {
             List<Source> listOfDMSSources = new List<Source>();
             try

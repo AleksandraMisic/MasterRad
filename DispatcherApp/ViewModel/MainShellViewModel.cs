@@ -99,10 +99,6 @@ namespace DispatcherApp.ViewModel
 
         private ObservableCollection<TreeViewItem> networkMapsBySource = new ObservableCollection<TreeViewItem>();
         private ObservableCollection<Button> networkMapsBySourceButton = new ObservableCollection<Button>();
-
-        private NetworkExplorer networkExplorer = new NetworkExplorer();
-        private IncidentExplorer incidentExplorer = new IncidentExplorer();
-        private OutputControl output = new OutputControl();
         private Dictionary<long, NetworkModelControlExtended> networModelControls = new Dictionary<long, NetworkModelControlExtended>();
         #endregion
 
@@ -160,7 +156,7 @@ namespace DispatcherApp.ViewModel
 
             try
             {
-                answerFromTransactionManager = ProxyToTransactionManager.GetNetwork();
+                answerFromTransactionManager = ProxyToTransactionManager.GetNetwork("");
             }
             catch (Exception e) { }
 
@@ -1757,7 +1753,7 @@ namespace DispatcherApp.ViewModel
 
                     try
                     {
-                        answerFromTransactionManager = ProxyToTransactionManager.GetNetwork();
+                        answerFromTransactionManager = ProxyToTransactionManager.GetNetwork("");
                     }
                     catch (Exception e) { }
 
@@ -2132,13 +2128,15 @@ namespace DispatcherApp.ViewModel
             {
                 isSourceOpen[(string)parameter] = true;
 
-                NetworkViewControl networkExplorer = new NetworkViewControl();
-                NetworkViewViewModel revm = new NetworkViewViewModel();
-                networkExplorer.DataContext = revm;
+                NetworkViewControl networkViewExplorer = new NetworkViewControl();
+                NetworkViewViewModel nvevm = new NetworkViewViewModel();
+                networkViewExplorer.DataContext = nvevm;
+
+                nvevm.GetNetwork((string)parameter);
 
                 ShellFillerShell sfs = new ShellFillerShell();
 
-                sfs.MainScroll.Content = networkExplorer;
+                sfs.MainScroll.Content = networkViewExplorer;
                 sfs.Header.Text = (string)parameter;
 
                 PlaceOrFocusControlInShell(NetworkViewViewModel.Position, sfs, false, null);
