@@ -11,49 +11,45 @@ namespace DMSCommon.Model
     [KnownType(typeof(Node))]
     public class Element
     {
-        private long _elementGID;
-
-        private bool _marker;
-
-        private bool _underSCADA = false;
-
-        private bool _incident;
-
-        private string _mRID;
+        private long elementGID;
+        private bool isEnergized;
+        private bool underSCADA;
+        private bool incident;
+        private string mRID;
 
         [DataMember]
         public long ElementGID
         {
-            get { return _elementGID; }
-            set { _elementGID = value; }
+            get { return elementGID; }
+            set { elementGID = value; }
         }
 
         [DataMember]
-        public bool Marker
+        public bool IsEnergized
         {
-            get { return _marker; }
-            set { _marker = value; }
+            get { return isEnergized; }
+            set { isEnergized = value; }
         }
 
         [DataMember]
         public bool UnderSCADA
         {
-            get { return _underSCADA; }
-            set { _underSCADA = value; }
+            get { return underSCADA; }
+            set { underSCADA = value; }
         }
 
         [DataMember]
         public bool Incident
         {
-            get { return _incident; }
-            set { _incident = value; }
+            get { return incident; }
+            set { incident = value; }
         }
 
         [DataMember]
         public string MRID
         {
-            get { return _mRID; }
-            set { _mRID = value; }
+            get { return mRID; }
+            set { mRID = value; }
         }
 
         public Element() { }
@@ -61,14 +57,14 @@ namespace DMSCommon.Model
         public Element(long gid)
         {
             ElementGID = gid;
-            Marker = true;
+            IsEnergized = true;
         }
 
         public Element(long gid, string mrid)
         {
             ElementGID = gid;
             MRID = mrid;
-            Marker = true;
+            IsEnergized = true;
         }
     }
 }

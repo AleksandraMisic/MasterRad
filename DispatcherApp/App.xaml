@@ -7,6 +7,7 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="View/Resources/Themes/DarkTheme/DarkTheme.xaml"/>
+                <ResourceDictionary Source="View/Resources/Constants/NetworkCanvasSize.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

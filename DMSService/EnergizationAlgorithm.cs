@@ -23,7 +23,7 @@ namespace DMSService
             //else if (tree.Data[el.ElementGID] is Switch)
             //{
             //    Switch s = (Switch)tree.Data[el.ElementGID];
-            //    if (s.Marker == true && s.State == SwitchState.Closed)
+            //    if (s.IsEnergized == true && s.State == SwitchState.Closed)
             //        return true;
             //    else
             //        return false;
@@ -51,7 +51,7 @@ namespace DMSService
                 else if (tree.Data[el.ElementGID] is Switch)
                 {
                     Switch s = (Switch)tree.Data[el.ElementGID];
-                    if (s.Marker == true && s.State == SwitchState.Closed)
+                    if (s.IsEnergized == true && s.State == SwitchState.Closed)
                         return true;
                     else
                         return false;
@@ -81,8 +81,8 @@ namespace DMSService
 
                     if (e is Consumer)
                     {
-                        e.Marker = currentNode.Marker;
-                        networkChange.Add(new UIUpdateModel(e.ElementGID, isEnergized)); // mali bug koji se ne ispoljava, treba currentNode.Marker
+                        e.IsEnergized = currentNode.IsEnergized;
+                        networkChange.Add(new UIUpdateModel(e.ElementGID, isEnergized)); // mali bug koji se ne ispoljava, treba currentNode.IsEnergized
                     }
                     else if (e is Switch)
                     {
@@ -97,17 +97,17 @@ namespace DMSService
                                 continue;
                             }
 
-                            s.Marker = false;
-                            networkChange.Add(new UIUpdateModel(s.ElementGID, s.Marker, OMSSCADACommon.States.OPEN));
+                            s.IsEnergized = false;
+                            networkChange.Add(new UIUpdateModel(s.ElementGID, s.IsEnergized, OMSSCADACommon.States.OPEN));
                         }
                         else
                         {
-                            s.Marker = currentNode.Marker;
-                            networkChange.Add(new UIUpdateModel(s.ElementGID, s.Marker, OMSSCADACommon.States.CLOSED));
+                            s.IsEnergized = currentNode.IsEnergized;
+                            networkChange.Add(new UIUpdateModel(s.ElementGID, s.IsEnergized, OMSSCADACommon.States.CLOSED));
                         }
 
                         Node node = (Node)tree.Data[s.End2];
-                        node.Marker = s.Marker;
+                        node.IsEnergized = s.IsEnergized;
                         networkChange.Add(new UIUpdateModel(node.ElementGID, isEnergized));
                         nodes.Enqueue(node);
                     }
@@ -116,11 +116,11 @@ namespace DMSService
                         Element acl;
                         tree.Data.TryGetValue(e.ElementGID, out acl);
                         ACLine ac = (ACLine)acl;
-                        ac.Marker = currentNode.Marker;
+                        ac.IsEnergized = currentNode.IsEnergized;
                         networkChange.Add(new UIUpdateModel(ac.ElementGID, isEnergized));
 
                         Node node = (Node)tree.Data[ac.End2];
-                        node.Marker = currentNode.Marker;
+                        node.IsEnergized = currentNode.IsEnergized;
                         networkChange.Add(new UIUpdateModel(node.ElementGID, isEnergized));
                         nodes.Enqueue(node);
                     }

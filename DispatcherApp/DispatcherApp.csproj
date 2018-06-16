@@ -67,6 +67,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Model\DrawingAlgorithms\Schematic\RadialNetwork\ElementDrawing\DrawElement.cs" />
+    <Compile Include="Model\DrawingAlgorithms\Schematic\RadialNetwork\ElementDrawing\DrawSwitch.cs" />
+    <Compile Include="Model\DrawingAlgorithms\Schematic\RadialNetwork\SimpleWidthDivider.cs" />
     <Compile Include="Model\Measurements\AnalogMeasurement.cs" />
     <Compile Include="Model\Measurements\DigitalMeasurement.cs" />
     <Compile Include="Model\Properties\ACLineSegmentProperties.cs" />
@@ -198,6 +201,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="View\Resources\Constants\NetworkCanvasSize.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\Resources\Themes\DarkTheme\BasicControls.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -325,6 +332,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="View\Resources\Images\call.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Model\DrawingAlgorithms\Schematic\MeshedNetwork\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

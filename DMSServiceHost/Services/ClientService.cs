@@ -318,9 +318,9 @@ namespace DMSService
         //                        if (EnergizationAlgorithm.TraceUp((Node)DMSService.Instance.Tree.Data[sw.End1], DMSService.Instance.Tree))
         //                        {
         //                            networkChange.Add(new UIUpdateModel(sw.ElementGID, true, OMSSCADACommon.States.CLOSED));
-        //                            sw.Marker = true;
+        //                            sw.IsEnergized = true;
         //                            Node n = (Node)DMSService.Instance.Tree.Data[sw.End2];
-        //                            n.Marker = true;
+        //                            n.IsEnergized = true;
         //                            networkChange.Add(new UIUpdateModel(n.ElementGID, true));
         //                            networkChange = EnergizationAlgorithm.TraceDown(n, networkChange, true, false, DMSService.Instance.Tree);
         //                        }

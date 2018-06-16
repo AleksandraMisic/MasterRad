@@ -1,0 +1,8 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:local="clr-namespace:DispatcherApp.View.Resources.Constants">
+
+    <sys:Double x:Key="NetworkCanvasHeight">400</sys:Double>
+    <sys:Double x:Key="NetworkCanvasWidth">400</sys:Double>
+</ResourceDictionary>

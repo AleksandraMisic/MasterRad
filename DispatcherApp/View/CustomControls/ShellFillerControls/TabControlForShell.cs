@@ -14,7 +14,7 @@ namespace DispatcherApp.View.CustomControls.ShellFillerControls
     {
         public static readonly DependencyProperty position =
             DependencyProperty.Register("Position", typeof(ShellPosition),
-            typeof(NetworkModelControlExtended));
+            typeof(TabControlForShell));
 
         public ShellPosition Position
         {

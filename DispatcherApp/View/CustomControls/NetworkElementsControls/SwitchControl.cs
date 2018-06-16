@@ -179,39 +179,39 @@ namespace DispatcherApp.View.CustomControls
             this.Button.Style = style;
             this.ButtonCanvas.Children.Add(Button);
 
-            BreakerProperties breakerProperties = (BreakerProperties)dataContext;
+            //BreakerProperties breakerProperties = (BreakerProperties)dataContext;
 
-            if (breakerProperties.IsUnderScada)
-            {
-                Canvas scadaCanvas = new Canvas();
-                Border scadaBorder = new Border()
-                {
-                    Height = buttonSize / 2,
-                    Width = buttonSize / 2,
-                    Background = Brushes.DarkOrange,
-                    BorderBrush = Brushes.White,
-                    ToolTip = "Under SCADA"
-                };
-                scadaBorder.CornerRadius = new CornerRadius(scadaBorder.Height/2);
-                scadaBorder.BorderThickness = new Thickness(scadaBorder.Height / 10);
-                Canvas.SetLeft(scadaBorder, -(scadaBorder.Width / 2));
-                Canvas.SetTop(scadaBorder, -(scadaBorder.Height / 2));
-                scadaCanvas.Children.Add(scadaBorder);
+            //if (breakerProperties.IsUnderScada)
+            //{
+            //    Canvas scadaCanvas = new Canvas();
+            //    Border scadaBorder = new Border()
+            //    {
+            //        Height = buttonSize / 2,
+            //        Width = buttonSize / 2,
+            //        Background = Brushes.DarkOrange,
+            //        BorderBrush = Brushes.White,
+            //        ToolTip = "Under SCADA"
+            //    };
+            //    scadaBorder.CornerRadius = new CornerRadius(scadaBorder.Height/2);
+            //    scadaBorder.BorderThickness = new Thickness(scadaBorder.Height / 10);
+            //    Canvas.SetLeft(scadaBorder, -(scadaBorder.Width / 2));
+            //    Canvas.SetTop(scadaBorder, -(scadaBorder.Height / 2));
+            //    scadaCanvas.Children.Add(scadaBorder);
 
-                TextBlock scadaTextblock = new TextBlock()
-                {
-                    Text = "S",
-                    Foreground = Brushes.White,
-                    ToolTip = "Under SCADA",
-                    HorizontalAlignment = HorizontalAlignment.Center,
-                    VerticalAlignment = VerticalAlignment.Center,
-                    FontSize = 4 * scadaBorder.Height / 5,
-                    Margin = new Thickness(0, 0, 0, scadaBorder.Height / 6)
-                };
-                scadaBorder.Child = scadaTextblock;
+            //    TextBlock scadaTextblock = new TextBlock()
+            //    {
+            //        Text = "S",
+            //        Foreground = Brushes.White,
+            //        ToolTip = "Under SCADA",
+            //        HorizontalAlignment = HorizontalAlignment.Center,
+            //        VerticalAlignment = VerticalAlignment.Center,
+            //        FontSize = 4 * scadaBorder.Height / 5,
+            //        Margin = new Thickness(0, 0, 0, scadaBorder.Height / 6)
+            //    };
+            //    scadaBorder.Child = scadaTextblock;
 
-                this.ButtonCanvas.Children.Add(scadaCanvas);
-            }
+            //    this.ButtonCanvas.Children.Add(scadaCanvas);
+            //}
 
             this.Canvas1.SetBinding(Canvas.VisibilityProperty, new Binding("Incident") { Converter = new BooleanToVisibilityConverter() });
             this.Canvas2.SetBinding(Canvas.VisibilityProperty, new Binding("CrewSent") { Converter = new BooleanToVisibilityConverter() });

@@ -85,10 +85,10 @@ namespace DMSService
                                 SendMailMessageToClient(message, true);
                                 lock (sync)
                                 {
-                                    if (DMSService.Instance.Tree.Data[call.Gid].Marker == true)
+                                    if (DMSService.Instance.Tree.Data[call.Gid].IsEnergized == true)
                                     {
                                         clientsCall.Add(call.Gid);
-                                        DMSService.Instance.Tree.Data[call.Gid].Marker = false;
+                                        DMSService.Instance.Tree.Data[call.Gid].IsEnergized = false;
                                     }
                                 }
                                 if (clientsCall.Count == 3)
@@ -212,12 +212,12 @@ namespace DMSService
                             {
                                 return;
                             }
-                            sw.Marker = false;
+                            sw.IsEnergized = false;
                             sw.State = SwitchState.Open;
                             sw.Incident = true;
                             networkChange.Add(new UIUpdateModel(sw.ElementGID, false, OMSSCADACommon.States.OPEN));
                             Node n = (Node)DMSService.Instance.Tree.Data[sw.End2];
-                            n.Marker = false;
+                            n.IsEnergized = false;
                             networkChange.Add(new UIUpdateModel(n.ElementGID, false));
                             networkChange = EnergizationAlgorithm.TraceDown(n, networkChange, false, false, DMSService.Instance.Tree);
 

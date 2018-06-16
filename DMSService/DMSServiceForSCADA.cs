@@ -70,13 +70,13 @@ namespace DMSService
 
                         sw.Incident = true;
                         sw.State = SwitchState.Open;
-                        sw.Marker = false;
+                        sw.IsEnergized = false;
                         networkChange.Add(new UIUpdateModel(sw.ElementGID, false, OMSSCADACommon.States.OPEN));
 
                         // treba mi objasnjenje sta se ovde radi? ne kotnam ove ScadaupdateModele sta se kad gde dodaje, sta je sta
                         // uopste, summary iznad tih propertija u dms modelu
                         Node n = (Node)DMSService.Instance.Tree.Data[sw.End2];
-                        n.Marker = false;
+                        n.IsEnergized = false;
                         networkChange.Add(new UIUpdateModel(n.ElementGID, false));
                         // pojasnjenje mi treba, komentari u ovom algoritmu i slicno, da ne debagujem sve redom, nemam vremena sad za to xD 
                         networkChange = EnergizationAlgorithm.TraceDown(n, networkChange, false, false, DMSService.Instance.Tree);
@@ -91,10 +91,10 @@ namespace DMSService
                         if (EnergizationAlgorithm.TraceUp((Node)DMSService.Instance.Tree.Data[sw.End1], DMSService.Instance.Tree))
                         {
                             networkChange.Add(new UIUpdateModel(sw.ElementGID, true, OMSSCADACommon.States.CLOSED));
-                            sw.Marker = true;
+                            sw.IsEnergized = true;
 
                             Node n = (Node)DMSService.Instance.Tree.Data[sw.End2];
-                            n.Marker = true;
+                            n.IsEnergized = true;
                             networkChange.Add(new UIUpdateModel(n.ElementGID, true));
                             networkChange = EnergizationAlgorithm.TraceDown(n, networkChange, true, false, DMSService.Instance.Tree);
                         }

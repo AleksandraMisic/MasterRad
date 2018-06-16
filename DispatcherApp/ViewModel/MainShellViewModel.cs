@@ -36,6 +36,7 @@ using DMSCommon;
 using DispatcherApp.ViewModel.ShellFillerModelViews;
 using DispatcherApp.View.CustomControls.ShellFillerControls;
 using DispatcherApp.ViewModel.ShellFillerViewModels;
+using OMSCommon;
 
 namespace DispatcherApp.ViewModel
 {
@@ -126,8 +127,6 @@ namespace DispatcherApp.ViewModel
         #region Constructor
         public MainShellViewModel()
         {
-            //Thread.Sleep(5000);
-            int i = -1;
             foreach (var position in Enum.GetValues(typeof(ShellPosition)))
             {
                 ShellProperties.Add((ShellPosition)position, new ShellFillerShellProperties());
@@ -142,27 +141,9 @@ namespace DispatcherApp.ViewModel
             subscriber.publishCall += GetCallFromConsumers;
             subscriber.publiesBreakers += SearchForIncident;
 
-            NetTcpBinding binding = new NetTcpBinding();
-            binding.CloseTimeout = new TimeSpan(1, 0, 0, 0);
-            binding.OpenTimeout = new TimeSpan(1, 0, 0, 0);
-            binding.ReceiveTimeout = new TimeSpan(1, 0, 0, 0);
-            binding.SendTimeout = new TimeSpan(1, 0, 0, 0);
-            binding.MaxReceivedMessageSize = Int32.MaxValue;
-
-            ChannelFactory<IOMSClient> factoryToTMS = new ChannelFactory<IOMSClient>(binding,
-                new EndpointAddress("net.tcp://localhost:6080/TransactionManagerService"));
-            ProxyToTransactionManager = factoryToTMS.CreateChannel();
-            TMSAnswerToClient answerFromTransactionManager = new TMSAnswerToClient();
-
-            try
-            {
-                answerFromTransactionManager = ProxyToTransactionManager.GetNetwork("");
-            }
-            catch (Exception e) { }
-
-            InitNetwork();
-            InitElementsAndProperties(answerFromTransactionManager);
-            DrawElementsOnGraph(answerFromTransactionManager.GraphDeep);
+            //InitNetwork();
+            //InitElementsAndProperties(answerFromTransactionManager);
+            //DrawElementsOnGraph(answerFromTransactionManager.GraphDeep);
         }
 
         public void InitNetwork()
@@ -183,7 +164,7 @@ namespace DispatcherApp.ViewModel
             #region FakeNetwork
             //Source s1 = new Source(0, -1, "ES_2") { ElementGID = 0 };
             //Source s2 = new Source(0, -1, "ES_3") { ElementGID = 23 };
-            //s2.Marker = false;
+            //s2.IsEnergized = false;
             //Node n10 = new Node(24, "CN_10");
             //n10.Parent = s2.ElementGID;
             //s2.End2 = n10.ElementGID;
@@ -232,7 +213,7 @@ namespace DispatcherApp.ViewModel
             //n3.Children.Add(b4.ElementGID);
             //ACLine b5 = new ACLine(8, "ACLS_2");
             //b5.End1 = n3.ElementGID;
-            //b5.Marker = false;
+            //b5.IsEnergized = false;
             //n3.Children.Add(b5.ElementGID);
             //Node n4 = new Node(9, "CN_4");
             //b4.End2 = n4.ElementGID;
@@ -246,14 +227,14 @@ namespace DispatcherApp.ViewModel
             //Consumer b7 = new Consumer(12, "EC_2");
             //b7.End1 = n5.ElementGID;
             //n5.Children.Add(b7.ElementGID);
-            //b7.Marker = false;
+            //b7.IsEnergized = false;
             //Node n6 = new Node(13, "CN_6");
             //b3.End2 = n6.ElementGID;
             //n6.Parent = b3.ElementGID;
-            //n6.Marker = false;
+            //n6.IsEnergized = false;
             //Switch b8 = new Switch(14, "BR_3");
             //b8.End1 = n6.ElementGID;
-            //b8.Marker = false;
+            //b8.IsEnergized = false;
             //n6.Children.Add(b8.ElementGID);
             //Node n7 = new Node(15, "CN_7");
             //b8.End2 = n7.ElementGID;
@@ -325,25 +306,25 @@ namespace DispatcherApp.ViewModel
                         if (element is Source)
                         {
                             this.Sources.Add(element.ElementGID, element.MRID);
-                            EnergySourceProperties properties = new EnergySourceProperties() { IsEnergized = element.Marker, IsUnderScada = element.UnderSCADA };
+                            EnergySourceProperties properties = new EnergySourceProperties() { IsEnergized = element.IsEnergized, IsUnderScada = element.UnderSCADA };
                             properties.ReadFromResourceDescription(rd);
                             this.properties.Add(element.ElementGID, properties);
                         }
                         else if (element is Consumer)
                         {
-                            EnergyConsumerProperties properties = new EnergyConsumerProperties() { IsEnergized = element.Marker, IsUnderScada = element.UnderSCADA };
+                            EnergyConsumerProperties properties = new EnergyConsumerProperties() { IsEnergized = element.IsEnergized, IsUnderScada = element.UnderSCADA };
                             properties.ReadFromResourceDescription(rd);
                             this.properties.Add(element.ElementGID, properties);
                         }
                         else if (element is ACLine)
                         {
-                            ACLineSegmentProperties properties = new ACLineSegmentProperties() { IsEnergized = element.Marker, IsUnderScada = element.UnderSCADA };
+                            ACLineSegmentProperties properties = new ACLineSegmentProperties() { IsEnergized = element.IsEnergized, IsUnderScada = element.UnderSCADA };
                             properties.ReadFromResourceDescription(rd);
                             this.properties.Add(element.ElementGID, properties);
                         }
                         else if (element is Node)
                         {
-                            ConnectivityNodeProperties properties = new ConnectivityNodeProperties() { IsEnergized = element.Marker, IsUnderScada = element.UnderSCADA };
+                            ConnectivityNodeProperties properties = new ConnectivityNodeProperties() { IsEnergized = element.IsEnergized, IsUnderScada = element.UnderSCADA };
                             properties.ReadFromResourceDescription(rd);
                             this.properties.Add(element.ElementGID, properties);
                         }
@@ -351,7 +332,7 @@ namespace DispatcherApp.ViewModel
                         {
                             Switch breaker = element as Switch;
                             this.Breakers.Add(element);
-                            BreakerProperties properties = new BreakerProperties() { IsEnergized = element.Marker, IsUnderScada = element.UnderSCADA, Incident = element.Incident, CanCommand = breaker.CanCommand };
+                            BreakerProperties properties = new BreakerProperties() { IsEnergized = element.IsEnergized, IsUnderScada = element.UnderSCADA, Incident = element.Incident, CanCommand = breaker.CanCommand };
 
                             if (breaker.State == SwitchState.Open)
                             {
@@ -766,11 +747,11 @@ namespace DispatcherApp.ViewModel
                     }
                     else if (branch is Switch)
                     {
-                        point4 = PlaceSwitch(cellHeight, cellWidth, point1, point2, branch.ElementGID, branch.Marker, branch.MRID);
+                        point4 = PlaceSwitch(cellHeight, cellWidth, point1, point2, branch.ElementGID, branch.IsEnergized, branch.MRID);
                     }
                     else if (branch is ACLine)
                     {
-                        PlaceACLine(cellHeight, cellWidth, point1, point2, branch.ElementGID, branch.Marker, branch.MRID);
+                        PlaceACLine(cellHeight, cellWidth, point1, point2, branch.ElementGID, branch.IsEnergized, branch.MRID);
                     }
 
                     Point point3 = new Point()
