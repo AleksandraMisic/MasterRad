@@ -28,7 +28,7 @@ namespace UIShell.ViewModel
         {
             var header = ((object[])parameter)[0];
             var position = ((object[])parameter)[1];
-            MainShellViewModel mainShellViewModel = ((object[])parameter)[3] as MainShellViewModel;
+            AbstractMainShellViewModel mainShellViewModel = ((object[])parameter)[3] as AbstractMainShellViewModel;
 
             var properties = mainShellViewModel.ShellProperties[(ShellPosition)position];
 

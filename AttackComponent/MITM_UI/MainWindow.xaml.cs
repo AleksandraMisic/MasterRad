@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MITM_UI.ViewModel;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,18 +13,18 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using UIShell.ViewModel;
 
-namespace UIShell.View
+namespace MITM_UI
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainShell : UserControl
+    public partial class MainWindow : Window
     {
-        public MainShell()
+        public MainWindow()
         {
             InitializeComponent();
+            this.DataContext = new MainShellViewModel();
         }
     }
 }

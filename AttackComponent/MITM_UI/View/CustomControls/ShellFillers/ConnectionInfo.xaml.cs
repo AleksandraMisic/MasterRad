@@ -12,16 +12,15 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using UIShell.ViewModel;
 
-namespace UIShell.View
+namespace MITM_UI.View.CustomControls.ShellFillers
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// Interaction logic for ConnectionInfo.xaml
     /// </summary>
-    public partial class MainShell : UserControl
+    public partial class ConnectionInfo : UserControl
     {
-        public MainShell()
+        public ConnectionInfo()
         {
             InitializeComponent();
         }

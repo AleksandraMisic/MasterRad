@@ -50,16 +50,15 @@
     <Compile Include="Model\RelayCommand.cs" />
     <Compile Include="Model\ShellFillerShellProperties.cs" />
     <Compile Include="Model\ShellPosition.cs" />
-    <Compile Include="ViewModel\MainShellViewModel.cs" />
+    <Compile Include="ViewModel\AbstractMainShellViewModel.cs" />
     <Compile Include="ViewModel\ShellFillerShellViewModel.cs" />
     <Compile Include="ViewModel\SingleShellFillerViewModel.cs" />
-    <Compile Include="ViewModel\TopMenuControlViewModel.cs" />
     <Compile Include="View\MainShell.xaml.cs">
       <DependentUpon>MainShell.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\TabControlForShell.cs" />
-    <Compile Include="View\TopMenuControl.xaml.cs">
-      <DependentUpon>TopMenuControl.xaml</DependentUpon>
+    <Compile Include="View\TopMenuPlacerControl.xaml.cs">
+      <DependentUpon>TopMenuPlacerControl.xaml</DependentUpon>
     </Compile>
     <Page Include="View\MainShell.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -85,7 +84,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="View\TopMenuControl.xaml">
+    <Page Include="View\TopMenuPlacerControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

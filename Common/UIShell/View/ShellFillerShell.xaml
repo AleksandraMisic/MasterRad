@@ -29,7 +29,7 @@
                 <ColumnDefinition/>
                 <ColumnDefinition Width="20"/>
             </Grid.ColumnDefinitions>
-            <TextBlock Name="Header" Style="{StaticResource ResourceKey=BorderTabTopLineTextBlock}"/>
+            <TextBlock Name="Header" x:FieldModifier="public" Style="{StaticResource ResourceKey=BorderTabTopLineTextBlock}"/>
             <Button Grid.Column="1" Style="{StaticResource ResourceKey=BorderTabTopLineCloseButton}" Command="{Binding CloseControlCommand}">
                 <Button.CommandParameter>
                     <MultiBinding Converter="{StaticResource CloseControlParameters}">
@@ -41,6 +41,6 @@
                 </Button.CommandParameter>
             </Button>
         </Grid>
-        <ScrollViewer Name="MainScroll" Grid.Row="1" Grid.ColumnSpan="2" Style="{StaticResource FavsScrollViewer }"/>
+        <ScrollViewer Name="MainScroll" x:FieldModifier="public" Grid.Row="1" Grid.ColumnSpan="2" Style="{StaticResource FavsScrollViewer }"/>
     </Grid>
 </UserControl>

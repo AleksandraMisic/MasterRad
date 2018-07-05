@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DNP3Outstation.ViewModel;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -23,6 +24,7 @@ namespace DNP3Outstation
         public MainWindow()
         {
             InitializeComponent();
+            this.DataContext = new MainshellViewModel();
         }
     }
 }

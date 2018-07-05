@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MITM_UI.Extensions.DNP3Extension.ViewModel;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,20 +11,19 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
-using UIShell.ViewModel;
 
-namespace UIShell.View
+namespace MITM_UI.Extensions.DNP3Extension
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainShell : UserControl
+    public partial class DNP3ExtensionMainWindow : Window
     {
-        public MainShell()
+        public DNP3ExtensionMainWindow()
         {
             InitializeComponent();
+            this.DataContext = new MainShellViewModel();
         }
     }
 }

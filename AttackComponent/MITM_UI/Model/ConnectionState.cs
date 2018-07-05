@@ -4,9 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace UIShell.ViewModel
+namespace MITM_UI.Model
 {
-    class TopMenuControlViewModel
+    public enum ConnectionState
     {
+        CONNECTED,
+        DISCONNECTED
     }
 }

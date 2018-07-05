@@ -1,0 +1,33 @@
+﻿<UserControl x:Class="MITM_UI.View.CustomControls.ShellFillers.ARPSpoof"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:MITM_UI.View.CustomControls.ShellFillers"
+             xmlns:customControls="clr-namespace:MITM_UI.View.CustomControls"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid Background="{StaticResource MediumColor}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <customControls:ScanForHosts/>
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Label Content="Target 1:" Margin="10, 20, 0, 0"/>
+            <TextBox Grid.Column="1" Height="25" Width="150" Margin="10, 20, 0, 0" Text="{Binding Target1}" VerticalContentAlignment="Center" Background="{DynamicResource DarkColor}" Foreground="LightGray"/>
+            <Label Content="Target 2:" Grid.Column="2" Margin="10, 20, 0, 0"/>
+            <TextBox Grid.Column="3" Height="25" Width="150" Margin="10, 20, 0, 0" Text="{Binding Target2}" VerticalContentAlignment="Center" Background="{DynamicResource DarkColor}" Foreground="LightGray"/>
+            <Button Style="{StaticResource ButtonStyle}" Content="Start Attack" Grid.Column="4" Height="30" Margin="30, 20, 0, 0" Width="80" Command="{Binding StartAttackCommand}"/>
+        </Grid>
+    </Grid>
+</UserControl>

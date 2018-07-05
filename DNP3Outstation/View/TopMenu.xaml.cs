@@ -12,16 +12,15 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using UIShell.ViewModel;
 
-namespace UIShell.View
+namespace DNP3Outstation.View
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// Interaction logic for TopMenu.xaml
     /// </summary>
-    public partial class MainShell : UserControl
+    public partial class TopMenu : UserControl
     {
-        public MainShell()
+        public TopMenu()
         {
             InitializeComponent();
         }

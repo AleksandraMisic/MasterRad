@@ -48,6 +48,7 @@
     <Compile Include="Enums\LinkConfigEnums.cs" />
     <Compile Include="Enums\NetworkConfigEnums.cs" />
     <Compile Include="ISetProperties.cs" />
+    <Compile Include="Parsers\DNP3DeviceProfileJan2010Parser.cs" />
     <Compile Include="Parsers\Parser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MITM_UI.ViewModel.ShellFillerViewModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,16 +13,15 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using UIShell.ViewModel;
 
-namespace UIShell.View
+namespace MITM_UI.View.CustomControls.ShellFillers
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// Interaction logic for ARPSpoof.xaml
     /// </summary>
-    public partial class MainShell : UserControl
+    public partial class ARPSpoof : UserControl
     {
-        public MainShell()
+        public ARPSpoof()
         {
             InitializeComponent();
         }

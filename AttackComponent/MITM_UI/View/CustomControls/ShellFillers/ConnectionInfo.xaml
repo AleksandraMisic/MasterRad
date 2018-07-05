@@ -1,0 +1,64 @@
+﻿<UserControl x:Class="MITM_UI.View.CustomControls.ShellFillers.ConnectionInfo"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:MITM_UI.View.CustomControls.ShellFillers"
+             xmlns:converters="clr-namespace:MITM_UI.View.Resources.Converters"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis"/>
+        <converters:BoolToStringConverter x:Key="BoolToString"/>
+        <converters:BoolToImagePathConverter x:Key="BoolToImagePath"/>
+    </UserControl.Resources>
+    <Grid Background="{StaticResource DarkColor}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="70"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="60"/>
+                <ColumnDefinition MinWidth="150"/>
+            </Grid.ColumnDefinitions>
+            <Grid Width="30" Height="30" Grid.Column="0" HorizontalAlignment="Right">
+                <Grid.Background>
+                    <ImageBrush ImageSource="{Binding IsConnected, Converter={StaticResource BoolToImagePath}}"/>
+                </Grid.Background>
+            </Grid>
+            <Label Grid.Column="1" Margin="5, 0, 0, 0" Content="{Binding IsConnected, Converter={StaticResource BoolToString}}" VerticalAlignment="Center" TextBlock.Foreground="White" TextBlock.FontSize="16" TextBlock.FontWeight="Light"/>
+        </Grid>
+        <Grid Grid.Row="1" Margin="0, 0, 0, 0" Visibility="{Binding IsConnected, Converter={StaticResource BoolToVis}}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Label Grid.Row="0" Content="Device info:" Margin="10, 0, 40, 0" VerticalAlignment="Center" HorizontalAlignment="Right" TextBlock.Foreground="White" TextBlock.FontSize="16" TextBlock.FontWeight="Light" Width="Auto"/>
+            <Label Grid.Row="1" Content="Description:" Margin="0, 0, 10, 0" VerticalAlignment="Center" HorizontalAlignment="Right" TextBlock.Foreground="White" TextBlock.FontSize="12" TextBlock.FontWeight="Light" Width="Auto"/>
+            <Label Grid.Row="2" Content="Friendly name:" Margin="0, 0, 10, 0" VerticalAlignment="Center" HorizontalAlignment="Right" TextBlock.Foreground="White" TextBlock.FontSize="12" TextBlock.FontWeight="Light" Width="Auto"/>
+            <Label Grid.Row="3" Content="IPv4 address:" Margin="0, 0, 10, 0" VerticalAlignment="Center" HorizontalAlignment="Right" TextBlock.Foreground="White" TextBlock.FontSize="12" TextBlock.FontWeight="Light" Width="Auto"/>
+            <Label Grid.Row="4" Content="MAC address:" Margin="0, 0, 10, 0" VerticalAlignment="Center" HorizontalAlignment="Right" TextBlock.Foreground="White" TextBlock.FontSize="12" TextBlock.FontWeight="Light" Width="Auto"/>
+            <Label Grid.Row="5" Content="Default gateway:" Margin="0, 0, 10, 0" VerticalAlignment="Center" HorizontalAlignment="Right" TextBlock.Foreground="White" TextBlock.FontSize="12" TextBlock.FontWeight="Light" Width="Auto"/>
+            <Label Grid.Row="6" Content="Subnet mask:" Margin="0, 0, 10, 0" VerticalAlignment="Center" HorizontalAlignment="Right" TextBlock.Foreground="White" TextBlock.FontSize="12" TextBlock.FontWeight="Light" Width="Auto"/>
+            <Label Grid.Row="7" Content="Routing enabled:" Margin="0, 0, 10, 0" VerticalAlignment="Center" HorizontalAlignment="Right" TextBlock.Foreground="White" TextBlock.FontSize="12" TextBlock.FontWeight="Light" Width="Auto"/>
+            <Label Grid.Row="1" Grid.Column="1" Content="{Binding Description}" Margin="10, 0, 10, 0" VerticalAlignment="Center" HorizontalAlignment="Left" TextBlock.Foreground="White" TextBlock.FontSize="12" TextBlock.FontWeight="Light" Width="Auto"/>
+            <Label Grid.Row="2" Grid.Column="1" Content="{Binding FriendlyName}" Margin="10, 0, 10, 0" VerticalAlignment="Center" HorizontalAlignment="Left" TextBlock.Foreground="White" TextBlock.FontSize="12" TextBlock.FontWeight="Light" Width="Auto"/>
+            <Label Grid.Row="3" Grid.Column="1" Content="{Binding IPAddress}" Margin="10, 0, 10, 0" VerticalAlignment="Center" HorizontalAlignment="Left" TextBlock.Foreground="White" TextBlock.FontSize="12" TextBlock.FontWeight="Light" Width="Auto"/>
+            <Label Grid.Row="4" Grid.Column="1" Content="{Binding MACAddress}" Margin="10, 0, 10, 0" VerticalAlignment="Center" HorizontalAlignment="Left" TextBlock.Foreground="White" TextBlock.FontSize="12" TextBlock.FontWeight="Light" Width="Auto"/>
+            <Label Grid.Row="5" Grid.Column="1" Content="{Binding DefaultGateway}" Margin="10, 0, 10, 0" VerticalAlignment="Center" HorizontalAlignment="Left" TextBlock.Foreground="White" TextBlock.FontSize="12" TextBlock.FontWeight="Light" Width="Auto"/>
+            <Label Grid.Row="6" Grid.Column="1" Content="{Binding SubnetMask}" Margin="10, 0, 10, 0" VerticalAlignment="Center" HorizontalAlignment="Left" TextBlock.Foreground="White" TextBlock.FontSize="12" TextBlock.FontWeight="Light" Width="Auto"/>
+            <Label Grid.Row="7" Grid.Column="1" Content="{Binding RoutingEnabled}" Margin="10, 0, 10, 0" VerticalAlignment="Center" HorizontalAlignment="Left" TextBlock.Foreground="White" TextBlock.FontSize="12" TextBlock.FontWeight="Light" Width="Auto"/>
+        </Grid>
+    </Grid>
+</UserControl>

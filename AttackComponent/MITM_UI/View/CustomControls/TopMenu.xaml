@@ -1,0 +1,29 @@
+﻿<UserControl x:Class="MITM_UI.View.CustomControls.TopMenu"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:MITM_UI.View.CustomControls"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <StackPanel Height="Auto" Width="Auto" Background="{StaticResource DarkestColor}" Margin="0, 10, 0, 0">
+        <Menu Background="{StaticResource DarkestColor}" Foreground="White">
+            <MenuItem Header="View" Margin="0, 2, 0, 2" Template="{StaticResource MenuItemHeaderTemplate}" Foreground="White">
+                <MenuItem Header="Connection Info" Foreground="White"
+                         Command="{Binding OpenConnectionInfoCommand}" CommandParameter="Connection Info"/>
+                <MenuItem Header="Active Attacks" Foreground="White"
+                         Command="{Binding OpenActiveAttacksCommand}" CommandParameter="Active Attacks"/>
+            </MenuItem>
+            <MenuItem Header="Attack" Margin="0, 2, 0, 2" Template="{StaticResource MenuItemHeaderTemplate}" Foreground="White">
+                <MenuItem Header="ARP Spoof" Foreground="White"
+                         Command="{Binding OpenARPSpoofCommand}" CommandParameter="ARP Spoof"/>
+            </MenuItem>
+            <MenuItem Header="Extensions" Margin="0, 2, 0, 2" Template="{StaticResource MenuItemHeaderTemplate}" Foreground="White">
+                <MenuItem Header="Modbus Extension" Foreground="White"
+                         Command="{Binding OpenNetworkExplorerCommand}" CommandParameter="Modbus Extension"/>
+                <MenuItem Header="DNP3 Extension" Foreground="White"
+                         Command="{Binding OpenDNP3ExtensionCommand}" CommandParameter="DNP3 Extension"/>
+            </MenuItem>
+        </Menu>
+    </StackPanel>
+</UserControl>

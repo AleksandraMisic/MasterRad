@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -17,11 +16,11 @@ using UIShell.ViewModel;
 namespace UIShell.View
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// Interaction logic for TopMenuControl.xaml
     /// </summary>
-    public partial class MainShell : UserControl
+    public partial class TopMenuPlacerControl : UserControl
     {
-        public MainShell()
+        public TopMenuPlacerControl()
         {
             InitializeComponent();
         }
