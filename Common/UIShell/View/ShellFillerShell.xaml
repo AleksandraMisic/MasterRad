@@ -24,12 +24,12 @@
             <ColumnDefinition/>
             <ColumnDefinition Width="20"/>
         </Grid.ColumnDefinitions>
-        <Grid Grid.ColumnSpan="2" Style="{StaticResource ResourceKey=BorderTabTopLineGrid}">
+        <Grid Grid.ColumnSpan="2" Style="{StaticResource ResourceKey=BorderTabTopLineGrid}" VerticalAlignment="Center">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
                 <ColumnDefinition Width="20"/>
             </Grid.ColumnDefinitions>
-            <TextBlock Name="Header" x:FieldModifier="public" Style="{StaticResource ResourceKey=BorderTabTopLineTextBlock}"/>
+            <TextBlock Name="Header" x:FieldModifier="public" Style="{StaticResource ResourceKey=BorderTabTopLineTextBlock}" VerticalAlignment="Center"/>
             <Button Grid.Column="1" Style="{StaticResource ResourceKey=BorderTabTopLineCloseButton}" Command="{Binding CloseControlCommand}">
                 <Button.CommandParameter>
                     <MultiBinding Converter="{StaticResource CloseControlParameters}">

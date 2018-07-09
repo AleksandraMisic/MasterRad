@@ -1,4 +1,5 @@
 ﻿using MITM_UI.Model;
+using MITM_UI.Model.GlobalInfo;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -6,7 +7,10 @@ using System.ComponentModel;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Threading;
 using UIShell.Model;
 using UIShell.ViewModel;
 using static MITM_UI.Model.ARPSpoofParticipantsInfo;
@@ -22,6 +26,9 @@ namespace MITM_UI.ViewModel.ShellFillerViewModels
         [DllImport("ARPSpoof.dll", EntryPoint = "ARPSpoof", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ARPSpoof(ref ARPSpoofParticipantsInfoStruct rPSpoofParticipantsInfoStruct);
 
+        [DllImport("ARPSpoof.dll", EntryPoint = "Terminate", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void Terminate();
+
         private static bool isOpen;
         private ObservableCollection<Host> hostsList;
         private Dictionary<string, Host> hosts;
@@ -30,6 +37,11 @@ namespace MITM_UI.ViewModel.ShellFillerViewModels
 
         private string target1;
         private string target2;
+
+        private int sniffForHostsMaxProgressValue = 7;
+        private int currentSniffForHostsProgress = 0;
+        private bool notSniffing = true;
+        private bool isAttack = false;
 
         private RelayCommand sniffForHostsCommand;
 
@@ -93,6 +105,59 @@ namespace MITM_UI.ViewModel.ShellFillerViewModels
             }
         }
 
+        public int SniffForHostsCurrentProgress
+        {
+            get
+            {
+                return currentSniffForHostsProgress;
+;
+            }
+            set
+            {
+                currentSniffForHostsProgress = value;
+                RaisePropertyChanged("SniffForHostsCurrentProgress");
+            }
+        }
+
+        public int SniffForHostsMaxProgressValue
+        {
+            get
+            {
+                return sniffForHostsMaxProgressValue;
+            }
+            set
+            {
+                sniffForHostsMaxProgressValue = value;
+                RaisePropertyChanged("SniffForHostsMaxProgressValue");
+            }
+        }
+
+        public bool NotSniffing
+        {
+            get
+            {
+                return notSniffing;
+            }
+            set
+            {
+                notSniffing = value;
+                RaisePropertyChanged("NotSniffing");
+            }
+        }
+
+        public bool IsAttack
+        {
+            get
+            {
+                return isAttack;
+            }
+            set
+            {
+                isAttack = value;
+                RaisePropertyChanged("IsAttack");
+            }
+        }
+
         public RelayCommand SniffForHostsCommand
         {
             get
@@ -136,7 +201,7 @@ namespace MITM_UI.ViewModel.ShellFillerViewModels
                 return startAttackCommand ?? new RelayCommand(
                     (parameter) =>
                     {
-                        ExecuteStartAttackCommand();
+                        ExecuteStartAttackCommand(parameter);
                     });
             }
         }
@@ -152,7 +217,93 @@ namespace MITM_UI.ViewModel.ShellFillerViewModels
             connectionInfoStruct.MACAddress = globalConnectionInfo.MACAddress;
             connectionInfoStruct.Name = globalConnectionInfo.Name;
             connectionInfoStruct.Hosts = new byte[200];
+            connectionInfoStruct.Sleep = (this.sniffForHostsMaxProgressValue-2)*1000;
 
+            NotSniffing = false;
+            Task.Factory.StartNew(() => SniffForHosts(connectionInfoStruct));
+
+            SniffForHostsCurrentProgress = 0;
+            Task.Factory.StartNew(() => ProgressBarChange());
+        }
+
+        public void ExecuteSetTargetCommand(string address, int targetNum)
+        {
+            switch (targetNum)
+            {
+                case 1:
+                    this.Target1 = address;
+                    break;
+                case 2:
+                    this.Target2 = address;
+                    break;
+            }
+        }
+
+        public void ExecuteStartAttackCommand(object parameter)
+        {
+            if ((string)parameter == "Start Attack")
+            {
+                //foreach (Attack a in ActiveAttacksViewModel.ActiveAttacks)
+                //{
+                //    if ((a.Target1 == target1 && a.Target2 == target2) || (a.Target1 == target2 && a.Target2 == target1))
+                //    {
+                //        MessageBox.Show("An attack on the chosen IP addresses is already in progress. See View->Active Attacks for details.", "Attack Already in Progress", MessageBoxButton.OK);
+                //        return;
+                //    }
+                //}
+
+                ARPSpoofParticipantsInfoStruct aRPSpoofParticipantsInfoStruct = new ARPSpoofParticipantsInfoStruct();
+
+                Host host = null;
+                this.hosts.TryGetValue(this.target1, out host);
+
+                if (host != null)
+                {
+                    aRPSpoofParticipantsInfoStruct.Target1IPAddress = host.IPAddressArray;
+                    aRPSpoofParticipantsInfoStruct.Target1MACAddress = host.MACAddressArray;
+                }
+                else
+                {
+                    return;
+                }
+
+                host = null;
+                this.hosts.TryGetValue(this.target2, out host);
+
+                if (host != null)
+                {
+                    aRPSpoofParticipantsInfoStruct.Target2IPAddress = host.IPAddressArray;
+                    aRPSpoofParticipantsInfoStruct.Target2MACAddress = host.MACAddressArray;
+                }
+                else
+                {
+                    return;
+                }
+
+                aRPSpoofParticipantsInfoStruct.MyIPAddress = globalConnectionInfo.IPAddress;
+                aRPSpoofParticipantsInfoStruct.MyMACAddress = globalConnectionInfo.MACAddress;
+
+                aRPSpoofParticipantsInfoStruct.Name = globalConnectionInfo.Name;
+
+                CancellationTokenSource tokenSource = new CancellationTokenSource();
+                Task.Factory.StartNew(() => ARPSpoof(ref aRPSpoofParticipantsInfoStruct), tokenSource.Token);
+
+                //Attack attack = new Attack() { Target1 = this.target1, Target2 = this.target2, Method = AttackMethod.ARP_SPOOF, TokenSource = tokenSource };
+                //ActiveAttacksViewModel.ActiveAttacks.Add(attack);
+
+                //this.Target1 = string.Empty;
+                //this.Target2 = string.Empty;
+                this.IsAttack = true;
+            }
+            else
+            {
+                Terminate();
+                this.IsAttack = false;
+            }
+        }
+
+        private void SniffForHosts(ConnectionInfoStruct connectionInfoStruct)
+        {
             SniffForHosts(ref connectionInfoStruct);
 
             int j = 0;
@@ -168,7 +319,7 @@ namespace MITM_UI.ViewModel.ShellFillerViewModels
                 hostsIPends.Add(connectionInfoStruct.Hosts[j]);
 
                 Host host = new Host();
-                host.IPAddressArray 
+                host.IPAddressArray
                     = new byte[4] {
                         globalConnectionInfo.IPAddress[0],
                         globalConnectionInfo.IPAddress[1],
@@ -201,62 +352,47 @@ namespace MITM_UI.ViewModel.ShellFillerViewModels
 
                 j++;
 
-                HostsList.Add(host);
-                this.hosts.Add(host.IPAddressString, host);
+                Application.Current.Dispatcher.BeginInvoke(
+                    DispatcherPriority.Background,
+                    new Action(() =>
+                    {
+                        HostsList.Add(host);
+                        this.hosts.Add(host.IPAddressString, host);
+                    })
+                );
 
                 connectionInfoStruct.HostCount--;
             }
+
+            Application.Current.Dispatcher.BeginInvoke(
+                    DispatcherPriority.Background,
+                    new Action(() =>
+                    {
+                        NotSniffing = true;
+                    })
+                );
         }
 
-        public void ExecuteSetTargetCommand(string address, int targetNum)
+        private async Task ProgressBarChange()
         {
-            switch (targetNum)
+            bool done = false;
+            while (!done)
             {
-                case 1:
-                    this.Target1 = address;
-                    break;
-                case 2:
-                    this.Target2 = address;
-                    break;
+                await Task.Delay(1000);
+
+                await Application.Current.Dispatcher.BeginInvoke(
+                    DispatcherPriority.Background,
+                    new Action(() =>
+                    {
+                        if (SniffForHostsCurrentProgress == SniffForHostsMaxProgressValue)
+                        {
+                            done = true;
+                        }
+
+                        SniffForHostsCurrentProgress++;
+                    })
+                );
             }
-        }
-
-        public void ExecuteStartAttackCommand()
-        {
-            ARPSpoofParticipantsInfoStruct aRPSpoofParticipantsInfoStruct = new ARPSpoofParticipantsInfoStruct();
-
-            Host host = null;
-            this.hosts.TryGetValue(this.target1, out host);
-
-            if (host != null)
-            {
-                aRPSpoofParticipantsInfoStruct.Target1IPAddress = host.IPAddressArray;
-                aRPSpoofParticipantsInfoStruct.Target1MACAddress = host.MACAddressArray;
-            }
-            else
-            {
-                return;
-            }
-
-            host = null;
-            this.hosts.TryGetValue(this.target2, out host);
-
-            if (host != null)
-            {
-                aRPSpoofParticipantsInfoStruct.Target2IPAddress = host.IPAddressArray;
-                aRPSpoofParticipantsInfoStruct.Target2MACAddress = host.MACAddressArray;
-            }
-            else
-            {
-                return;
-            }
-
-            aRPSpoofParticipantsInfoStruct.MyIPAddress = globalConnectionInfo.IPAddress;
-            aRPSpoofParticipantsInfoStruct.MyMACAddress = globalConnectionInfo.MACAddress;
-
-            aRPSpoofParticipantsInfoStruct.Name = globalConnectionInfo.Name;
-
-            ARPSpoof(ref aRPSpoofParticipantsInfoStruct);
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

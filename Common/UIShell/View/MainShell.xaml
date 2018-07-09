@@ -26,7 +26,7 @@
             <RowDefinition Name="MainRow"></RowDefinition>
             <RowDefinition Height="20" Name="BottomLine"></RowDefinition>
         </Grid.RowDefinitions>
-        <local:TopMenuPlacerControl Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="{StaticResource NumOfColumns}"/>
+        <local:TopMenuPlacerControl Grid.Row="0" VerticalAlignment="Top" Grid.Column="0" Grid.ColumnSpan="{StaticResource NumOfColumns}"/>
         <Grid Grid.Row="1" Grid.ColumnSpan="{StaticResource NumOfColumns}" Background="{StaticResource DarkestColor}">
         </Grid>
         <Border Grid.Row="2" BorderThickness="{StaticResource ResourceKey=OuterBorderThickness}" BorderBrush="{StaticResource DarkestColor}">

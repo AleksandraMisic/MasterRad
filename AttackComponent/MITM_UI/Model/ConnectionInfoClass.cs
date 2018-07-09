@@ -34,6 +34,8 @@ namespace MITM_UI.Model
             public int HostCount;
 
             public int RoutingEnabled;
+
+            public int Sleep;
         }
     }
 }

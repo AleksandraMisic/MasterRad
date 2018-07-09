@@ -4,8 +4,12 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:MITM_UI.View.CustomControls"
+              xmlns:converters="clr-namespace:MITM_UI.View.Resources.Converters"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <converters:BoolToVisibility x:Key="BoolToVisibility"/>
+    </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -13,15 +17,17 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <Grid Grid.Row="2">
-            <Button Style="{StaticResource ButtonStyle}" Grid.Column="2" Margin="10, 10, 10, 10" Content="Start sniffing" Height="30" Width="80" HorizontalAlignment="Left" Command="{Binding SniffForHostsCommand}"/>
+            <Button Style="{StaticResource ButtonStyle}" Grid.Column="2" Margin="10, 10, 10, 10" Content="Start sniffing" Height="30" Width="80" HorizontalAlignment="Left" Command="{Binding SniffForHostsCommand}" IsEnabled="{Binding NotSniffing}"/>
+            <ProgressBar Maximum="{Binding SniffForHostsMaxProgressValue}" Minimum="0" HorizontalAlignment="Left" Visibility="{Binding NotSniffing, Converter={StaticResource BoolToVisibility}}" Value="{Binding SniffForHostsCurrentProgress}" Height="20" Width="150" Margin="110, 0, 0, 0">
+            </ProgressBar>
         </Grid>
         <Grid Grid.Row="0">
             <TextBlock Text="Hosts on local network:" Foreground="Black" Margin="10, 10, 10, 10"/>
         </Grid>
         <DataGrid Grid.Row="1" Background="{StaticResource DarkColor}" ItemsSource="{Binding HostsList}" Margin="10, 0, 10, 0" MinHeight="200" Style="{StaticResource DataGridStyle}" RowStyle="{StaticResource ResourceKey=DataGridRow}" ColumnHeaderStyle="{StaticResource ResourceKey=DataGridColumnHeader}" CellStyle="{StaticResource ResourceKey=DataGridCell}" Name="MainDataGrid" AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False" CanUserDeleteRows="False" CanUserReorderColumns="False" CanUserResizeRows="False">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="IP Address" Binding="{Binding IPAddressString}"/>
-                <DataGridTextColumn Header="MAC Address" Binding="{Binding MACAddressString}"/>
+                <DataGridTextColumn Header="IP Address" Binding="{Binding IPAddressString}" TextBlock.TextAlignment="Center"/>
+                <DataGridTextColumn Header="MAC Address" Binding="{Binding MACAddressString}" TextBlock.TextAlignment="Center"/>
                 <DataGridTemplateColumn Header="Target1">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>

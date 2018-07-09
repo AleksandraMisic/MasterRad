@@ -1,6 +1,7 @@
 ﻿using MITM_UI.Extensions.DNP3Extension;
 using MITM_UI.Extensions.DNP3Extension.Model;
 using MITM_UI.Model;
+using MITM_UI.Model.GlobalInfo;
 using MITM_UI.View.CustomControls;
 using MITM_UI.View.CustomControls.ShellFillers;
 using MITM_UI.ViewModel.ShellFillerViewModels;
@@ -31,7 +32,7 @@ namespace MITM_UI.ViewModel
         #region Private fields
 
         private GlobalConnectionInfo globalConnectionInfo;
-        private const int sleep = 500;
+        private const int isConnectedSleep = 500;
 
         #endregion
 
@@ -212,7 +213,7 @@ namespace MITM_UI.ViewModel
                 {
                     this.globalConnectionInfo.ConnectionState = ConnectionState.DISCONNECTED;
 
-                    Thread.Sleep(sleep);
+                    Thread.Sleep(isConnectedSleep);
                     continue;
                 }
 
@@ -230,7 +231,7 @@ namespace MITM_UI.ViewModel
 
                 this.globalConnectionInfo.SubnetMask = connectionInfo.SubnetMask;
 
-                Thread.Sleep(sleep);
+                Thread.Sleep(isConnectedSleep);
             }
         }
     }

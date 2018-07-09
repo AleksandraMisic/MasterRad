@@ -1,4 +1,5 @@
 ﻿using MITM_UI.Model;
+using MITM_UI.Model.GlobalInfo;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;

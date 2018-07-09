@@ -63,14 +63,18 @@
       <DependentUpon>TopMenu.xaml</DependentUpon>
     </Compile>
     <Compile Include="Model\ARPSpoofParticipantsInfo.cs" />
+    <Compile Include="Model\Attack.cs" />
+    <Compile Include="Model\AttackMethod.cs" />
     <Compile Include="Model\ConnectionInfoClass.cs" />
     <Compile Include="Model\ConnectionState.cs" />
-    <Compile Include="Model\GlobalConnectionInfo.cs" />
+    <Compile Include="Model\GlobalInfo\GlobalActiveAttacks.cs" />
+    <Compile Include="Model\GlobalInfo\GlobalConnectionInfo.cs" />
     <Compile Include="Model\Host.cs" />
     <Compile Include="ViewModel\MainShellViewModel.cs" />
     <Compile Include="ViewModel\ShellFillerViewModels\ActiveAttacksViewModel.cs" />
     <Compile Include="ViewModel\ShellFillerViewModels\ARPSpooferViewModel.cs" />
     <Compile Include="ViewModel\ShellFillerViewModels\ConnectionInfoViewModel.cs" />
+    <Compile Include="ViewModel\ShellFillerViewModels\PacketAnalyzerViewModel.cs" />
     <Compile Include="View\CustomControls\ScanForHosts.xaml.cs">
       <DependentUpon>ScanForHosts.xaml</DependentUpon>
     </Compile>
@@ -83,12 +87,18 @@
     <Compile Include="View\CustomControls\ShellFillers\ConnectionInfo.xaml.cs">
       <DependentUpon>ConnectionInfo.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\CustomControls\ShellFillers\PacketAnalyzer.xaml.cs">
+      <DependentUpon>PacketAnalyzer.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\CustomControls\TopMenu.xaml.cs">
       <DependentUpon>TopMenu.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\Resources\Converters\BoolToContentConverter.cs" />
     <Compile Include="View\Resources\Converters\BoolToImagePathConverter.cs" />
     <Compile Include="View\Resources\Converters\BoolToStringConverter.cs" />
+    <Compile Include="View\Resources\Converters\BoolToVisibility.cs" />
     <Compile Include="View\Resources\Converters\CloseControlParameters.cs" />
+    <Compile Include="View\Resources\Converters\ContentToBoolConverter.cs" />
     <Page Include="Extensions\DNP3Extension\DNP3ExtensionMainWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -122,6 +132,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\CustomControls\ShellFillers\ConnectionInfo.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\CustomControls\ShellFillers\PacketAnalyzer.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

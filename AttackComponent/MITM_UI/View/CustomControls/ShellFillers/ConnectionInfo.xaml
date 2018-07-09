@@ -44,7 +44,7 @@
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
-            <Label Grid.Row="0" Content="Device info:" Margin="10, 0, 40, 0" VerticalAlignment="Center" HorizontalAlignment="Right" TextBlock.Foreground="White" TextBlock.FontSize="16" TextBlock.FontWeight="Light" Width="Auto"/>
+            <Label Grid.Row="0" Content="Device info:" Margin="10, 0, 20, 0" VerticalAlignment="Center" HorizontalAlignment="Right" TextBlock.Foreground="White" TextBlock.FontSize="16" TextBlock.FontWeight="Light" Width="Auto"/>
             <Label Grid.Row="1" Content="Description:" Margin="0, 0, 10, 0" VerticalAlignment="Center" HorizontalAlignment="Right" TextBlock.Foreground="White" TextBlock.FontSize="12" TextBlock.FontWeight="Light" Width="Auto"/>
             <Label Grid.Row="2" Content="Friendly name:" Margin="0, 0, 10, 0" VerticalAlignment="Center" HorizontalAlignment="Right" TextBlock.Foreground="White" TextBlock.FontSize="12" TextBlock.FontWeight="Light" Width="Auto"/>
             <Label Grid.Row="3" Content="IPv4 address:" Margin="0, 0, 10, 0" VerticalAlignment="Center" HorizontalAlignment="Right" TextBlock.Foreground="White" TextBlock.FontSize="12" TextBlock.FontWeight="Light" Width="Auto"/>

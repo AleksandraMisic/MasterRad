@@ -5,8 +5,13 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:MITM_UI.View.CustomControls.ShellFillers"
              xmlns:customControls="clr-namespace:MITM_UI.View.CustomControls"
+             xmlns:converters="clr-namespace:MITM_UI.View.Resources.Converters"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <converters:ContentToBoolConverter x:Key="ContentToBoolConverter"/>
+        <converters:BoolToContentConverter x:Key="BoolToContentConverter"/>
+    </UserControl.Resources>
     <Grid Background="{StaticResource MediumColor}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -24,10 +29,17 @@
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
             <Label Content="Target 1:" Margin="10, 20, 0, 0"/>
-            <TextBox Grid.Column="1" Height="25" Width="150" Margin="10, 20, 0, 0" Text="{Binding Target1}" VerticalContentAlignment="Center" Background="{DynamicResource DarkColor}" Foreground="LightGray"/>
+            <TextBox Name="Target1" Grid.Column="1" Height="25" Width="150" Margin="10, 20, 0, 0" Text="{Binding Target1}" VerticalContentAlignment="Center" Background="{DynamicResource DarkColor}" Foreground="LightGray"/>
             <Label Content="Target 2:" Grid.Column="2" Margin="10, 20, 0, 0"/>
-            <TextBox Grid.Column="3" Height="25" Width="150" Margin="10, 20, 0, 0" Text="{Binding Target2}" VerticalContentAlignment="Center" Background="{DynamicResource DarkColor}" Foreground="LightGray"/>
-            <Button Style="{StaticResource ButtonStyle}" Content="Start Attack" Grid.Column="4" Height="30" Margin="30, 20, 0, 0" Width="80" Command="{Binding StartAttackCommand}"/>
+            <TextBox Name="Target2" Grid.Column="3" Height="25" Width="150" Margin="10, 20, 0, 0" Text="{Binding Target2}" VerticalContentAlignment="Center" Background="{DynamicResource DarkColor}" Foreground="LightGray"/>
+            <Button Style="{StaticResource ButtonStyle}" Content="{Binding IsAttack, Converter={StaticResource ResourceKey=BoolToContentConverter}}" Grid.Column="4" Height="30" Margin="30, 20, 0, 0" Width="80" Command="{Binding StartAttackCommand}"  CommandParameter="{Binding Content, RelativeSource={RelativeSource Mode=Self}}">
+                <Button.IsEnabled>
+                    <MultiBinding Converter="{StaticResource ContentToBoolConverter}">
+                        <Binding ElementName="Target1" Path="Text"/>
+                        <Binding ElementName="Target2" Path="Text"/>
+                    </MultiBinding>
+                </Button.IsEnabled>
+            </Button>
         </Grid>
     </Grid>
 </UserControl>

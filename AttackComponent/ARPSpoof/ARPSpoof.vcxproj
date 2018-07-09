@@ -96,10 +96,10 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <OutputFile>$(SolutionDir)MITM_UI\bin\Debug\$(ProjectName).dll</OutputFile>
+      <OutputFile>$(SolutionDir)\AttackComponent\MITM_UI\bin\Debug\$(ProjectName).dll</OutputFile>
       <AdditionalLibraryDirectories>E:\WpdPack\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>wpcap.lib;Packet.lib;Ws2_32.lib;iphlpapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <ProgramDatabaseFile>$(SolutionDir)MITM_UI\bin\Debug\$(ProjectName).pdb</ProgramDatabaseFile>
+      <ProgramDatabaseFile>$(SolutionDir)\AttackComponent\MITM_UI\bin\Debug\$(ProjectName).pdb</ProgramDatabaseFile>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">

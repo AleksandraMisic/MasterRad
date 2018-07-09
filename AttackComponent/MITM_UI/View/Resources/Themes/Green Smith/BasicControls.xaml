@@ -36,7 +36,7 @@
     <Style x:Key="DataGridColumnHeader" TargetType="DataGridColumnHeader">
         <Setter Property="Foreground" Value="{StaticResource ResourceKey=LightColor}" />
         <Setter Property="Background" Value="{StaticResource ResourceKey=DarkColor}" />
-        <Setter Property="HorizontalContentAlignment" Value="Left" />
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="IsTabStop" Value="False" />
         <Setter Property="SeparatorBrush" Value="{StaticResource ResourceKey=LightColor}" />
