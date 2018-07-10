@@ -41,7 +41,7 @@ namespace MITM_UI.ViewModel.ShellFillerViewModels
         private int sniffForHostsMaxProgressValue = 7;
         private int currentSniffForHostsProgress = 0;
         private bool notSniffing = true;
-        private bool isAttack = false;
+        private bool notAttack = true;
 
         private RelayCommand sniffForHostsCommand;
 
@@ -145,16 +145,16 @@ namespace MITM_UI.ViewModel.ShellFillerViewModels
             }
         }
 
-        public bool IsAttack
+        public bool NotAttack
         {
             get
             {
-                return isAttack;
+                return notAttack;
             }
             set
             {
-                isAttack = value;
-                RaisePropertyChanged("IsAttack");
+                notAttack = value;
+                RaisePropertyChanged("NotAttack");
             }
         }
 
@@ -293,12 +293,12 @@ namespace MITM_UI.ViewModel.ShellFillerViewModels
 
                 //this.Target1 = string.Empty;
                 //this.Target2 = string.Empty;
-                this.IsAttack = true;
+                this.NotAttack = false;
             }
             else
             {
                 Terminate();
-                this.IsAttack = false;
+                this.NotAttack = true;
             }
         }
 

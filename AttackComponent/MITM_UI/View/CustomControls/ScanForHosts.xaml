@@ -32,7 +32,8 @@
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <Button Style="{StaticResource ButtonStyle}" 
-                                    Grid.Column="2" Margin="10, 2, 10, 2" Content="Target1" HorizontalAlignment="Center"
+                                    Grid.Column="2" Margin="10, 2, 10, 2" Content="Target1" HorizontalAlignment="Center" IsEnabled="{Binding  DataContext.NotAttack, 
+                                                    RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}}"
                                     Command="{Binding DataContext.SetTarget1Command, 
                                                     RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}}"
                                             CommandParameter="{Binding IPAddressString}">
@@ -44,7 +45,8 @@
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <Button Style="{StaticResource ButtonStyle}" 
-                                    Grid.Column="2" Margin="10, 2, 10, 2" Content="Target2" HorizontalAlignment="Center" 
+                                    Grid.Column="2" Margin="10, 2, 10, 2" Content="Target2" HorizontalAlignment="Center" IsEnabled="{Binding  DataContext.NotAttack, 
+                                                    RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}}"
                                     Command="{Binding DataContext.SetTarget2Command, 
                                                     RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}}"
                                             CommandParameter="{Binding IPAddressString}">

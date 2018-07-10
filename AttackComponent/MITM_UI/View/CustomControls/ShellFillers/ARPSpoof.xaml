@@ -32,7 +32,7 @@
             <TextBox Name="Target1" Grid.Column="1" Height="25" Width="150" Margin="10, 20, 0, 0" Text="{Binding Target1}" VerticalContentAlignment="Center" Background="{DynamicResource DarkColor}" Foreground="LightGray"/>
             <Label Content="Target 2:" Grid.Column="2" Margin="10, 20, 0, 0"/>
             <TextBox Name="Target2" Grid.Column="3" Height="25" Width="150" Margin="10, 20, 0, 0" Text="{Binding Target2}" VerticalContentAlignment="Center" Background="{DynamicResource DarkColor}" Foreground="LightGray"/>
-            <Button Style="{StaticResource ButtonStyle}" Content="{Binding IsAttack, Converter={StaticResource ResourceKey=BoolToContentConverter}}" Grid.Column="4" Height="30" Margin="30, 20, 0, 0" Width="80" Command="{Binding StartAttackCommand}"  CommandParameter="{Binding Content, RelativeSource={RelativeSource Mode=Self}}">
+            <Button Style="{StaticResource ButtonStyle}" Content="{Binding NotAttack, Converter={StaticResource ResourceKey=BoolToContentConverter}}" Grid.Column="4" Height="30" Margin="30, 20, 0, 0" Width="80" Command="{Binding StartAttackCommand}"  CommandParameter="{Binding Content, RelativeSource={RelativeSource Mode=Self}}">
                 <Button.IsEnabled>
                     <MultiBinding Converter="{StaticResource ContentToBoolConverter}">
                         <Binding ElementName="Target1" Path="Text"/>

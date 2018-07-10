@@ -12,15 +12,15 @@ namespace MITM_UI.View.Resources.Converters
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            bool isAttack = (bool)value;
+            bool notAttack = (bool)value;
 
-            if (isAttack)
+            if (notAttack)
             {
-                return "Terminate";
+                return "Start Attack";
             }
             else
             {
-                return "Start Attack";
+                return "Terminate";
             }
         }
 
