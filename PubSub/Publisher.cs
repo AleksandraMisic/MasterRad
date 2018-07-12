@@ -19,7 +19,7 @@ namespace PubSub
             CreateProxy();
         }
 
-        public void ReturnConnectionInfo(ConnectionInfoStruct connectionInfo)
+        public void ReturnConnectionInfo(GlobalConnectionInfo connectionInfo)
         {
             try
             {

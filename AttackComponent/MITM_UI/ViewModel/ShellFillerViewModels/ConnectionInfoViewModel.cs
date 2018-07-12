@@ -15,8 +15,6 @@ namespace MITM_UI.ViewModel.ShellFillerViewModels
 {
     public class ConnectionInfoViewModel : SingleShellFillerViewModel
     {
-        private static GlobalConnectionInfo globalConnectionInfo;
-
         private static bool isOpen;
 
         private static bool isConnected;
@@ -25,11 +23,6 @@ namespace MITM_UI.ViewModel.ShellFillerViewModels
         private string iPAddress;
         private string mACAddress;
         private string subnetMask;
-
-        static ConnectionInfoViewModel()
-        {
-            globalConnectionInfo = new GlobalConnectionInfo(); ;
-        }
 
         #region Properties
         public override bool IsOpen
@@ -117,55 +110,52 @@ namespace MITM_UI.ViewModel.ShellFillerViewModels
         }
         #endregion
 
-        public void GetNetworkInfo()
+        public void CheckForConnectionChange()
         {
-            while (true)
+            GlobalConnectionInfo connectionInfo = Database.GlobalConnectionInfo;
+
+            if (connectionInfo.ConnectionState == ConnectionState.DISCONNECTED)
             {
-                if (globalConnectionInfo.ConnectionState == ConnectionState.DISCONNECTED)
+                this.IsConnected = false;
+                return;
+            }
+
+            this.IsConnected = true;
+
+            this.friendlyName = connectionInfo.FriendlyName;
+            this.Description = connectionInfo.Description;
+
+            this.IPAddress = string.Empty;
+            for (int i = 0; i < 4; i++)
+            {
+                this.IPAddress += connectionInfo.IPAddress[i].ToString();
+
+                if (i != 3)
                 {
-                    this.IsConnected = false;
-                    continue;
+                    this.IPAddress += ".";
                 }
+            }
 
-                this.IsConnected = true;
+            this.SubnetMask = string.Empty;
+            for (int i = 0; i < 4; i++)
+            {
+                this.SubnetMask += connectionInfo.SubnetMask[i].ToString();
 
-                this.friendlyName = globalConnectionInfo.FriendlyName;
-                this.Description = globalConnectionInfo.Description;
-
-                this.IPAddress = string.Empty;
-                for (int i = 0; i < 4; i++)
+                if (i != 3)
                 {
-                    this.IPAddress += globalConnectionInfo.IPAddress[i].ToString();
-
-                    if (i != 3)
-                    {
-                        this.IPAddress += ".";
-                    }
+                    this.SubnetMask += ".";
                 }
+            }
 
-                this.SubnetMask = string.Empty;
-                for (int i = 0; i < 4; i++)
+            this.MACAddress = string.Empty;
+            for (int i = 0; i < 6; i++)
+            {
+                this.MACAddress += connectionInfo.MACAddress[i].ToString("X");
+
+                if (i != 5)
                 {
-                    this.SubnetMask += globalConnectionInfo.SubnetMask[i].ToString();
-
-                    if (i != 3)
-                    {
-                        this.SubnetMask += ".";
-                    }
+                    this.MACAddress += " : ";
                 }
-
-                this.MACAddress = string.Empty;
-                for (int i = 0; i < 6; i++)
-                {
-                    this.MACAddress += globalConnectionInfo.MACAddress[i].ToString("X");
-
-                    if (i != 5)
-                    {
-                        this.MACAddress += " : ";
-                    }
-                }
-
-                Thread.Sleep(500);
             }
         }
     }

@@ -12,6 +12,6 @@ namespace MITM_Common.PubSub
     public interface IPublisher
     {
         [OperationContract]
-        void ReturnConnectionInfo(ConnectionInfoStruct connectionInfo);
+        void ReturnConnectionInfo(GlobalConnectionInfo connectionInfo);
     }
 }

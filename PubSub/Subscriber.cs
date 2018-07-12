@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace PubSub
 {
-    public delegate void PublishConnectionInfoEvent(ConnectionInfoStruct connectionInfoStruct);
+    public delegate void PublishConnectionInfoEvent(GlobalConnectionInfo connectionInfoStruct);
 
     public class Subscriber : IPublisher
     { 
@@ -23,7 +23,7 @@ namespace PubSub
             CreateProxy();
         }
 
-        public void ReturnConnectionInfo(ConnectionInfoStruct connectionInfo)
+        public void ReturnConnectionInfo(GlobalConnectionInfo connectionInfo)
         {
             publishConnectionInfoEvent?.Invoke(connectionInfo);
         }

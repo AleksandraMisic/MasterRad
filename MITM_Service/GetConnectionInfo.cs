@@ -44,7 +44,7 @@ namespace MITM_Service
                     if (change)
                     {
                         Publisher publisher = new Publisher();
-                        publisher.ReturnConnectionInfo(connectionInfo);
+                        publisher.ReturnConnectionInfo(this.globalConnectionInfo);
                     }
 
                     change = false;
@@ -107,7 +107,7 @@ namespace MITM_Service
                 if (change)
                 {
                     Publisher publisher = new Publisher();
-                    publisher.ReturnConnectionInfo(connectionInfo);
+                    publisher.ReturnConnectionInfo(this.globalConnectionInfo);
                 }
 
                 change = false;

@@ -65,6 +65,7 @@
     <Compile Include="Model\ARPSpoofParticipantsInfo.cs" />
     <Compile Include="Model\Attack.cs" />
     <Compile Include="Model\AttackMethod.cs" />
+    <Compile Include="Model\GlobalInfo\Database.cs" />
     <Compile Include="Model\GlobalInfo\GlobalActiveAttacks.cs" />
     <Compile Include="Model\Host.cs" />
     <Compile Include="ViewModel\MainShellViewModel.cs" />

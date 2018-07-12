@@ -11,7 +11,7 @@ namespace PubSub
 {
     public class PublishService : IPublisher
     {
-        public void ReturnConnectionInfo(ConnectionInfoStruct connectionInfo)
+        public void ReturnConnectionInfo(GlobalConnectionInfo connectionInfo)
         {
             foreach (IPublisher subscriber in PubSubDatabase.Subscribers)
             {
@@ -27,9 +27,9 @@ namespace PubSub
     {
         private IPublisher subscriber;
 
-        private ConnectionInfoStruct connectionInfo;
+        private GlobalConnectionInfo connectionInfo;
         
-        public PublishThreadData(IPublisher subscriber, ConnectionInfoStruct connectionInfo)
+        public PublishThreadData(IPublisher subscriber, GlobalConnectionInfo connectionInfo)
         {
             this.subscriber = subscriber;
             this.connectionInfo = connectionInfo;
@@ -48,7 +48,7 @@ namespace PubSub
             }
         }
 
-        public ConnectionInfoStruct ConnectionInfoStruct
+        public GlobalConnectionInfo ConnectionInfoStruct
         {
             get
             {
@@ -61,7 +61,7 @@ namespace PubSub
             }
         }
 
-        public void PublishConnectionInfo(ConnectionInfoStruct connectionInfo)
+        public void PublishConnectionInfo(GlobalConnectionInfo connectionInfo)
         {
             try
             {
