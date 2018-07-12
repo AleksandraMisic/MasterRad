@@ -65,10 +65,7 @@
     <Compile Include="Model\ARPSpoofParticipantsInfo.cs" />
     <Compile Include="Model\Attack.cs" />
     <Compile Include="Model\AttackMethod.cs" />
-    <Compile Include="Model\ConnectionInfoClass.cs" />
-    <Compile Include="Model\ConnectionState.cs" />
     <Compile Include="Model\GlobalInfo\GlobalActiveAttacks.cs" />
-    <Compile Include="Model\GlobalInfo\GlobalConnectionInfo.cs" />
     <Compile Include="Model\Host.cs" />
     <Compile Include="ViewModel\MainShellViewModel.cs" />
     <Compile Include="ViewModel\ShellFillerViewModels\ActiveAttacksViewModel.cs" />
@@ -193,6 +190,14 @@
     <Resource Include="View\Resources\Images\connected.png" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\MITM_Common\MITM_Common.csproj">
+      <Project>{8F2C0828-C30D-414C-B7C7-8C14A9B9B5F9}</Project>
+      <Name>MITM_Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\PubSub\PubSub.csproj">
+      <Project>{E69FA60D-5A8A-49DC-9308-32BB345C8070}</Project>
+      <Name>PubSub</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ARPSpoof\ARPSpoof.vcxproj">
       <Project>{f21a62ab-bb43-4263-9c34-644320d4da3f}</Project>
       <Name>ARPSpoof</Name>

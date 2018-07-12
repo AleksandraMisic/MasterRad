@@ -1,4 +1,5 @@
-﻿using MITM_UI.Model;
+﻿using MITM_Common.MITM_Service;
+using MITM_UI.Model;
 using MITM_UI.Model.GlobalInfo;
 using System;
 using System.Collections.Generic;
@@ -14,7 +15,6 @@ using System.Windows.Threading;
 using UIShell.Model;
 using UIShell.ViewModel;
 using static MITM_UI.Model.ARPSpoofParticipantsInfo;
-using static MITM_UI.Model.ConnectionInfoClass;
 
 namespace MITM_UI.ViewModel.ShellFillerViewModels
 {
@@ -50,12 +50,12 @@ namespace MITM_UI.ViewModel.ShellFillerViewModels
 
         private RelayCommand startAttackCommand;
 
-        public ARPSpoofViewModel(GlobalConnectionInfo globalConnectionInfo)
+        public ARPSpoofViewModel()
         {
             hostsList = new ObservableCollection<Host>();
             hosts = new Dictionary<string, Host>();
             hostsIPends = new List<byte>();
-            this.globalConnectionInfo = globalConnectionInfo;
+            globalConnectionInfo = new GlobalConnectionInfo();
 
             target1 = string.Empty;
             target2 = string.Empty;

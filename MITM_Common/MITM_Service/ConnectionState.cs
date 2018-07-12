@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MITM_UI.Model
+namespace MITM_Common.MITM_Service
 {
     public enum ConnectionState
     {

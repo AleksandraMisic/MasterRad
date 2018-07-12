@@ -1,10 +1,13 @@
-﻿using MITM_UI.Extensions.DNP3Extension;
+﻿using MITM_Common.MITM_Service;
+using MITM_Common.PubSub;
+using MITM_UI.Extensions.DNP3Extension;
 using MITM_UI.Extensions.DNP3Extension.Model;
 using MITM_UI.Model;
 using MITM_UI.Model.GlobalInfo;
 using MITM_UI.View.CustomControls;
 using MITM_UI.View.CustomControls.ShellFillers;
 using MITM_UI.ViewModel.ShellFillerViewModels;
+using PubSub;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -20,7 +23,6 @@ using System.Windows.Threading;
 using UIShell.Model;
 using UIShell.View;
 using UIShell.ViewModel;
-using static MITM_UI.Model.ConnectionInfoClass;
 
 namespace MITM_UI.ViewModel
 {
@@ -31,8 +33,7 @@ namespace MITM_UI.ViewModel
 
         #region Private fields
 
-        private GlobalConnectionInfo globalConnectionInfo;
-        private const int isConnectedSleep = 500;
+        private Subscriber subscriber;
 
         #endregion
 
@@ -40,13 +41,12 @@ namespace MITM_UI.ViewModel
 
         public MainShellViewModel()
         {
-            globalConnectionInfo = new GlobalConnectionInfo();
-
-            Thread isConnectedThread = new Thread(() => IsConnectedThread());
-            isConnectedThread.Start();
-
             TopMenu = new ObservableCollection<UserControl>();
             TopMenu.Add(new TopMenu());
+
+            subscriber = new Subscriber();
+            subscriber.Subscribe();
+            subscriber.publishConnectionInfoEvent += ConnectionInfoChanged;
         }
 
         #endregion
@@ -120,7 +120,7 @@ namespace MITM_UI.ViewModel
 
         private void ExecuteOpenConnectionInfoCommand(object parameter)
         {
-            ConnectionInfoViewModel civm = new ConnectionInfoViewModel(this.globalConnectionInfo);
+            ConnectionInfoViewModel civm = new ConnectionInfoViewModel();
             if (civm.IsOpen == false)
             {
                 civm.IsOpen = true;
@@ -171,7 +171,7 @@ namespace MITM_UI.ViewModel
 
         private void ExecuteOpenARPSpoofCommand(object parameter)
         {
-            ARPSpoofViewModel asvm = new ARPSpoofViewModel(this.globalConnectionInfo);
+            ARPSpoofViewModel asvm = new ARPSpoofViewModel();
             if (asvm.IsOpen == false)
             {
                 asvm.IsOpen = true;
@@ -201,38 +201,9 @@ namespace MITM_UI.ViewModel
 
         #endregion
 
-        public void IsConnectedThread()
+        void ConnectionInfoChanged(ConnectionInfoStruct connectionInfo)
         {
-            while (true)
-            {
-                ConnectionInfoStruct connectionInfo = new ConnectionInfoStruct() { MACAddress = new byte[6], IPAddress = new byte[4], SubnetMask = new byte[4] };
-
-                GetNetworkInfo(ref connectionInfo);
-
-                if (connectionInfo.IsConnected == 0)
-                {
-                    this.globalConnectionInfo.ConnectionState = ConnectionState.DISCONNECTED;
-
-                    Thread.Sleep(isConnectedSleep);
-                    continue;
-                }
-
-                this.globalConnectionInfo.ConnectionState = ConnectionState.CONNECTED;
-
-                this.globalConnectionInfo.Name = connectionInfo.Name;
-
-                this.globalConnectionInfo.Description = connectionInfo.Description;
-
-                this.globalConnectionInfo.FriendlyName = connectionInfo.FriendlyName;
-
-                this.globalConnectionInfo.IPAddress = connectionInfo.IPAddress;
-
-                this.globalConnectionInfo.MACAddress = connectionInfo.MACAddress;
-
-                this.globalConnectionInfo.SubnetMask = connectionInfo.SubnetMask;
-
-                Thread.Sleep(isConnectedSleep);
-            }
+            // TO DO
         }
     }
 }

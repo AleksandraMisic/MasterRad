@@ -13,7 +13,7 @@ namespace UIShell.ViewModel
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        private void RaisePropertyChanged(string property)
+        protected void RaisePropertyChanged(string property)
         {
             if (PropertyChanged != null)
             {

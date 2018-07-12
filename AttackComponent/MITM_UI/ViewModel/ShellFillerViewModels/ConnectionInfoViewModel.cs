@@ -1,4 +1,5 @@
-﻿using MITM_UI.Model;
+﻿using MITM_Common.MITM_Service;
+using MITM_UI.Model;
 using MITM_UI.Model.GlobalInfo;
 using System;
 using System.Collections.Generic;
@@ -12,9 +13,9 @@ using UIShell.ViewModel;
 
 namespace MITM_UI.ViewModel.ShellFillerViewModels
 {
-    public class ConnectionInfoViewModel : SingleShellFillerViewModel, INotifyPropertyChanged
+    public class ConnectionInfoViewModel : SingleShellFillerViewModel
     {
-        private GlobalConnectionInfo globalConnectionInfo;
+        private static GlobalConnectionInfo globalConnectionInfo;
 
         private static bool isOpen;
 
@@ -25,9 +26,9 @@ namespace MITM_UI.ViewModel.ShellFillerViewModels
         private string mACAddress;
         private string subnetMask;
 
-        public ConnectionInfoViewModel(GlobalConnectionInfo globalConnectionInfo)
+        static ConnectionInfoViewModel()
         {
-            this.globalConnectionInfo = globalConnectionInfo;
+            globalConnectionInfo = new GlobalConnectionInfo(); ;
         }
 
         #region Properties
@@ -115,16 +116,6 @@ namespace MITM_UI.ViewModel.ShellFillerViewModels
             }
         }
         #endregion
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        private void RaisePropertyChanged(string property)
-        {
-            if (PropertyChanged != null)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs(property));
-            }
-        }
 
         public void GetNetworkInfo()
         {
