@@ -35,8 +35,6 @@ namespace MITM_UI.ViewModel
 
         private Subscriber subscriber;
 
-        private ConnectionInfoViewModel connectionInfoViewModel = null;
-
         #endregion
 
         #region Constructors
@@ -129,6 +127,8 @@ namespace MITM_UI.ViewModel
 
                 ConnectionInfo connectionInfo = new ConnectionInfo();
 
+                civm.ConnectionInfoChanged();
+
                 connectionInfo.DataContext = civm;
 
                 ShellFillerShell sfs = new ShellFillerShell() { DataContext = this };
@@ -138,7 +138,7 @@ namespace MITM_UI.ViewModel
 
                 PlaceOrFocusControlInShell(ShellPosition.LEFT, sfs, false, null);
 
-                this.connectionInfoViewModel = civm;
+                Database.ViewModels.Add(ViewModelType.CONNECTION_INFO, civm);
 
                 return;
             }
@@ -206,9 +206,9 @@ namespace MITM_UI.ViewModel
         {
             Database.GlobalConnectionInfo = connectionInfo;
 
-            if (connectionInfoViewModel.IsOpen)
+            if (Database.ViewModels.TryGetValue(ViewModelType.CONNECTION_INFO, out SingleShellFillerViewModel singleShellFillerViewModel) && singleShellFillerViewModel.IsOpen)
             {
-                connectionInfoViewModel.CheckForConnectionChange();
+                ((ConnectionInfoViewModel)singleShellFillerViewModel).ConnectionInfoChanged();
             }
         }
     }

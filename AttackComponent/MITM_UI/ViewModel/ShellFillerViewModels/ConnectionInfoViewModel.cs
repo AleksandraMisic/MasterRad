@@ -110,7 +110,7 @@ namespace MITM_UI.ViewModel.ShellFillerViewModels
         }
         #endregion
 
-        public void CheckForConnectionChange()
+        public void ConnectionInfoChanged()
         {
             GlobalConnectionInfo connectionInfo = Database.GlobalConnectionInfo;
 

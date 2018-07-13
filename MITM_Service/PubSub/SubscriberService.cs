@@ -1,4 +1,5 @@
-﻿using MITM_Common.PubSub;
+﻿using MITM_Common;
+using MITM_Common.PubSub;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,10 +11,19 @@ namespace PubSub
 {
     public class SubscriberService : ISubscriber
     {
+        Publisher publisher = null;
+
+        public SubscriberService()
+        {
+            publisher = new Publisher();
+        }
+
         public void Subscribe()
         {
             IPublisher subscriber = OperationContext.Current.GetCallbackChannel<IPublisher>();
             PubSubDatabase.AddSubscriber(subscriber);
+
+            publisher.ReturnConnectionInfo(Database.GlobalConnectionInfo);
         }
 
         public void UnSubscribe()

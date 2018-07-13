@@ -41,6 +41,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Database.cs" />
     <Compile Include="MITM_Service\ConnectionInfoStruct.cs" />
     <Compile Include="MITM_Service\ConnectionState.cs" />
     <Compile Include="MITM_Service\GlobalConnectionInfo.cs" />

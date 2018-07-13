@@ -34,6 +34,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.ServiceModel" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -46,6 +47,10 @@
     <Compile Include="MITM_Service.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="PubSub\Publisher.cs" />
+    <Compile Include="PubSub\PublishService.cs" />
+    <Compile Include="PubSub\Subscriber.cs" />
+    <Compile Include="PubSub\SubscriberService.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -54,10 +59,6 @@
     <ProjectReference Include="..\MITM_Common\MITM_Common.csproj">
       <Project>{8F2C0828-C30D-414C-B7C7-8C14A9B9B5F9}</Project>
       <Name>MITM_Common</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\PubSub\PubSub.csproj">
-      <Project>{e69fa60d-5a8a-49dc-9308-32bb345c8070}</Project>
-      <Name>PubSub</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -1,4 +1,5 @@
-﻿using MITM_Common.MITM_Service;
+﻿using MITM_Common;
+using MITM_Common.MITM_Service;
 using PubSub;
 using System;
 using System.Collections.Generic;
@@ -15,12 +16,13 @@ namespace MITM_Service
         [DllImport("ARPSpoof.dll", EntryPoint = "GetNetworkInfo", CallingConvention = CallingConvention.Cdecl)]
         public static extern void GetNetworkInfo(ref ConnectionInfoStruct name);
 
-        private GlobalConnectionInfo globalConnectionInfo;
+        Publisher publisher = null;
+        
         private const int isConnectedSleep = 500;
 
         public GetConnectionInfo()
         {
-            this.globalConnectionInfo = new GlobalConnectionInfo();
+            publisher = new Publisher();
         }
 
         public void Get()
@@ -35,16 +37,15 @@ namespace MITM_Service
 
                 if (connectionInfo.IsConnected == 0)
                 {
-                    if (this.globalConnectionInfo.ConnectionState != ConnectionState.DISCONNECTED)
+                    if (Database.GlobalConnectionInfo.ConnectionState != ConnectionState.DISCONNECTED)
                     {
                         change = true;
-                        this.globalConnectionInfo.ConnectionState = ConnectionState.DISCONNECTED;
+                        Database.GlobalConnectionInfo.ConnectionState = ConnectionState.DISCONNECTED;
                     }
 
                     if (change)
                     {
-                        Publisher publisher = new Publisher();
-                        publisher.ReturnConnectionInfo(this.globalConnectionInfo);
+                        publisher.ReturnConnectionInfo(Database.GlobalConnectionInfo);
                     }
 
                     change = false;
@@ -54,60 +55,59 @@ namespace MITM_Service
                 }
                 else 
                 {
-                    if (this.globalConnectionInfo.ConnectionState != ConnectionState.CONNECTED)
+                    if (Database.GlobalConnectionInfo.ConnectionState != ConnectionState.CONNECTED)
                     {
                         change = true;
-                        this.globalConnectionInfo.ConnectionState = ConnectionState.CONNECTED;
+                        Database.GlobalConnectionInfo.ConnectionState = ConnectionState.CONNECTED;
                     }
                 }
 
-                this.globalConnectionInfo.ConnectionState = ConnectionState.CONNECTED;
+                Database.GlobalConnectionInfo.ConnectionState = ConnectionState.CONNECTED;
 
-                if (this.globalConnectionInfo.Name != connectionInfo.Name)
+                if (Database.GlobalConnectionInfo.Name != connectionInfo.Name)
                 {
                     change = true;
-                    this.globalConnectionInfo.Name = connectionInfo.Name;
+                    Database.GlobalConnectionInfo.Name = connectionInfo.Name;
                 }
-                if (this.globalConnectionInfo.Description != connectionInfo.Description)
+                if (Database.GlobalConnectionInfo.Description != connectionInfo.Description)
                 {
                     change = true;
-                    this.globalConnectionInfo.Description = connectionInfo.Description;
+                    Database.GlobalConnectionInfo.Description = connectionInfo.Description;
                 }
-                if (this.globalConnectionInfo.FriendlyName != connectionInfo.FriendlyName)
+                if (Database.GlobalConnectionInfo.FriendlyName != connectionInfo.FriendlyName)
                 {
                     change = true;
-                    this.globalConnectionInfo.FriendlyName = connectionInfo.FriendlyName;
+                    Database.GlobalConnectionInfo.FriendlyName = connectionInfo.FriendlyName;
                 }
                 for (int i = 0; i < 4; i++)
                 {
-                    if (this.globalConnectionInfo.IPAddress[i] != connectionInfo.IPAddress[i])
+                    if (Database.GlobalConnectionInfo.IPAddress[i] != connectionInfo.IPAddress[i])
                     {
                         change = true;
-                        this.globalConnectionInfo.IPAddress = connectionInfo.IPAddress;
+                        Database.GlobalConnectionInfo.IPAddress = connectionInfo.IPAddress;
                         break;
                     }
                 }
                 for (int i = 0; i < 6; i++)
                 {
-                    if (this.globalConnectionInfo.MACAddress[i] != connectionInfo.MACAddress[i])
+                    if (Database.GlobalConnectionInfo.MACAddress[i] != connectionInfo.MACAddress[i])
                     {
                         change = true;
-                        this.globalConnectionInfo.MACAddress = connectionInfo.MACAddress;
+                        Database.GlobalConnectionInfo.MACAddress = connectionInfo.MACAddress;
                     }
                 }
                 for (int i = 0; i < 4; i++)
                 {
-                    if (this.globalConnectionInfo.SubnetMask[i] != connectionInfo.SubnetMask[i])
+                    if (Database.GlobalConnectionInfo.SubnetMask[i] != connectionInfo.SubnetMask[i])
                     {
                         change = true;
-                        this.globalConnectionInfo.SubnetMask = connectionInfo.SubnetMask;
+                        Database.GlobalConnectionInfo.SubnetMask = connectionInfo.SubnetMask;
                     }
                 }
 
                 if (change)
                 {
-                    Publisher publisher = new Publisher();
-                    publisher.ReturnConnectionInfo(this.globalConnectionInfo);
+                    publisher.ReturnConnectionInfo(Database.GlobalConnectionInfo);
                 }
 
                 change = false;

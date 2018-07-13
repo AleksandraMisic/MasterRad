@@ -68,6 +68,7 @@
     <Compile Include="Model\GlobalInfo\Database.cs" />
     <Compile Include="Model\GlobalInfo\GlobalActiveAttacks.cs" />
     <Compile Include="Model\Host.cs" />
+    <Compile Include="Model\ViewModelType.cs" />
     <Compile Include="ViewModel\MainShellViewModel.cs" />
     <Compile Include="ViewModel\ShellFillerViewModels\ActiveAttacksViewModel.cs" />
     <Compile Include="ViewModel\ShellFillerViewModels\ARPSpooferViewModel.cs" />
@@ -195,9 +196,9 @@
       <Project>{8F2C0828-C30D-414C-B7C7-8C14A9B9B5F9}</Project>
       <Name>MITM_Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\PubSub\PubSub.csproj">
-      <Project>{E69FA60D-5A8A-49DC-9308-32BB345C8070}</Project>
-      <Name>PubSub</Name>
+    <ProjectReference Include="..\..\MITM_Service\MITM_Service.csproj">
+      <Project>{30C58186-A115-48E4-8316-5F88E72D7264}</Project>
+      <Name>MITM_Service</Name>
     </ProjectReference>
     <ProjectReference Include="..\ARPSpoof\ARPSpoof.vcxproj">
       <Project>{f21a62ab-bb43-4263-9c34-644320d4da3f}</Project>
