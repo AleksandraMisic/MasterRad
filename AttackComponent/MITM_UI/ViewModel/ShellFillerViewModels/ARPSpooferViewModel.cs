@@ -15,26 +15,17 @@ using System.Windows;
 using System.Windows.Threading;
 using UIShell.Model;
 using UIShell.ViewModel;
-using static MITM_UI.Model.ARPSpoofParticipantsInfo;
 
 namespace MITM_UI.ViewModel.ShellFillerViewModels
 {
     public class ARPSpoofViewModel : SingleShellFillerViewModel, INotifyPropertyChanged
     {
-        [DllImport("ARPSpoof.dll", EntryPoint = "SniffForHosts", CallingConvention = CallingConvention.Cdecl)]
-        public static extern void SniffForHosts(ref ConnectionInfoStruct connectionInfo);
-
-        [DllImport("ARPSpoof.dll", EntryPoint = "ARPSpoof", CallingConvention = CallingConvention.Cdecl)]
-        public static extern void ARPSpoof(ref ARPSpoofParticipantsInfoStruct rPSpoofParticipantsInfoStruct);
-
-        [DllImport("ARPSpoof.dll", EntryPoint = "Terminate", CallingConvention = CallingConvention.Cdecl)]
-        public static extern void Terminate();
+        MITMServiceProxy mITMServiceProxy = null;
 
         private static bool isOpen;
         private ObservableCollection<Host> hostsList;
         private Dictionary<string, Host> hosts;
         private List<byte> hostsIPends;
-        private GlobalConnectionInfo globalConnectionInfo;
 
         private string target1;
         private string target2;
@@ -53,10 +44,11 @@ namespace MITM_UI.ViewModel.ShellFillerViewModels
 
         public ARPSpoofViewModel()
         {
+            mITMServiceProxy = new MITMServiceProxy(NetTcpBindingCreator.Create());
+
             hostsList = new ObservableCollection<Host>();
             hosts = new Dictionary<string, Host>();
             hostsIPends = new List<byte>();
-            globalConnectionInfo = new GlobalConnectionInfo();
 
             target1 = string.Empty;
             target2 = string.Empty;
@@ -235,24 +227,15 @@ namespace MITM_UI.ViewModel.ShellFillerViewModels
         {
             if ((string)parameter == "Start Attack")
             {
-                //foreach (Attack a in ActiveAttacksViewModel.ActiveAttacks)
-                //{
-                //    if ((a.Target1 == target1 && a.Target2 == target2) || (a.Target1 == target2 && a.Target2 == target1))
-                //    {
-                //        MessageBox.Show("An attack on the chosen IP addresses is already in progress. See View->Active Attacks for details.", "Attack Already in Progress", MessageBoxButton.OK);
-                //        return;
-                //    }
-                //}
-
-                ARPSpoofParticipantsInfoStruct aRPSpoofParticipantsInfoStruct = new ARPSpoofParticipantsInfoStruct();
+                ARPSpoofParticipantsInfo participants = new ARPSpoofParticipantsInfo();
 
                 Host host = null;
                 this.hosts.TryGetValue(this.target1, out host);
 
                 if (host != null)
                 {
-                    aRPSpoofParticipantsInfoStruct.Target1IPAddress = host.IPAddressArray;
-                    aRPSpoofParticipantsInfoStruct.Target1MACAddress = host.MACAddressArray;
+                    participants.Target1IPAddress = host.IPAddressArray;
+                    participants.Target1MACAddress = host.MACAddressArray;
                 }
                 else
                 {
@@ -264,40 +247,32 @@ namespace MITM_UI.ViewModel.ShellFillerViewModels
 
                 if (host != null)
                 {
-                    aRPSpoofParticipantsInfoStruct.Target2IPAddress = host.IPAddressArray;
-                    aRPSpoofParticipantsInfoStruct.Target2MACAddress = host.MACAddressArray;
+                    participants.Target2IPAddress = host.IPAddressArray;
+                    participants.Target2MACAddress = host.MACAddressArray;
                 }
                 else
                 {
                     return;
                 }
 
-                aRPSpoofParticipantsInfoStruct.MyIPAddress = globalConnectionInfo.IPAddress;
-                aRPSpoofParticipantsInfoStruct.MyMACAddress = globalConnectionInfo.MACAddress;
+                participants.MyIPAddress = Model.GlobalInfo.Database.GlobalConnectionInfo.IPAddress;
+                participants.MyMACAddress = Model.GlobalInfo.Database.GlobalConnectionInfo.MACAddress;
 
-                aRPSpoofParticipantsInfoStruct.Name = globalConnectionInfo.Name;
+                participants.Name = Model.GlobalInfo.Database.GlobalConnectionInfo.Name;
+                
+                Task.Factory.StartNew(() => mITMServiceProxy.ARPSpoof(participants));
 
-                CancellationTokenSource tokenSource = new CancellationTokenSource();
-                Task.Factory.StartNew(() => ARPSpoof(ref aRPSpoofParticipantsInfoStruct), tokenSource.Token);
-
-                //Attack attack = new Attack() { Target1 = this.target1, Target2 = this.target2, Method = AttackMethod.ARP_SPOOF, TokenSource = tokenSource };
-                //ActiveAttacksViewModel.ActiveAttacks.Add(attack);
-
-                //this.Target1 = string.Empty;
-                //this.Target2 = string.Empty;
                 this.NotAttack = false;
             }
             else
             {
-                Terminate();
+                mITMServiceProxy.TerminateActiveAttack();
                 this.NotAttack = true;
             }
         }
 
         void SniffForHosts()
         {
-            MITMServiceProxy mITMServiceProxy = new MITMServiceProxy(NetTcpBindingCreator.Create());
-
             List<Host> hosts = mITMServiceProxy.SniffForHosts();
 
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background, 

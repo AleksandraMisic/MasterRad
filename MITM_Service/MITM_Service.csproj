@@ -43,6 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Database.cs" />
     <Compile Include="GetConnectionInfo.cs" />
     <Compile Include="MITM_Service.cs" />
     <Compile Include="MITM_ServiceManager.cs" />

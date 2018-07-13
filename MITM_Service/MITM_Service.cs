@@ -14,12 +14,28 @@ namespace MITM_Service
         [DllImport("ARPSpoof.dll", EntryPoint = "SniffForHosts", CallingConvention = CallingConvention.Cdecl)]
         public static extern void SniffForHosts(ref ConnectionInfoStruct connectionInfo);
 
+        [DllImport("ARPSpoof.dll", EntryPoint = "ARPSpoof", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void ARPSpoof(ref ARPSpoofParticipantsInfo participants);
+
+        [DllImport("ARPSpoof.dll", EntryPoint = "Terminate", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void Terminate();
+
         private List<byte> hostsIPends;
         private int sniffForHostsInterval = 7;
 
         public MITM_Service()
         {
             hostsIPends = new List<byte>();
+        }
+
+        public void ARPSpoof(ARPSpoofParticipantsInfo participants)
+        {
+            Task.Factory.StartNew(() => ARPSpoof(ref participants));
+        }
+
+        public void TerminateActiveAttack()
+        {
+            Terminate();
         }
 
         public List<Host> SniffForHosts()

@@ -12,5 +12,11 @@ namespace MITM_Common.MITM_Service
     {
         [OperationContract]
         List<Host> SniffForHosts();
+
+        [OperationContract]
+        void ARPSpoof(ARPSpoofParticipantsInfo participants);
+
+        [OperationContract]
+        void TerminateActiveAttack();
     }
 }

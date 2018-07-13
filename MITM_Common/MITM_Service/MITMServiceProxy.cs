@@ -20,6 +20,18 @@ namespace MITM_Common
             factory = this.CreateChannel();
         }
 
+        public void ARPSpoof(ARPSpoofParticipantsInfo participants)
+        {
+            try
+            {
+                factory.ARPSpoof(participants);
+            }
+            catch (Exception e)
+            {
+                
+            }
+        }
+
         public List<Host> SniffForHosts()
         {
             try
@@ -29,6 +41,18 @@ namespace MITM_Common
             catch (Exception e)
             {
                 return new List<Host>();
+            }
+        }
+
+        public void TerminateActiveAttack()
+        {
+            try
+            {
+                factory.TerminateActiveAttack();
+            }
+            catch (Exception e)
+            {
+                
             }
         }
     }

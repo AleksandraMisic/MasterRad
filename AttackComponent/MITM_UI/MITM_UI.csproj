@@ -63,7 +63,6 @@
     <Compile Include="Extensions\DNP3Extension\View\TopMenu.xaml.cs">
       <DependentUpon>TopMenu.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Model\ARPSpoofParticipantsInfo.cs" />
     <Compile Include="Model\Attack.cs" />
     <Compile Include="Model\AttackMethod.cs" />
     <Compile Include="Model\GlobalInfo\Database.cs" />
