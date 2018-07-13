@@ -11,6 +11,6 @@ namespace MITM_Common.MITM_Service
     public interface IMITM_Contract
     {
         [OperationContract]
-        void Temp();
+        List<Host> SniffForHosts();
     }
 }

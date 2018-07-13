@@ -1,11 +1,13 @@
-﻿using System;
+﻿using MITM_Common;
+using MITM_Common.MITM_Service;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.ServiceModel;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MITM_Common.MITM_Service
+namespace MITM_Service
 {
     public class MITM_ServiceManager
     {

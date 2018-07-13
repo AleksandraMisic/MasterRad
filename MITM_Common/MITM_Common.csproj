@@ -32,6 +32,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -42,12 +43,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Database.cs" />
+    <Compile Include="Host.cs" />
     <Compile Include="MITM_Service\ConnectionInfoStruct.cs" />
     <Compile Include="MITM_Service\ConnectionState.cs" />
     <Compile Include="MITM_Service\GlobalConnectionInfo.cs" />
     <Compile Include="MITM_Service\IMITM_Contract.cs" />
-    <Compile Include="MITM_Service\MITM_Service.cs" />
-    <Compile Include="MITM_Service\MITM_ServiceManager.cs" />
+    <Compile Include="MITM_Service\MITMServiceProxy.cs" />
     <Compile Include="NetTcpBindingCreator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PubSub\IPublisher.cs" />

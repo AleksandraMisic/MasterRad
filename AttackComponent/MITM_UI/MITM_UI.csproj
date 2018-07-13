@@ -36,6 +36,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.ServiceModel" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -67,7 +68,6 @@
     <Compile Include="Model\AttackMethod.cs" />
     <Compile Include="Model\GlobalInfo\Database.cs" />
     <Compile Include="Model\GlobalInfo\GlobalActiveAttacks.cs" />
-    <Compile Include="Model\Host.cs" />
     <Compile Include="Model\ViewModelType.cs" />
     <Compile Include="ViewModel\MainShellViewModel.cs" />
     <Compile Include="ViewModel\ShellFillerViewModels\ActiveAttacksViewModel.cs" />
@@ -193,7 +193,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\MITM_Common\MITM_Common.csproj">
-      <Project>{8F2C0828-C30D-414C-B7C7-8C14A9B9B5F9}</Project>
+      <Project>{8f2c0828-c30d-414c-b7c7-8c14a9b9b5f9}</Project>
       <Name>MITM_Common</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\MITM_Service\MITM_Service.csproj">

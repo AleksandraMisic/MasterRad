@@ -1,4 +1,5 @@
-﻿using MITM_Common.MITM_Service;
+﻿using MITM_Common;
+using MITM_Common.MITM_Service;
 using MITM_UI.Model;
 using MITM_UI.Model.GlobalInfo;
 using System;
@@ -208,22 +209,13 @@ namespace MITM_UI.ViewModel.ShellFillerViewModels
 
         public void ExecuteSniffForHostsCommand(object parameter)
         {
-            byte[] hosts = new byte[200];
-
-            ConnectionInfoStruct connectionInfoStruct = new ConnectionInfoStruct();
-            connectionInfoStruct.SubnetMask = globalConnectionInfo.SubnetMask;
-            connectionInfoStruct.DefaultGateway = new byte[4] { 192, 168, 0, 1};
-            connectionInfoStruct.IPAddress = globalConnectionInfo.IPAddress;
-            connectionInfoStruct.MACAddress = globalConnectionInfo.MACAddress;
-            connectionInfoStruct.Name = globalConnectionInfo.Name;
-            connectionInfoStruct.Hosts = new byte[200];
-            connectionInfoStruct.Sleep = (this.sniffForHostsMaxProgressValue-2)*1000;
-
             NotSniffing = false;
-            Task.Factory.StartNew(() => SniffForHosts(connectionInfoStruct));
 
             SniffForHostsCurrentProgress = 0;
+
             Task.Factory.StartNew(() => ProgressBarChange());
+
+            Task.Factory.StartNew(() => SniffForHosts());
         }
 
         public void ExecuteSetTargetCommand(string address, int targetNum)
@@ -302,75 +294,26 @@ namespace MITM_UI.ViewModel.ShellFillerViewModels
             }
         }
 
-        private void SniffForHosts(ConnectionInfoStruct connectionInfoStruct)
+        void SniffForHosts()
         {
-            SniffForHosts(ref connectionInfoStruct);
+            MITMServiceProxy mITMServiceProxy = new MITMServiceProxy(NetTcpBindingCreator.Create());
 
-            int j = 0;
-            while (connectionInfoStruct.HostCount > 0)
+            List<Host> hosts = mITMServiceProxy.SniffForHosts();
+
+            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background, 
+            new Action(() =>
             {
-                if (hostsIPends.Contains(connectionInfoStruct.Hosts[j]) || connectionInfoStruct.Hosts[j] == globalConnectionInfo.IPAddress[3])
+                foreach (Host host in hosts)
                 {
-                    j += 7;
-                    connectionInfoStruct.HostCount--;
-                    continue;
-                }
-
-                hostsIPends.Add(connectionInfoStruct.Hosts[j]);
-
-                Host host = new Host();
-                host.IPAddressArray
-                    = new byte[4] {
-                        globalConnectionInfo.IPAddress[0],
-                        globalConnectionInfo.IPAddress[1],
-                        globalConnectionInfo.IPAddress[2],
-                        connectionInfoStruct.Hosts[j]
-                    };
-
-                for (int k = 0; k < 4; k++)
-                {
-                    host.IPAddressString += host.IPAddressArray[k];
-
-                    if (k != 3)
+                    if (!this.hosts.TryGetValue(host.IPAddressString, out Host host1))
                     {
-                        host.IPAddressString += ".";
-                    }
-                }
-
-                host.MACAddressArray = new byte[6];
-                for (int k = 0; k < 6; k++)
-                {
-                    host.MACAddressArray[k] = connectionInfoStruct.Hosts[++j];
-
-                    host.MACAddressString += host.MACAddressArray[k].ToString("X");
-
-                    if (k != 5)
-                    {
-                        host.MACAddressString += ":";
-                    }
-                }
-
-                j++;
-
-                Application.Current.Dispatcher.BeginInvoke(
-                    DispatcherPriority.Background,
-                    new Action(() =>
-                    {
-                        HostsList.Add(host);
+                        this.HostsList.Add(host);
                         this.hosts.Add(host.IPAddressString, host);
-                    })
-                );
+                    }
+                }
 
-                connectionInfoStruct.HostCount--;
-            }
-
-            Application.Current.Dispatcher.BeginInvoke(
-                    DispatcherPriority.Background,
-                    new Action(() =>
-                    {
-                        NotSniffing = true;
-                    })
-                );
+                NotSniffing = true;
+            }));
         }
 
         private async Task ProgressBarChange()
@@ -392,15 +335,6 @@ namespace MITM_UI.ViewModel.ShellFillerViewModels
                         SniffForHostsCurrentProgress++;
                     })
                 );
-            }
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        private void RaisePropertyChanged(string property)
-        {
-            if (PropertyChanged != null)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs(property));
             }
         }
     }

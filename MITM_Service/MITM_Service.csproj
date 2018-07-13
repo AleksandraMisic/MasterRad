@@ -45,6 +45,7 @@
   <ItemGroup>
     <Compile Include="GetConnectionInfo.cs" />
     <Compile Include="MITM_Service.cs" />
+    <Compile Include="MITM_ServiceManager.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PubSub\Publisher.cs" />

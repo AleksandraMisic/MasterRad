@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MITM_UI.Model
+namespace MITM_Common
 {
+    [DataContract]
     public class Host :  INotifyPropertyChanged
     {
         private string ipAddressString;
@@ -15,6 +17,7 @@ namespace MITM_UI.Model
         private byte[] ipAddressArray;
         private byte[] macAddressArray;
 
+        [DataMember]
         public string IPAddressString
         {
             get
@@ -28,6 +31,7 @@ namespace MITM_UI.Model
             }
         }
 
+        [DataMember]
         public string MACAddressString
         {
             get
@@ -41,6 +45,7 @@ namespace MITM_UI.Model
             }
         }
 
+        [DataMember]
         public byte[] IPAddressArray
         {
             get
@@ -54,6 +59,7 @@ namespace MITM_UI.Model
             }
         }
 
+        [DataMember]
         public byte[] MACAddressArray
         {
             get
