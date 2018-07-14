@@ -46,7 +46,7 @@ namespace UIShell.ViewModel
 
         public AbstractMainShellViewModel()
         {
-            shellProperties = new Dictionary<ShellPosition, ShellFillerShellProperties>();
+            ShellProperties = new Dictionary<ShellPosition, ShellFillerShellProperties>();
 
             foreach (var position in Enum.GetValues(typeof(ShellPosition)))
             {
@@ -72,7 +72,7 @@ namespace UIShell.ViewModel
 
         protected void PlaceOrFocusControlInShell(ShellPosition position, ShellFillerShell sfs, bool isFocus, string parameter)
         {
-            var currentTabControl = shellProperties[position];
+            var currentTabControl = ShellProperties[position];
 
             if (!isFocus)
             {

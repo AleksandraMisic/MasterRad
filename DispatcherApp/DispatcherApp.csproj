@@ -79,17 +79,12 @@
     <Compile Include="Model\Properties\EnergyConsumerProperties.cs" />
     <Compile Include="Model\Properties\EnergySourceProperties.cs" />
     <Compile Include="Model\Measurements\Measurement.cs" />
-    <Compile Include="Model\RelayCommand.cs" />
-    <Compile Include="Model\ShellFillerShellProperties.cs" />
-    <Compile Include="Model\ShellPosition.cs" />
     <Compile Include="ViewModel\MainShellViewModel.cs" />
     <Compile Include="ViewModel\ShellFillerViewModels\IncidentExplorerViewModel.cs" />
     <Compile Include="ViewModel\ShellFillerViewModels\NetworkExplorerViewModel.cs" />
     <Compile Include="ViewModel\ShellFillerViewModels\NetworkViewViewModel.cs" />
     <Compile Include="ViewModel\ShellFillerViewModels\PropertiesModelView.cs" />
     <Compile Include="ViewModel\ShellFillerViewModels\ReportExplorerModelView.cs" />
-    <Compile Include="ViewModel\ShellFillerViewModels\ShellFillerViewModel.cs" />
-    <Compile Include="View\CustomControls\BorderTabItem.cs" />
     <Compile Include="View\CustomControls\NetworkElementsControls\ACLineControl.cs" />
     <Compile Include="View\CustomControls\NetworkElementsControls\ConsumerControl.cs" />
     <Compile Include="View\CustomControls\NetworkElementsControls\NodeControl.cs" />
@@ -131,12 +126,8 @@
     <Compile Include="View\CustomControls\ShellFillerControls\ReportExplorer.xaml.cs">
       <DependentUpon>ReportExplorer.xaml</DependentUpon>
     </Compile>
-    <Compile Include="View\CustomControls\ShellFillerControls\ShellFillerShell.xaml.cs">
-      <DependentUpon>ShellFillerShell.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="View\CustomControls\ShellFillerControls\TabControlForShell.cs" />
-    <Compile Include="View\CustomControls\TopMenuControl.xaml.cs">
-      <DependentUpon>TopMenuControl.xaml</DependentUpon>
+    <Compile Include="View\CustomControls\TopMenu.xaml.cs">
+      <DependentUpon>TopMenu.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\Resources\Converters\BigLettersToRegularText.cs" />
     <Compile Include="View\Resources\Converters\BoolToVisibility.cs" />
@@ -197,10 +188,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="View\CustomControls\ShellFillerControls\ShellFillerShell.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="View\Resources\Constants\NetworkCanvasSize.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -225,7 +212,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="View\CustomControls\TopMenuControl.xaml">
+    <Page Include="View\CustomControls\TopMenu.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -278,6 +265,10 @@
     <ProjectReference Include="..\Common\OMSSCADACommon\OMSSCADACommon.csproj">
       <Project>{A7F86CA6-39F1-4B61-BF71-C01E327FA861}</Project>
       <Name>OMSSCADACommon</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Common\UIShell\UIShell.csproj">
+      <Project>{339a9bf8-9468-4889-9f76-9c9deae5df49}</Project>
+      <Name>UIShell</Name>
     </ProjectReference>
     <ProjectReference Include="..\DMSContract\DMSContract.csproj">
       <Project>{C48472D2-BEF9-425D-88B1-4F6B2D31FD8C}</Project>

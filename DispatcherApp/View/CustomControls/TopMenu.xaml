@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="DispatcherApp.View.TopMenuControl"
+﻿<UserControl x:Class="DispatcherApp.View.TopMenu"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -6,9 +6,9 @@
              xmlns:local="clr-namespace:DispatcherApp.View"
              mc:Ignorable="d">
     <Grid HorizontalAlignment="Stretch" Background="{StaticResource DarkestColor}" >
-        <StackPanel Height="Auto" Width="Auto" Background="{StaticResource DarkestColor}" Margin="0, 10, 0, 0">
+        <StackPanel Height="Auto" Width="Auto" Background="{StaticResource DarkestColor}" Margin="0, 0, 0, 0">
             <Menu Background="{StaticResource DarkestColor}" Foreground="White">
-                <MenuItem Header="View" Margin="0, 2, 0, 2" Template="{StaticResource MenuItemHeaderTemplate}" Foreground="White">
+                <MenuItem Header="View" Margin="0, 0, 0, 2" Template="{StaticResource MenuItemHeaderTemplate}" Foreground="White">
                     <MenuItem Header="Network Explorer" Foreground="LightGray"
                          Command="{Binding OpenNetworkExplorerCommand}" CommandParameter="Network Explorer"/>
                     <MenuItem Header="Incident Explorer" Foreground="LightGray"

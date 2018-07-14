@@ -1,6 +1,5 @@
 ﻿using DispatcherApp.Model;
 using DispatcherApp.Model.DrawingAlgorithms.Schematic.RadialNetwork;
-using DispatcherApp.ViewModel.ShellFillerViewModels;
 using DMSCommon.Model;
 using System;
 using System.Collections.Generic;
@@ -12,6 +11,7 @@ using System.Windows;
 using System.Windows.Controls;
 using TransactionManagerContract;
 using TransactionManagerContract.ClientDMS;
+using UIShell.Model;
 
 namespace DispatcherApp.ViewModel.ShellFillerModelViews
 {

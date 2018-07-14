@@ -1,5 +1,4 @@
 ﻿using DispatcherApp.Model;
-using DispatcherApp.ViewModel.ShellFillerViewModels;
 using DMSCommon.Model;
 using IMSContract;
 using System;
@@ -10,10 +9,12 @@ using System.ServiceModel;
 using System.Text;
 using System.Threading.Tasks;
 using TransactionManagerContract;
+using UIShell.Model;
+using UIShell.ViewModel;
 
 namespace DispatcherApp.ViewModel.ShellFillerModelViews
 {
-    public class IncidentExplorerViewModel : ShellFillerViewModel
+    public class IncidentExplorerViewModel : SingleShellFillerViewModel
     {
         private static bool isOpen;
         private static ShellPosition position;

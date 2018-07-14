@@ -1,5 +1,4 @@
-﻿using DispatcherApp.Model;
-using DispatcherApp.View;
+﻿using DispatcherApp.View;
 using DispatcherApp;
 using FTN.Common;
 using FTN.Services.NetworkModelService.DataModel.Core;
@@ -34,15 +33,15 @@ using DispatcherApp.View.CustomControls.TabContentControls;
 using GravityAppsMandelkowMetroCharts;
 using DMSCommon;
 using DispatcherApp.ViewModel.ShellFillerModelViews;
-using DispatcherApp.View.CustomControls.ShellFillerControls;
-using DispatcherApp.ViewModel.ShellFillerViewModels;
 using OMSCommon;
+using UIShell.ViewModel;
+using UIShell.Model;
+using UIShell.View;
 
 namespace DispatcherApp.ViewModel
 {
-    public class MainShellViewModel : INotifyPropertyChanged
+    public class MainShellViewModel : AbstractMainShellViewModel
     {
-        public event PropertyChangedEventHandler PropertyChanged;
 
         public Task blinkTask;
 
@@ -53,7 +52,6 @@ namespace DispatcherApp.ViewModel
         private FrameworkElement frameworkElement = new FrameworkElement();
 
         private Dictionary<string, bool> isSourceOpen = new Dictionary<string, bool>();
-        private Dictionary<ShellPosition, ShellFillerShellProperties> shellProperties = new Dictionary<ShellPosition, ShellFillerShellProperties>();
 
         private ObservableCollection<ChartSeries> chartSeries = new ObservableCollection<ChartSeries>();
         private ObservableCollection<UIElement> chartBorderItems = new ObservableCollection<UIElement>();
@@ -127,10 +125,8 @@ namespace DispatcherApp.ViewModel
         #region Constructor
         public MainShellViewModel()
         {
-            foreach (var position in Enum.GetValues(typeof(ShellPosition)))
-            {
-                ShellProperties.Add((ShellPosition)position, new ShellFillerShellProperties());
-            }
+            TopMenu = new ObservableCollection<UserControl>();
+            TopMenu.Add(new TopMenu());
 
             subscriber = new Subscriber();
             subscriber.Subscribe();
@@ -1378,37 +1374,6 @@ namespace DispatcherApp.ViewModel
             //}
         }
 
-        private void SetTabContent(BorderTabItem ti, Element element)
-        {
-            if (element != null)
-            {
-                if (element is Node)
-                {
-                    ti.Scroll.Content = new NodePropertiesControl();
-                }
-                else if (element is Switch)
-                {
-                    ti.Scroll.Content = new SwitchPropertiesControl();
-                }
-                else if (element is Consumer)
-                {
-                    ti.Scroll.Content = new ConsumerPropertiesControl();
-                }
-                else if (element is Source)
-                {
-                    ti.Scroll.Content = new SourcePropertiesControl();
-                }
-                else if (element is ACLine)
-                {
-                    ti.Scroll.Content = new ACLinePropertiesControl();
-                }
-            }
-            else
-            {
-                ti.Scroll.Content = new EmptyPropertiesControl();
-            }
-        }
-
         private void ExecuteOpenControlCommand(object parameter)
         {
             //if (parameter as string == "Properties")
@@ -1682,19 +1647,6 @@ namespace DispatcherApp.ViewModel
             }
         }
 
-        public Dictionary<ShellPosition, ShellFillerShellProperties> ShellProperties
-        {
-            get
-            {
-                return shellProperties;
-            }
-            set
-            {
-                shellProperties = value;
-                RaisePropertyChanged("ShellProperties");
-            }
-        }
-
         public IOMSClient ProxyToTransactionManager
         {
             get { return proxyToTransactionManager; }
@@ -1702,16 +1654,6 @@ namespace DispatcherApp.ViewModel
         }
 
         #endregion Properties
-
-        #region Miscelaneous
-        private void RaisePropertyChanged(string property)
-        {
-            if (PropertyChanged != null)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs(property));
-            }
-        }
-        #endregion
 
         #region Publish methods
         private void GetDigitalUpdate(List<UIUpdateModel> update)
@@ -2130,7 +2072,7 @@ namespace DispatcherApp.ViewModel
 
         private void PlaceOrFocusControlInShell(ShellPosition position, ShellFillerShell sfs, bool isFocus, string parameter)
         {
-            var currentTabControl = this.shellProperties[position];
+            var currentTabControl = ShellProperties[position];
 
             if (!isFocus)
             {
@@ -2186,7 +2128,7 @@ namespace DispatcherApp.ViewModel
 
             try
             {
-                ShellFillerViewModel viewModel = (ShellFillerViewModel)((object[])parameter)[2];
+                SingleShellFillerViewModel viewModel = (SingleShellFillerViewModel)((object[])parameter)[2];
                 viewModel.IsOpen = false;
             }
             catch { }

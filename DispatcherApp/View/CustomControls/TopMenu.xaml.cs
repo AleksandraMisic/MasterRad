@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -13,14 +12,14 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace DispatcherApp.View.CustomControls.ShellFillerControls
+namespace DispatcherApp.View
 {
     /// <summary>
-    /// Interaction logic for ShellFillerShell.xaml
+    /// Interaction logic for TopMenuControl.xaml
     /// </summary>
-    public partial class ShellFillerShell : UserControl
+    public partial class TopMenu : UserControl
     {
-        public ShellFillerShell()
+        public TopMenu()
         {
             InitializeComponent();
         }

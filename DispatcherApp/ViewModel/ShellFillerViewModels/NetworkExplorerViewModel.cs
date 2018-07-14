@@ -1,6 +1,5 @@
 ﻿using DispatcherApp.Model;
 using DispatcherApp.View;
-using DispatcherApp.ViewModel.ShellFillerViewModels;
 using DMSCommon.Model;
 using OMSCommon;
 using System;
@@ -15,10 +14,12 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using TransactionManagerContract;
 using TransactionManagerContract.ClientDMS;
+using UIShell.Model;
+using UIShell.ViewModel;
 
 namespace DispatcherApp.ViewModel.ShellFillerModelViews
 {
-    public class NetworkExplorerViewModel : ShellFillerViewModel
+    public class NetworkExplorerViewModel : SingleShellFillerViewModel
     {
         private static bool isOpen;
         private static ShellPosition position;

@@ -1,14 +1,15 @@
 ﻿using DispatcherApp.Model;
-using DispatcherApp.ViewModel.ShellFillerViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UIShell.Model;
+using UIShell.ViewModel;
 
 namespace DispatcherApp.ViewModel.ShellFillerModelViews
 {
-    public class PropertiesModelView : ShellFillerViewModel
+    public class PropertiesModelView : SingleShellFillerViewModel
     {
         private static bool isOpen;
         private static ShellPosition position;
