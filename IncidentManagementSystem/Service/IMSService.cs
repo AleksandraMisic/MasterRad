@@ -27,25 +27,10 @@ namespace IncidentManagementSystem.Service
                     {
                         Console.WriteLine("Added crew: " + c.CrewName + ", crew id: " + c.Id);
                     }
+
                     ctx.SaveChanges();
+
                     return true;
-                    //using (var ctxCloud = new IncidentCloudContext())
-                    //{
-                    //    try
-                    //    {
-                    //        ctxCloud.Crews.Add(crew);
-                    //        foreach (Crew c in ctx.Crews)
-                    //        {
-                    //            Console.WriteLine("Added crew: " + c.CrewName + ", crew id: " + c.Id);
-                    //        }
-                    //        ctxCloud.SaveChanges();
-                    //        return true;
-                    //    }
-                    //    catch (Exception e)
-                    //    {
-                    //        return false;
-                    //    }
-                    //}
                 }
                 catch (Exception e)
                 {
@@ -63,12 +48,6 @@ namespace IncidentManagementSystem.Service
                 ctx.SaveChanges();
                 Console.WriteLine("Upisano:\n MRID: " + report.MrID + ", Date Time: " + report.Time + ", State: " + report.State);
             }
-            //using (var ctxCloud = new IncidentCloudContext())
-            //{
-            //    ctxCloud.ElementStateReports.Add(report);
-            //    ctxCloud.SaveChanges();
-            //    Console.WriteLine("Upisano:\n MRID: " + report.MrID + ", Date Time: " + report.Time + ", State: " + report.State);
-            //}
         }
 
         public void AddReport(IncidentReport report)
@@ -78,16 +57,12 @@ namespace IncidentManagementSystem.Service
                 ctx.IncidentReports.Add(report);
                 ctx.SaveChanges();
             }
-            //using (var ctxCloud = new IncidentCloudContext())
-            //{
-            //    ctxCloud.IncidentReports.Add(report);
-            //    ctxCloud.SaveChanges();
-            //}
         }
 
         public List<SwitchStateReport> GetAllElementStateReports()
         {
             List<SwitchStateReport> retVal = new List<SwitchStateReport>();
+
             using (var ctx = new IncidentContext())
             {
                 foreach (SwitchStateReport ir in ctx.ElementStateReports)
@@ -95,21 +70,14 @@ namespace IncidentManagementSystem.Service
                     retVal.Add(ir);
                 }
             }
+
             return retVal;
-            //List<ElementStateReport> retVal = new List<ElementStateReport>();
-            //using (var ctxCloud = new IncidentCloudContext())
-            //{
-            //    foreach (ElementStateReport ir in ctxCloud.ElementStateReports)
-            //    {
-            //        retVal.Add(ir);
-            //    }
-            //}
-            //return retVal;
         }
 
         public List<IncidentReport> GetAllReports()
         {
             List<IncidentReport> retVal = new List<IncidentReport>();
+
             using (var ctx = new IncidentContext())
             {
                 foreach (IncidentReport ir in ctx.IncidentReports.Include("InvestigationCrew").Include("RepairCrew"))
@@ -117,35 +85,22 @@ namespace IncidentManagementSystem.Service
                     retVal.Add(ir);
                 }
             }
+
             return retVal;
-            //List<IncidentReport> retVal = new List<IncidentReport>();
-            //using (var ctxCloud = new IncidentCloudContext())
-            //{
-            //    foreach (IncidentReport ir in ctxCloud.IncidentReports.Include("Crew"))
-            //    {
-            //        retVal.Add(ir);
-            //    }
-            //}
-            //return retVal;
         }
 
         public List<Crew> GetCrews()
         {
             List<Crew> retVal = new List<Crew>();
+
             using (var ctx = new IncidentContext())
             {
                 ctx.Crews.ToList().ForEach(u => retVal.Add(u));
             }
-            return retVal;
-            //List<Crew> retVal = new List<Crew>();
-            //using (var ctxCloud = new IncidentCloudContext())
-            //{
-            //    ctxCloud.Crews.ToList().ForEach(u => retVal.Add(u));
-            //}
-            //return retVal;
-        }
 
-        // KORISTI SE
+            return retVal;
+        }
+        
         public List<List<SwitchStateReport>> GetElementStateReportsForMrID(string mrID)
         {
             List<SwitchStateReport> temp = new List<SwitchStateReport>();
@@ -227,8 +182,7 @@ namespace IncidentManagementSystem.Service
 
             return res;
         }
-
-       //Koristi se
+        
         public List<List<IncidentReport>> GetReportsForMrID(string mrID)
         {
             List<IncidentReport> temp = new List<IncidentReport>();
@@ -371,10 +325,6 @@ namespace IncidentManagementSystem.Service
             {
                 temp = ctx.IncidentReports.ToList();
             }
-            //using (var ctxCloud = new IncidentCloudContext())
-            //{
-            //    temp = ctxCloud.IncidentReports.ToList();
-            //}
 
             foreach (IncidentReport report in temp)
             {

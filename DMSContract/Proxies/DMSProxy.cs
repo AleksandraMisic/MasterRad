@@ -1,20 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using DMSCommon.Model;
-using DMSContract;
-using DMSContract.Proxies;
+﻿using DMSCommon.Model;
 using IMSContract;
-using TransactionManagerContract.ClientDMS;
+using OMSCommon;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.ServiceModel;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace TransactionManager.Services
+namespace DMSContract.Proxies
 {
-    public class ClientDMSService : IDMSContract
+    public class DMSProxy : ClientBase<IDMSContract>, IDMSContract
     {
-        private DMSProxy dMSProxy;
-
-        public ClientDMSService()
+        public DMSProxy() : base(NetTcpBindingCreator.Create(), new EndpointAddress("net.tcp://localhost:5000/DMSService"))
         {
-            dMSProxy = new DMSProxy();
+
         }
 
         public List<ACLine> GetAllACLines()
@@ -39,14 +39,7 @@ namespace TransactionManager.Services
 
         public List<Source> GetAllSources()
         {
-            List<Source> listOfDMSSources = new List<Source>();
-            try
-            {
-                listOfDMSSources = dMSProxy.GetAllSources();
-            }
-            catch (Exception e) { }
-
-            return listOfDMSSources;
+            return Channel.GetAllSources();
         }
 
         public List<Switch> GetAllSwitches()
@@ -56,14 +49,7 @@ namespace TransactionManager.Services
 
         public List<Element> GetNetwork(string mrid)
         {
-            List<Element> listOfDMSElements = new List<Element>();
-            try
-            {
-                listOfDMSElements = dMSProxy.GetNetwork(mrid);
-            }
-            catch (Exception e) { }
-
-            return listOfDMSElements;
+            return Channel.GetNetwork(mrid);
         }
 
         public int GetNetworkDepth()

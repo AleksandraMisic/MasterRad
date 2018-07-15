@@ -12,7 +12,7 @@ namespace IncidentManagementSystem
 		static void Main(string[] args)
 		{
             Console.Title = "Incident Management System";
-            IncidentManagementSystemService ims = new IncidentManagementSystemService();
+            IMSServiceHost ims = new IMSServiceHost();
 		
 			ims.Start();
             Console.WriteLine("Incident Management System started");

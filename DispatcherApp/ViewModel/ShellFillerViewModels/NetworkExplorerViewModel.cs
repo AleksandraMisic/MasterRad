@@ -62,7 +62,13 @@ namespace DispatcherApp.ViewModel.ShellFillerModelViews
 
         public void GetAllSources(MainShellViewModel viewModel)
         {
-            this.sources = new ObservableCollection<Button>();
+            this.Sources = new ObservableCollection<Button>();
+
+            foreach (Source source in LocalCache.Sources.Values)
+            {
+                Button but = new Button() { Content = source.MRID, DataContext = viewModel, Command = viewModel.OpenNetworkViewCommand, CommandParameter = source.MRID };
+                this.Sources.Add(but);
+            }
 
             List<Source> sourcesList = new List<Source>();
             try
@@ -76,8 +82,13 @@ namespace DispatcherApp.ViewModel.ShellFillerModelViews
             
             foreach (Source source in sourcesList)
             {
-                Button but = new Button() { Content = source.MRID, DataContext = viewModel, Command = viewModel.OpenNetworkViewCommand, CommandParameter = source.MRID };
-                this.Sources.Add(but);
+                if (!LocalCache.Sources.TryGetValue(source.MRID, out Source source1))
+                {
+                    LocalCache.Sources.Add(source.MRID, source);
+
+                    Button but = new Button() { Content = source.MRID, DataContext = viewModel, Command = viewModel.OpenNetworkViewCommand, CommandParameter = source.MRID };
+                    this.Sources.Add(but);
+                }
             }
         }
     }

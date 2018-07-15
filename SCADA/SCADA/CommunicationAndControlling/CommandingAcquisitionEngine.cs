@@ -12,6 +12,7 @@ using SCADA.ClientHandler;
 using SCADA.ConfigurationParser;
 using System.Linq;
 using SCADA.CommunicationAndControlling.SecondaryDataProcessing;
+using DMSContract;
 
 namespace SCADA.CommunicationAndControlling
 {
@@ -23,6 +24,8 @@ namespace SCADA.CommunicationAndControlling
 
         private DBContext dbContext = null;
 
+        DMSSCADAProxy dMSProxy = null;
+
         public CommandingAcquisitionEngine()
         {
             Console.WriteLine("AcqEngine Instancing()");
@@ -30,6 +33,8 @@ namespace SCADA.CommunicationAndControlling
             IORequests = IORequestsQueue.GetQueue();
             dbContext = new DBContext();
             timerMsc = 5000;
+
+            dMSProxy = new DMSSCADAProxy();
         }
       
         /// <summary>
@@ -480,9 +485,8 @@ namespace SCADA.CommunicationAndControlling
                                                                 isChange = true;
                                                                 target.State = target.ValidStates[isOpened ? 1 : 0];
                                                                 Console.WriteLine(" CHANGE! Digital variable {0}, state: {1}", target.Name, target.State);
-
-                                                                DMSClient dMSClient = new DMSClient();
-                                                                dMSClient.ChangeOnSCADADigital(target.Name, target.State);
+                                                                
+                                                                dMSProxy.ChangeOnSCADADigital(target.Name, target.State);
                                                             }
                                                         }
                                                         catch
@@ -531,8 +535,8 @@ namespace SCADA.CommunicationAndControlling
                                                                 Console.WriteLine(" CHANGE! Analog variable {0}, AcqValue: {1}", target.Name, target.AcqValue);
 
                                                                 //to do: propagacija analogih promena(ako se secate Pavlica je prvo rekao da nam to ne treba da samo jednom zakucamo vrednost na pocetku) xD
-                                                                DMSClient dMSClient = new DMSClient();
-                                                                dMSClient.ChangeOnSCADAAnalog(target.Name, target.AcqValue);
+                                                                
+                                                                dMSProxy.ChangeOnSCADAAnalog(target.Name, target.AcqValue);
                                                             }
                                                         }
                                                         catch

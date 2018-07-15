@@ -1,3 +1,4 @@
+using OMSCommon;
 using SCADAContracts;
 using System;
 using System.Collections.Generic;
@@ -18,20 +19,13 @@ namespace SCADA.ClientHandler
 
         private void InitializeHosts()
         {
-            var binding = new NetTcpBinding();
-            binding.CloseTimeout = new TimeSpan(1, 0, 0, 0);
-            binding.OpenTimeout = new TimeSpan(1, 0, 0, 0);
-            binding.ReceiveTimeout = new TimeSpan(1, 0, 0, 0);
-            binding.SendTimeout = new TimeSpan(1, 0, 0, 0);
-            binding.MaxReceivedMessageSize = Int32.MaxValue;
-
             hosts = new List<ServiceHost>();
 
             // service for handlling client requests
             ServiceHost invokerhost = new ServiceHost(typeof(Invoker));
             invokerhost.Description.Name = "SCADAInvokerservice";
             invokerhost.AddServiceEndpoint(typeof(ISCADAContract),
-              binding,
+               NetTcpBindingCreator.Create(),
                new Uri("net.tcp://localhost:4000/SCADAService"));
             hosts.Add(invokerhost);
 
@@ -39,8 +33,8 @@ namespace SCADA.ClientHandler
             ServiceHost transactionServiceHost = new ServiceHost(typeof(SCADATransactionService));
             transactionServiceHost.Description.Name = "SCADATransactionService";
             transactionServiceHost.AddServiceEndpoint(typeof(ITransactionSCADA),
-                binding,
-                new Uri("net.tcp://localhost:8078/SCADATransactionService"));
+                NetTcpBindingCreator.Create(),
+                new Uri("net.tcp://localhost:4001/SCADATransactionService"));
 
             transactionServiceHost.Description.Behaviors.Remove(typeof(ServiceDebugBehavior));
             transactionServiceHost.Description.Behaviors.Add(new ServiceDebugBehavior() { IncludeExceptionDetailInFaults = true });

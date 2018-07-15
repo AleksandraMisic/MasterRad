@@ -72,6 +72,10 @@
       <Project>{DB3DA680-83F3-422A-9C7D-7F3F883472A2}</Project>
       <Name>IMSContract</Name>
     </ProjectReference>
+    <ProjectReference Include="..\OMSCommon\OMSCommon.csproj">
+      <Project>{C4572A3C-F667-4434-97BC-825B1D3858E0}</Project>
+      <Name>OMSCommon</Name>
+    </ProjectReference>
     <ProjectReference Include="..\PubSubContract\PubSubContract.csproj">
       <Project>{c6cf75f4-b2f3-4139-88e9-0ebb37e04e16}</Project>
       <Name>PubSubContract</Name>

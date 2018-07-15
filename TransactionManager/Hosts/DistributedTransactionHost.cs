@@ -17,7 +17,7 @@ namespace TransactionManager.Hosts
         public void Start()
         {
             svc = new ServiceHost(typeof(DistributedTransactionService));
-            svc.AddServiceEndpoint(typeof(IDistributedTransaction), NetTcpBindingCreator.Create(), new Uri("net.tcp://localhost:6000/DistributedTransactionService"));
+            svc.AddServiceEndpoint(typeof(IDistributedTransaction), NetTcpBindingCreator.Create(), new Uri("net.tcp://localhost:7002/DistributedTransactionService"));
 
             svc.Description.Behaviors.Remove(typeof(ServiceDebugBehavior));
             svc.Description.Behaviors.Add(new ServiceDebugBehavior() { IncludeExceptionDetailInFaults = true });

@@ -3,9 +3,10 @@ using DMSCommon.Model;
 using DMSCommon.TreeGraph;
 using DMSCommon.TreeGraph.Tree;
 using DMSContract;
+using DMSService;
 using FTN.Common;
 using IMSContract;
-using OMSSCADACommon;
+using OMSCommon;
 using OMSSCADACommon.Commands;
 using OMSSCADACommon.Responses;
 using SCADAContracts;
@@ -14,14 +15,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.ServiceModel;
 using System.ServiceModel.Description;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using TransactionManagerContract;
 
-namespace DMSService
+namespace DMS.Hosts
 {
-    public class DMSService : IDisposable
+    public class DMSServiceHost : IDisposable
     {
         private List<ServiceHost> hosts = null;
 
@@ -41,61 +40,49 @@ namespace DMSService
         private ModelResourcesDesc modelResourcesDesc = new ModelResourcesDesc();
         private ModelGdaDMS gda = new ModelGdaDMS();
 
-        private SCADAClient scadaClient;
-        private SCADAClient ScadaClient
+        private SCADAProxy scadaProxy;
+        private SCADAProxy ScadaProxy
         {
             get
             {
-                NetTcpBinding binding = new NetTcpBinding();
-                binding.CloseTimeout = TimeSpan.FromMinutes(10);
-                binding.OpenTimeout = TimeSpan.FromMinutes(10);
-                binding.ReceiveTimeout = TimeSpan.FromMinutes(10);
-                binding.SendTimeout = TimeSpan.FromMinutes(10);
-                binding.MaxReceivedMessageSize = Int32.MaxValue;
-                if (scadaClient == null)
+                if (scadaProxy == null)
                 {
-                    scadaClient = new SCADAClient(new EndpointAddress("net.tcp://localhost:4000/SCADAService"), binding);
+                    scadaProxy = new SCADAProxy();
                 }
-                return scadaClient;
+                return scadaProxy;
             }
-            set { scadaClient = value; }
+            set { scadaProxy = value; }
         }
 
         private ServiceHost scadaHost;
 
         private static Tree<Element> tree;
-        private static DMSService instance = null;
+        private static DMSServiceHost instance = null;
 
         public static bool areHostsStarted = false;
         public static bool isNetworkInitialized = false;
 
-        private IMSClient imsClient;
-        private IMSClient IMSClient
+        private IMSProxy imsProxy;
+        private IMSProxy IMSProxy
         {
             get
             {
-                if (imsClient == null)
+                if (imsProxy == null)
                 {
-                    NetTcpBinding binding = new NetTcpBinding();
-                    binding.CloseTimeout = TimeSpan.FromMinutes(10);
-                    binding.OpenTimeout = TimeSpan.FromMinutes(10);
-                    binding.ReceiveTimeout = TimeSpan.FromMinutes(10);
-                    binding.SendTimeout = TimeSpan.FromMinutes(10);
-                    binding.MaxReceivedMessageSize = Int32.MaxValue;
-                    imsClient = new IMSClient(new EndpointAddress("net.tcp://localhost:6090/IncidentManagementSystemService"), binding);
+                    imsProxy = new IMSProxy();
                 }
-                return imsClient;
+                return imsProxy;
             }
-            set { imsClient = value; }
+            set { imsProxy = value; }
         }
 
-        public static DMSService Instance
+        public static DMSServiceHost Instance
         {
             get
             {
                 if (instance == null)
                 {
-                    instance = new DMSService();
+                    instance = new DMSServiceHost();
                 }
                 return instance;
             }
@@ -103,7 +90,7 @@ namespace DMSService
 
         public static int updatesCount = 0;
 
-        private DMSService()
+        private DMSServiceHost()
         {
             InitializeHosts();
         }
@@ -144,7 +131,7 @@ namespace DMSService
         public void Start()
         {
             string message = string.Empty;
-            // u StartHosts() ce se startovati DMSTransaction i DMSDispatcher. 
+            
             StartHosts();
             Tree = InitializeNetwork(new Delta());
 
@@ -153,15 +140,13 @@ namespace DMSService
                 Console.WriteLine("Not Initialized network");
                 Thread.Sleep(100);
             }
-
-            // ne treba da se podize host za skadu, pre nego sto se pozove InitializeNetwork
+            
             StartScadaHost();
-
-            // svi su otvoreni
+            
             if (hosts.Select(h => h.State == CommunicationState.Opened).ToList().Count == hosts.Count)
             {
                 areHostsStarted = true;
-                message = "The Distribution Management System Service is started.";
+                message = "The Distribution Management System has started.";
                 Console.WriteLine("\n{0}", message);
                 CommonTrace.WriteTrace(CommonTrace.TraceInfo, message);
             }
@@ -182,68 +167,58 @@ namespace DMSService
             {
                 try
                 {
-                    if (ScadaClient.State == CommunicationState.Created)
+                    if (ScadaProxy.State == CommunicationState.Created)
                     {
-                        ScadaClient.Open();
+                        ScadaProxy.Open();
                     }
 
-                    if (ScadaClient.Ping())
+                    if (ScadaProxy.Ping())
                         break;
                 }
                 catch (Exception e)
                 {
-                    //Console.WriteLine(e);
                     Console.WriteLine("InitializeNetwork() -> SCADA is not available yet.");
-                    NetTcpBinding binding = new NetTcpBinding();
-                    binding.CloseTimeout = TimeSpan.FromMinutes(10);
-                    binding.OpenTimeout = TimeSpan.FromMinutes(10);
-                    binding.ReceiveTimeout = TimeSpan.FromMinutes(10);
-                    binding.SendTimeout = TimeSpan.FromMinutes(10);
-                    binding.MaxReceivedMessageSize = Int32.MaxValue;
-                    if (ScadaClient.State == CommunicationState.Faulted)
-                        ScadaClient = new SCADAClient(new EndpointAddress("net.tcp://localhost:4000/SCADAService"), binding);
+                    if (ScadaProxy.State == CommunicationState.Faulted)
+                        ScadaProxy = new SCADAProxy();
                 }
                 Thread.Sleep(300);
             } while (true);
+
             Console.WriteLine("InitializeNetwork() -> SCADA is available.");
 
             Response response = null;
             // get dynamic data
-            response = ScadaClient.ExecuteCommand(new ReadAll());
+            response = ScadaProxy.ExecuteCommand(new ReadAll());
 
             do
             {
                 try
                 {
-                    if (IMSClient.State == CommunicationState.Created)
+                    if (IMSProxy.State == CommunicationState.Created)
                     {
-                        IMSClient.Open();
+                        IMSProxy.Open();
                     }
 
-                    if (IMSClient.Ping())
+                    if (IMSProxy.Ping())
                         break;
                 }
                 catch (Exception e)
                 {
                     //Console.WriteLine(e);
-                    Console.WriteLine("ProcessCrew() -> IMS is not available yet.");
-                    if (IMSClient.State == CommunicationState.Faulted)
+                    Console.WriteLine("InitializeNetwork() -> IMS is not available yet.");
+                    if (IMSProxy.State == CommunicationState.Faulted)
                     {
-                        NetTcpBinding binding = new NetTcpBinding();
-                        binding.CloseTimeout = TimeSpan.FromMinutes(10);
-                        binding.OpenTimeout = TimeSpan.FromMinutes(10);
-                        binding.ReceiveTimeout = TimeSpan.FromMinutes(10);
-                        binding.SendTimeout = TimeSpan.FromMinutes(10);
-                        binding.MaxReceivedMessageSize = Int32.MaxValue;
-                        IMSClient = new IMSClient(new EndpointAddress("net.tcp://localhost:6090/IncidentManagementSystemService"), binding);
+                        IMSProxy = new IMSProxy();
                     }
                 }
 
                 Thread.Sleep(1000);
             } while (true);
 
-            List<IncidentReport> reports = imsClient.GetAllReports();
-            List<SwitchStateReport> elementStates = imsClient.GetAllElementStateReports();
+            Console.WriteLine("InitializeNetwork() -> IMS is available.");
+
+            List<IncidentReport> reports = imsProxy.GetAllReports();
+            List<SwitchStateReport> elementStates = imsProxy.GetAllElementStateReports();
 
             // if there is no insert operations it means it is system initialization,
             // and DMS should obtain the static data from NMS           
@@ -483,7 +458,7 @@ namespace DMSService
                         {
                             var psr = SwitchesRD.Where(m => m.GetProperty(ModelCode.IDOBJ_MRID).AsString() == mrid).FirstOrDefault();
                             var meas = DiscreteMeasurementsRD.Where(m => m.GetProperty(ModelCode.MEASUREMENT_PSR).AsLong() == psr.Id).FirstOrDefault();
-                            
+
                             if (meas != null)
                             {
                                 var res = (DigitalVariable)response.Variables.Where(v => v.Id == meas.GetProperty(ModelCode.IDOBJ_MRID).AsString()).FirstOrDefault();
@@ -774,35 +749,37 @@ namespace DMSService
 
         private void InitializeHosts()
         {
-            var binding = new NetTcpBinding();
-            binding.CloseTimeout = TimeSpan.FromMinutes(10);
-            binding.OpenTimeout = TimeSpan.FromMinutes(10);
-            binding.ReceiveTimeout = TimeSpan.FromMinutes(10);
-            binding.SendTimeout = TimeSpan.FromMinutes(10);
-            binding.TransactionFlow = true;
-            binding.MaxReceivedMessageSize = Int32.MaxValue;
-
             hosts = new List<ServiceHost>();
+
+            ServiceHost dmsHost = new ServiceHost(typeof(DMSService));
+            dmsHost.Description.Name = "DMSService";
+            dmsHost.AddServiceEndpoint(typeof(IDMSContract), NetTcpBindingCreator.Create(), new
+            Uri("net.tcp://localhost:5000/DMSService"));
+            dmsHost.Description.Behaviors.Remove(typeof(ServiceDebugBehavior));
+            dmsHost.Description.Behaviors.Add(new ServiceDebugBehavior() { IncludeExceptionDetailInFaults = true });
+
+            hosts.Add(dmsHost);
+
             ServiceHost transactionHost = new ServiceHost(typeof(DMSTransactionService));
             transactionHost.Description.Name = "DMSTransactionService";
-            transactionHost.AddServiceEndpoint(typeof(IDistributedTransaction), binding, new
-            Uri("net.tcp://localhost:8028/DMSTransactionService"));
+            transactionHost.AddServiceEndpoint(typeof(IDistributedTransaction), NetTcpBindingCreator.Create(), new
+            Uri("net.tcp://localhost:5001/DMSTransactionService"));
             transactionHost.Description.Behaviors.Remove(typeof(ServiceDebugBehavior));
             transactionHost.Description.Behaviors.Add(new ServiceDebugBehavior() { IncludeExceptionDetailInFaults = true });
 
             hosts.Add(transactionHost);
 
-            scadaHost = new ServiceHost(typeof(DMSServiceForSCADA));
-            scadaHost.Description.Name = "DMSServiceForSCADA";
-            scadaHost.AddServiceEndpoint(typeof(IDMSToSCADAContract), binding, new
-            Uri("net.tcp://localhost:8039/IDMSToSCADAContract"));
+            scadaHost = new ServiceHost(typeof(DMSSCADAService));
+            scadaHost.Description.Name = "DMSSCADAService";
+            scadaHost.AddServiceEndpoint(typeof(IDMSSCADAContract), NetTcpBindingCreator.Create(), new
+            Uri("net.tcp://localhost:5002/DMSSCADAService"));
             scadaHost.Description.Behaviors.Remove(typeof(ServiceDebugBehavior));
             scadaHost.Description.Behaviors.Add(new ServiceDebugBehavior() { IncludeExceptionDetailInFaults = true });
 
             ServiceHost callService = new ServiceHost(typeof(DMSCallService));
             callService.Description.Name = "DMSCallService";
-            callService.AddServiceEndpoint(typeof(IDMSCallContract), binding, new
-            Uri("net.tcp://localhost:8049/DMSCallService"));
+            callService.AddServiceEndpoint(typeof(IDMSCallContract), NetTcpBindingCreator.Create(), new
+            Uri("net.tcp://localhost:5003/DMSCallService"));
             callService.Description.Behaviors.Remove(typeof(ServiceDebugBehavior));
             callService.Description.Behaviors.Add(new ServiceDebugBehavior() { IncludeExceptionDetailInFaults = true });
 
@@ -844,7 +821,6 @@ namespace DMSService
                 message = string.Format("Trace level: {0}", CommonTrace.TraceLevel);
                 Console.WriteLine(message);
                 CommonTrace.WriteTrace(CommonTrace.TraceInfo, message);
-                //DMSCallService call = new DMSCallService();
             }
             catch (Exception)
             {

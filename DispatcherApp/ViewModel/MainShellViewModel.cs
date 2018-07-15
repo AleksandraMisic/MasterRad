@@ -1,26 +1,20 @@
 ﻿using DispatcherApp.View;
 using DispatcherApp;
 using FTN.Common;
-using FTN.Services.NetworkModelService.DataModel.Core;
 using PubSubscribe;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
-using System.Text;
 using System.Windows.Controls;
 using System.Collections.ObjectModel;
 using System.Windows;
-using System.Windows.Input;
 using DMSCommon.Model;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using System.Windows.Media.Imaging;
 using System.IO;
 using System.Threading;
-using DMSCommon.TreeGraph;
 using DispatcherApp.Model.Properties;
-using TransactionManagerContract;
 using System.ServiceModel;
 using System.Windows.Data;
 using IMSContract;
@@ -33,21 +27,23 @@ using DispatcherApp.View.CustomControls.TabContentControls;
 using GravityAppsMandelkowMetroCharts;
 using DMSCommon;
 using DispatcherApp.ViewModel.ShellFillerModelViews;
-using OMSCommon;
 using UIShell.ViewModel;
 using UIShell.Model;
 using UIShell.View;
+using TransactionManagerContract;
+using TransactionManagerContract.ClientDMS;
+using TransactionManagerContract.ClientIMS;
 
 namespace DispatcherApp.ViewModel
 {
     public class MainShellViewModel : AbstractMainShellViewModel
     {
-
         public Task blinkTask;
 
         public CancellationTokenSource tokenSource = new CancellationTokenSource();
 
-        private IOMSClient proxyToTransactionManager;
+        private ClientDMSProxy dMSProxy;
+        private ClientIMSProxy iMSProxy;
 
         private FrameworkElement frameworkElement = new FrameworkElement();
 
@@ -63,10 +59,8 @@ namespace DispatcherApp.ViewModel
         private double investigationMax = 4;
         private double maxValue = 4;
         private double minValue = 0;
-
-        #region Subscriber
+        
         private Subscriber subscriber;
-        #endregion
 
         #region Bindings
         private Dictionary<long, Element> Network = new Dictionary<long, Element>();
@@ -136,6 +130,28 @@ namespace DispatcherApp.ViewModel
             subscriber.publishIncident += GetIncident;
             subscriber.publishCall += GetCallFromConsumers;
             subscriber.publiesBreakers += SearchForIncident;
+
+            dMSProxy = new ClientDMSProxy();
+            
+            try
+            {
+                List<Source> sourcesList = dMSProxy.GetAllSources();
+            }
+            catch(Exception e) { }
+
+            try
+            {
+                List<IncidentReport> reportsList = iMSProxy.GetAllReports();
+            }
+            catch (Exception e) { }
+
+            //foreach (Source source in sourcesList)
+            //{
+            //    if (!LocalCache.Sources.TryGetValue(source.MRID, out Source source1))
+            //    {
+            //        LocalCache.Sources.Add(source.MRID, source);
+            //    }
+            //}
 
             //InitNetwork();
             //InitElementsAndProperties(answerFromTransactionManager);
@@ -1091,11 +1107,11 @@ namespace DispatcherApp.ViewModel
 
                 if (!allDates)
                 {
-                    reportsByBreaker = ProxyToTransactionManager.GetReportsForSpecificDateSortByBreaker(mrids, date);
+                    //reportsByBreaker = ProxyToOMS.GetReportsForSpecificDateSortByBreaker(mrids, date);
                 }
                 else
                 {
-                    reportsByBreaker = ProxyToTransactionManager.GetAllReportsSortByBreaker(mrids);
+                    //reportsByBreaker = ProxyToOMS.GetAllReportsSortByBreaker(mrids);
                 }
 
                 ClusteredColumnChart chart = new ClusteredColumnChart();
@@ -1161,7 +1177,7 @@ namespace DispatcherApp.ViewModel
 
                 List<List<IncidentReport>> reportsByBreaker = new List<List<IncidentReport>>();
 
-                reportsByBreaker = ProxyToTransactionManager.GetReportsForMrID(breaker.MRID);
+                //reportsByBreaker = ProxyToOMS.GetReportsForMrID(breaker.MRID);
 
                 ClusteredColumnChart chart = new ClusteredColumnChart();
                 this.ChartSeries.Clear();
@@ -1221,7 +1237,7 @@ namespace DispatcherApp.ViewModel
 
                 try
                 {
-                    reportsByBreaker = ProxyToTransactionManager.GetElementStateReportsForMrID(breaker.MRID);
+                    //reportsByBreaker = ProxyToOMS.GetElementStateReportsForMrID(breaker.MRID);
                 }
                 catch { }
 
@@ -1269,7 +1285,7 @@ namespace DispatcherApp.ViewModel
 
             try
             {
-                ProxyToTransactionManager.SendCommandToSCADA(TypeOfSCADACommand.WriteDigital, (string)parameter, CommandTypes.CLOSE, 0);
+                //ProxyToOMS.SendCommandToSCADA(TypeOfSCADACommand.WriteDigital, (string)parameter, CommandTypes.CLOSE, 0);
             }
             catch { }
         }
@@ -1325,7 +1341,7 @@ namespace DispatcherApp.ViewModel
                 //report.IncidentState = IncidentState.REPAIRING;
             }
 
-            ProxyToTransactionManager.SendCrew(report, crew);
+            //ProxyToOMS.SendCrew(report, crew);
 
             //try
             //{
@@ -1374,38 +1390,6 @@ namespace DispatcherApp.ViewModel
             //}
         }
 
-        private void ExecuteOpenControlCommand(object parameter)
-        {
-            //if (parameter as string == "Properties")
-            //{
-            //    bool exists = false;
-            //    int i = 0;
-
-            //    for (i = 0; i < RightTabControlTabs.Count; i++)
-            //    {
-            //        if (RightTabControlTabs[i].Header == parameter)
-            //        {
-            //            exists = true;
-            //            this.RightTabControlIndex = i;
-            //            break;
-            //        }
-            //    }
-
-            //    if (!exists)
-            //    {
-            //        BorderTabItem ti = new BorderTabItem() { Header = parameter, Style = (Style)frameworkElement.FindResource("TabItemRightStyle") };
-            //        if (!RightTabControlTabs.Contains(ti))
-            //        {
-            //            ti.Title.Text = (string)parameter;
-            //            SetTabContent(ti, null);
-            //            this.RightTabControlTabs.Add(ti);
-            //            this.RightTabControlIndex = this.RightTabControlTabs.Count - 1;
-            //        }
-            //    }
-
-            //    this.RightTabControlVisibility = Visibility.Visible;
-            //}
-        }
         #endregion
 
         #region Properties
@@ -1647,12 +1631,6 @@ namespace DispatcherApp.ViewModel
             }
         }
 
-        public IOMSClient ProxyToTransactionManager
-        {
-            get { return proxyToTransactionManager; }
-            set { proxyToTransactionManager = value; }
-        }
-
         #endregion Properties
 
         #region Publish methods
@@ -1671,12 +1649,12 @@ namespace DispatcherApp.ViewModel
 
                     ChannelFactory<IOMSClient> factoryToTMS = new ChannelFactory<IOMSClient>(binding,
                         new EndpointAddress("net.tcp://localhost:6080/TransactionManagerService"));
-                    ProxyToTransactionManager = factoryToTMS.CreateChannel();
+                    //ProxyToOMS = factoryToTMS.CreateChannel();
                     TMSAnswerToClient answerFromTransactionManager = new TMSAnswerToClient();
 
                     try
                     {
-                        answerFromTransactionManager = ProxyToTransactionManager.GetNetwork("");
+                        //answerFromTransactionManager = ProxyToOMS.GetNetwork("");
                     }
                     catch (Exception e) { }
 
@@ -1985,9 +1963,10 @@ namespace DispatcherApp.ViewModel
             {
                 ievm.IsOpen = true;
 
-                IncidentExplorer incidentExplorer = new IncidentExplorer();
-                
-                incidentExplorer.DataContext = ievm;
+                IncidentExplorer incidentExplorer = new IncidentExplorer
+                {
+                    DataContext = ievm
+                };
 
                 ievm.GetAllIncidentReports();
 

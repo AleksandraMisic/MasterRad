@@ -1,4 +1,5 @@
-﻿using DMSCommon;
+﻿using DMS.Hosts;
+using DMSCommon;
 using DMSCommon.Model;
 using DMSContract;
 using FTN.Common;
@@ -14,26 +15,20 @@ using System.Threading.Tasks;
 
 namespace DMSService
 {
-    public class DMSServiceForSCADA : IDMSToSCADAContract
+    public class DMSSCADAService : IDMSSCADAContract
     {
-        private IMSClient imsClient;
-        private IMSClient IMSClient
+        private IMSProxy imsProxy;
+        private IMSProxy IMSProxy
         {
             get
             {
-                if (imsClient == null)
+                if (imsProxy == null)
                 {
-                    NetTcpBinding binding = new NetTcpBinding();
-                    binding.CloseTimeout = TimeSpan.FromMinutes(10);
-                    binding.OpenTimeout = TimeSpan.FromMinutes(10);
-                    binding.ReceiveTimeout = TimeSpan.FromMinutes(10);
-                    binding.SendTimeout = TimeSpan.FromMinutes(10);
-                    binding.MaxReceivedMessageSize = Int32.MaxValue;
-                    imsClient = new IMSClient(new EndpointAddress("net.tcp://localhost:6090/IncidentManagementSystemService"), binding);
+                    imsProxy = new IMSProxy();
                 }
-                return imsClient;
+                return imsProxy;
             }
-            set { imsClient = value; }
+            set { imsProxy = value; }
         }
 
         public void ChangeOnSCADADigital(string mrID, OMSSCADACommon.States state)
@@ -53,7 +48,7 @@ namespace DMSService
 
                 Element DMSElementWithMeas;
                 Console.WriteLine("Change on scada Digital Instance.Tree");
-                DMSService.Instance.Tree.Data.TryGetValue(rdAssociatedPSR, out DMSElementWithMeas);
+                DMSServiceHost.Instance.Tree.Data.TryGetValue(rdAssociatedPSR, out DMSElementWithMeas);
                 Switch sw = DMSElementWithMeas as Switch;
 
                 if (sw != null)
@@ -75,11 +70,11 @@ namespace DMSService
 
                         // treba mi objasnjenje sta se ovde radi? ne kotnam ove ScadaupdateModele sta se kad gde dodaje, sta je sta
                         // uopste, summary iznad tih propertija u dms modelu
-                        Node n = (Node)DMSService.Instance.Tree.Data[sw.End2];
+                        Node n = (Node)DMSServiceHost.Instance.Tree.Data[sw.End2];
                         n.IsEnergized = false;
                         networkChange.Add(new UIUpdateModel(n.ElementGID, false));
                         // pojasnjenje mi treba, komentari u ovom algoritmu i slicno, da ne debagujem sve redom, nemam vremena sad za to xD 
-                        networkChange = EnergizationAlgorithm.TraceDown(n, networkChange, false, false, DMSService.Instance.Tree);
+                        networkChange = EnergizationAlgorithm.TraceDown(n, networkChange, false, false, DMSServiceHost.Instance.Tree);
                     }
                     else if (state == OMSSCADACommon.States.CLOSED)
                     {
@@ -88,15 +83,15 @@ namespace DMSService
                         sw.State = SwitchState.Closed;
 
                         // i ovde takodje pojasnjenje
-                        if (EnergizationAlgorithm.TraceUp((Node)DMSService.Instance.Tree.Data[sw.End1], DMSService.Instance.Tree))
+                        if (EnergizationAlgorithm.TraceUp((Node)DMSServiceHost.Instance.Tree.Data[sw.End1], DMSServiceHost.Instance.Tree))
                         {
                             networkChange.Add(new UIUpdateModel(sw.ElementGID, true, OMSSCADACommon.States.CLOSED));
                             sw.IsEnergized = true;
 
-                            Node n = (Node)DMSService.Instance.Tree.Data[sw.End2];
+                            Node n = (Node)DMSServiceHost.Instance.Tree.Data[sw.End2];
                             n.IsEnergized = true;
                             networkChange.Add(new UIUpdateModel(n.ElementGID, true));
-                            networkChange = EnergizationAlgorithm.TraceDown(n, networkChange, true, false, DMSService.Instance.Tree);
+                            networkChange = EnergizationAlgorithm.TraceDown(n, networkChange, true, false, DMSServiceHost.Instance.Tree);
                         }
                         else
                         {
@@ -108,27 +103,21 @@ namespace DMSService
                     {
                         try
                         {
-                            if (IMSClient.State == CommunicationState.Created)
+                            if (IMSProxy.State == CommunicationState.Created)
                             {
-                                IMSClient.Open();
+                                IMSProxy.Open();
                             }
 
-                            if (IMSClient.Ping())
+                            if (IMSProxy.Ping())
                                 break;
                         }
                         catch (Exception e)
                         {
                             //Console.WriteLine(e);
                             Console.WriteLine("ProcessCrew() -> IMS is not available yet.");
-                            if (IMSClient.State == CommunicationState.Faulted)
+                            if (IMSProxy.State == CommunicationState.Faulted)
                             {
-                                NetTcpBinding binding = new NetTcpBinding();
-                                binding.CloseTimeout = TimeSpan.FromMinutes(10);
-                                binding.OpenTimeout = TimeSpan.FromMinutes(10);
-                                binding.ReceiveTimeout = TimeSpan.FromMinutes(10);
-                                binding.SendTimeout = TimeSpan.FromMinutes(10);
-                                binding.MaxReceivedMessageSize = Int32.MaxValue;
-                                IMSClient = new IMSClient(new EndpointAddress("net.tcp://localhost:6090/IncidentManagementSystemService"), binding);
+                                IMSProxy = new IMSProxy();
                             }
                         }
 
@@ -136,10 +125,10 @@ namespace DMSService
                     } while (true);
 
                     // report changed state of the element
-                    IMSClient.AddElementStateReport(elementStateReport);
+                    IMSProxy.AddElementStateReport(elementStateReport);
 
                     // ni ovo ne kontam, tj. nemam vremena da kontam previse xD
-                    Source s = (Source)DMSService.Instance.Tree.Data[DMSService.Instance.Tree.Roots[0]];
+                    Source s = (Source)DMSServiceHost.Instance.Tree.Data[DMSServiceHost.Instance.Tree.Roots[0]];
                     networkChange.Add(new UIUpdateModel(s.ElementGID, true));
 
                     Publisher publisher = new Publisher();
@@ -154,10 +143,10 @@ namespace DMSService
                         List<long> listOfConsumersWithoutPower = gids.Where(x => (DMSType)ModelCodeHelper.ExtractTypeFromGlobalId(x) == DMSType.ENERGCONSUMER).ToList();
                         foreach (long gid in listOfConsumersWithoutPower)
                         {
-                            ResourceDescription resDes = DMSService.Instance.Gda.GetValues(gid);
+                            ResourceDescription resDes = DMSServiceHost.Instance.Gda.GetValues(gid);
                             try { incident.LostPower += resDes.GetProperty(ModelCode.ENERGCONSUMER_PFIXED).AsFloat(); } catch { }
                         }
-                        IMSClient.AddReport(incident);
+                        IMSProxy.AddReport(incident);
                         publisher.PublishIncident(incident);
                     }
                 }

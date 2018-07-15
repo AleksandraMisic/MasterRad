@@ -1,19 +1,13 @@
 ﻿using DMSCommon.Model;
-using System;
+using IMSContract;
 using System.Collections.Generic;
-using System.Linq;
 using System.ServiceModel;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace DMSContract.Client
+namespace DMSContract
 {
     [ServiceContract]
-    public interface IClient
+    public interface IDMSContract
     {
-        [OperationContract]
-        List<Element> GetNetwork(string mrid);
-
         [OperationContract]
         List<Source> GetAllSources();
 
@@ -30,9 +24,18 @@ namespace DMSContract.Client
         List<Node> GetAllNodes();
 
         [OperationContract]
+        Source GetTreeRoot();
+
+        [OperationContract]
         int GetNetworkDepth();
 
         [OperationContract]
-        Source GetTreeRoot();
+        List<Element> GetAllElements();
+
+        [OperationContract]
+        List<Element> GetNetwork(string mrid);
+
+        [OperationContract]
+        void SendCrew(IncidentReport report, Crew crew);
     }
 }

@@ -8,12 +8,12 @@ using TransactionManagerContract;
 
 namespace TransactionManager
 {
-    public class TransactionCallback : IDistributedTransactionCallback
+    public class DistributedTransactionCallback : IDistributedTransactionCallback
     {
         private TransactionAnswer answerForEnlist;
         private TransactionAnswer answerForPrepare;
 
-        public TransactionCallback()
+        public DistributedTransactionCallback()
         {
             AnswerForEnlist = TransactionAnswer.Unanswered;
             answerForPrepare = TransactionAnswer.Unanswered;                                                        

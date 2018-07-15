@@ -1,4 +1,5 @@
-﻿using OMSCommon;
+﻿using DMSContract;
+using OMSCommon;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,7 +19,7 @@ namespace TransactionManager.Hosts
         public void Start()
         {
             svc = new ServiceHost(typeof(ClientDMSService));
-            svc.AddServiceEndpoint(typeof(IClientDMS), NetTcpBindingCreator.Create(), new Uri("net.tcp://localhost:6002/ClientDMSService"));
+            svc.AddServiceEndpoint(typeof(IDMSContract), NetTcpBindingCreator.Create(), new Uri("net.tcp://localhost:7000/ClientDMSService"));
 
             svc.Description.Behaviors.Remove(typeof(ServiceDebugBehavior));
             svc.Description.Behaviors.Add(new ServiceDebugBehavior() { IncludeExceptionDetailInFaults = true });
@@ -29,7 +30,7 @@ namespace TransactionManager.Hosts
         public void Stop()
         {
             svc.Close();
-            Console.WriteLine("ClientDMSService server stopped.");
+            Console.WriteLine("ClientDMSService has stopped.");
         }
     }
 }

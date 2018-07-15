@@ -77,7 +77,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ClientHandler\DMSClient.cs" />
     <Compile Include="ClientHandler\Invoker.cs" />
     <Compile Include="ClientHandler\SCADAService.cs" />
     <Compile Include="ClientHandler\SCADATransactionService.cs" />
@@ -113,6 +112,10 @@
     <ProjectReference Include="..\..\DMSContract\DMSContract.csproj">
       <Project>{C48472D2-BEF9-425D-88B1-4F6B2D31FD8C}</Project>
       <Name>DMSContract</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\OMSCommon\OMSCommon.csproj">
+      <Project>{C4572A3C-F667-4434-97BC-825B1D3858E0}</Project>
+      <Name>OMSCommon</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\PCCommon\PCCommon.csproj">
       <Project>{5bc05be9-6f8a-428d-83e7-c406d6736401}</Project>

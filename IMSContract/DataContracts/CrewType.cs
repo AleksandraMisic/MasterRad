@@ -2,7 +2,7 @@
 {
     public enum CrewType
     {
-        Investigation = 0,     // kasnije dodati smislene vrednosti
+        Investigation = 0,
         Repair
     }
 }

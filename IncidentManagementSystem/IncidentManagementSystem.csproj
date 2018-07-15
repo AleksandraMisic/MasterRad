@@ -63,7 +63,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Service\IMSService.cs" />
-    <Compile Include="Service\IncidentManagementSystemService.cs" />
+    <Compile Include="Service\IMSServiceHost.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -73,6 +73,10 @@
     <ProjectReference Include="..\IMSContract\IMSContract.csproj">
       <Project>{DB3DA680-83F3-422A-9C7D-7F3F883472A2}</Project>
       <Name>IMSContract</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\OMSCommon\OMSCommon.csproj">
+      <Project>{C4572A3C-F667-4434-97BC-825B1D3858E0}</Project>
+      <Name>OMSCommon</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

@@ -48,19 +48,25 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Crew.cs" />
-    <Compile Include="CrewType.cs" />
-    <Compile Include="SwitchStateReport.cs" />
+    <Compile Include="DataContracts\Crew.cs" />
+    <Compile Include="DataContracts\CrewType.cs" />
+    <Compile Include="DataContracts\SwitchStateReport.cs" />
     <Compile Include="IIMSContract.cs" />
-    <Compile Include="IMSClient.cs" />
-    <Compile Include="IncidentReport.cs" />
-    <Compile Include="IncidentState.cs" />
+    <Compile Include="IMSProxy.cs" />
+    <Compile Include="DataContracts\IncidentReport.cs" />
+    <Compile Include="DataContracts\IncidentState.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ReasonForIncident.cs" />
+    <Compile Include="DataContracts\ReasonForIncident.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\OMSCommon\OMSCommon.csproj">
+      <Project>{C4572A3C-F667-4434-97BC-825B1D3858E0}</Project>
+      <Name>OMSCommon</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -4,7 +4,7 @@ using System.ServiceModel;
 namespace DMSContract
 {
     [ServiceContract]
-    public interface IDMSToSCADAContract
+    public interface IDMSSCADAContract
     {
         [OperationContract]
         void ChangeOnSCADADigital(string mrID, States state);

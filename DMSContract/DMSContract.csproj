@@ -44,13 +44,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Client\ClientProxy.cs" />
-    <Compile Include="Client\IClient.cs" />
-    <Compile Include="DMSCallProxy.cs" />
-    <Compile Include="ScadaToDMSProxy.cs" />
-    <Compile Include="IDMSCallContract.cs" />
-    <Compile Include="IDMSContract.cs" />
-    <Compile Include="IDMSToSCADAContract.cs" />
+    <Compile Include="Proxies\DMSCallProxy.cs" />
+    <Compile Include="Proxies\DMSProxy.cs" />
+    <Compile Include="Proxies\DMSSCADAProxy.cs" />
+    <Compile Include="Contracts\IDMSCallContract.cs" />
+    <Compile Include="Contracts\IDMSContract.cs" />
+    <Compile Include="Contracts\IDMSSCADAContract.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -1,6 +1,7 @@
 ﻿using DispatcherApp.Model;
 using DMSCommon.Model;
 using IMSContract;
+using OMSCommon;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -84,14 +85,7 @@ namespace DispatcherApp.ViewModel.ShellFillerModelViews
 
         private void CreateChannel()
         {
-            NetTcpBinding binding = new NetTcpBinding();
-            binding.CloseTimeout = new TimeSpan(1, 0, 0, 0);
-            binding.OpenTimeout = new TimeSpan(1, 0, 0, 0);
-            binding.ReceiveTimeout = new TimeSpan(1, 0, 0, 0);
-            binding.SendTimeout = new TimeSpan(1, 0, 0, 0);
-            binding.MaxReceivedMessageSize = Int32.MaxValue;
-
-            ChannelFactory<IOMSClient> factoryToOMS = new ChannelFactory<IOMSClient>(binding,
+            ChannelFactory<IOMSClient> factoryToOMS = new ChannelFactory<IOMSClient>(NetTcpBindingCreator.Create(),
                 new EndpointAddress("net.tcp://localhost:6080/TransactionManagerService"));
             ProxyToOMS = factoryToOMS.CreateChannel();
         }

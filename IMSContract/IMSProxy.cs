@@ -1,55 +1,16 @@
-﻿using System;
+﻿using OMSCommon;
+using System;
 using System.Collections.Generic;
 using System.ServiceModel;
 
 namespace IMSContract
 {
-    public class IMSClient : ClientBase<IIMSContract>, IIMSContract
+    public class IMSProxy : ClientBase<IIMSContract>, IIMSContract
     {
-        // izbrisati iz App.config fajlova client tag...
-        //public IMSClient() : base("IMSEndpoint")
-        //{
-        //}
-
-        public IMSClient(string endpointName, NetTcpBinding binding) : base(binding, new EndpointAddress(endpointName))
+        public IMSProxy() : base(NetTcpBindingCreator.Create(), new EndpointAddress("net.tcp://localhost:6000/IMSService"))
         {
 
         }
-
-        public IMSClient(EndpointAddress address, NetTcpBinding binding) : base(binding, address)
-        {
-
-        }
-
-        //// unused
-        //public bool AddCrew(Crew crew)
-        //{
-        //    return Channel.AddCrew(crew);
-        //}
-
-        //// unused
-        //public List<ElementStateReport> GetElementStateReportsForSpecificMrIDAndSpecificTimeInterval(string mrID, DateTime startTime, DateTime endTime)
-        //{
-        //    return Channel.GetElementStateReportsForSpecificMrIDAndSpecificTimeInterval(mrID, startTime, endTime);
-        //}
-
-        //// unused
-        //public List<ElementStateReport> GetElementStateReportsForSpecificTimeInterval(DateTime startTime, DateTime endTime)
-        //{
-        //    return Channel.GetElementStateReportsForSpecificTimeInterval(startTime, endTime);
-        //}
-
-        //// unused
-        //public List<IncidentReport> GetReportsForSpecificMrIDAndSpecificTimeInterval(string mrID, DateTime startTime, DateTime endTime)
-        //{
-        //    return Channel.GetReportsForSpecificMrIDAndSpecificTimeInterval(mrID, startTime, endTime);
-        //}
-
-        //// unused
-        //public List<IncidentReport> GetReportsForSpecificTimeInterval(DateTime startTime, DateTime endTime)
-        //{
-        //    return Channel.GetReportsForSpecificTimeInterval(startTime, endTime);
-        //}
 
         public void AddElementStateReport(SwitchStateReport report)
         {

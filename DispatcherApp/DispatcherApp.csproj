@@ -58,6 +58,9 @@
     <Reference Include="System.Xaml">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
+    <Reference Include="TransactionManagerContract">
+      <HintPath>..\TransactionManagerContract\bin\Debug\TransactionManagerContract.dll</HintPath>
+    </Reference>
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
@@ -70,6 +73,7 @@
     <Compile Include="Model\DrawingAlgorithms\Schematic\RadialNetwork\ElementDrawing\DrawElement.cs" />
     <Compile Include="Model\DrawingAlgorithms\Schematic\RadialNetwork\ElementDrawing\DrawSwitch.cs" />
     <Compile Include="Model\DrawingAlgorithms\Schematic\RadialNetwork\SimpleWidthDivider.cs" />
+    <Compile Include="Model\LocalCache.cs" />
     <Compile Include="Model\Measurements\AnalogMeasurement.cs" />
     <Compile Include="Model\Measurements\DigitalMeasurement.cs" />
     <Compile Include="Model\Properties\ACLineSegmentProperties.cs" />
@@ -226,7 +230,6 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Model\Config.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>

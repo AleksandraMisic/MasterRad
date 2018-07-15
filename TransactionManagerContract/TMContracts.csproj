@@ -46,15 +46,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ClientDMS\ClientDMSProxy.cs" />
-    <Compile Include="ClientDMS\IClientDMS.cs" />
-    <Compile Include="ClientGeneral\IClientGeneral.cs" />
+    <Compile Include="ClientIMS\ClientIMSProxy.cs" />
     <Compile Include="IOMSClient.cs" />
     <Compile Include="DistributedTransaction\IDistributedTransaction.cs" />
     <Compile Include="DistributedTransaction\IDistributedTransactionCallback.cs" />
     <Compile Include="ITransactionSCADA.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TMSAnswerToClient.cs" />
-    <Compile Include="ClientGeneral\ClientGeneralProxy.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common\NMSCommon.csproj">
@@ -83,7 +81,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="ClientIMS\" />
     <Folder Include="ClientSCADA\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

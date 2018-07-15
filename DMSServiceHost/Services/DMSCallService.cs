@@ -18,6 +18,7 @@ using System.ServiceModel;
 using System.Threading.Tasks;
 using OMSSCADACommon;
 using DMSCommon;
+using DMS.Hosts;
 
 namespace DMSService
 {
@@ -30,25 +31,20 @@ namespace DMSService
         public List<long> allBrekersUp = new List<long>();
         bool waitForMoreCalls = true;
         public object sync = new object();
-        private IMSClient imsClient;
-        public IMSClient IMSClient
+
+        private IMSProxy imsProxy;
+        public IMSProxy IMSProxy
         {
             get
             {
-                if (imsClient == null)
+                if (imsProxy == null)
                 {
-                    NetTcpBinding binding = new NetTcpBinding();
-                    binding.CloseTimeout = TimeSpan.FromMinutes(10);
-                    binding.OpenTimeout = TimeSpan.FromMinutes(10);
-                    binding.ReceiveTimeout = TimeSpan.FromMinutes(10);
-                    binding.SendTimeout = TimeSpan.FromMinutes(10);
-                    binding.MaxReceivedMessageSize = Int32.MaxValue;
-                    imsClient = new IMSClient(new EndpointAddress("net.tcp://localhost:6090/IncidentManagementSystemService"), binding);
-                    imsClient.Open();
+                    imsProxy = new IMSProxy();
+                    imsProxy.Open();
                 }
-                return imsClient;
+                return imsProxy;
             }
-            set { imsClient = value; }
+            set { imsProxy = value; }
         }
 
         public DMSCallService()
@@ -85,10 +81,10 @@ namespace DMSService
                                 SendMailMessageToClient(message, true);
                                 lock (sync)
                                 {
-                                    if (DMSService.Instance.Tree.Data[call.Gid].IsEnergized == true)
+                                    if (DMSServiceHost.Instance.Tree.Data[call.Gid].IsEnergized == true)
                                     {
                                         clientsCall.Add(call.Gid);
-                                        DMSService.Instance.Tree.Data[call.Gid].IsEnergized = false;
+                                        DMSServiceHost.Instance.Tree.Data[call.Gid].IsEnergized = false;
                                     }
                                 }
                                 if (clientsCall.Count == 3)
@@ -146,15 +142,15 @@ namespace DMSService
                     {
                         foreach (long call in clientsCall)
                         {
-                            Consumer c = (Consumer)DMSService.Instance.Tree.Data[call];
-                            Node upNode = (Node)DMSService.Instance.Tree.Data[c.End1];
-                            UpToSource(upNode, DMSService.Instance.Tree);
+                            Consumer c = (Consumer)DMSServiceHost.Instance.Tree.Data[call];
+                            Node upNode = (Node)DMSServiceHost.Instance.Tree.Data[c.End1];
+                            UpToSource(upNode, DMSServiceHost.Instance.Tree);
                             if (allBrekersUp.Count > 0)
                             {
                                 List<long> pom = new List<long>();
                                 foreach (var item in allBrekersUp)
                                 {
-                                    Switch s = (Switch)DMSService.Instance.Tree.Data[item];
+                                    Switch s = (Switch)DMSServiceHost.Instance.Tree.Data[item];
                                     if (s.UnderSCADA == false)
                                     {
                                         pom.Add(s.ElementGID);
@@ -171,7 +167,7 @@ namespace DMSService
                     maxDepthCheck = new List<NodeLink>();
                     foreach (long breaker in intesection)
                     {
-                        maxDepthCheck.Add(DMSService.Instance.Tree.Links.Values.FirstOrDefault(x => x.Parent == breaker));
+                        maxDepthCheck.Add(DMSServiceHost.Instance.Tree.Links.Values.FirstOrDefault(x => x.Parent == breaker));
                     }
                     NodeLink possibileIncident = maxDepthCheck.FirstOrDefault(x => x.Depth == maxDepthCheck.Max(y => y.Depth));
                     incidentBreaker = possibileIncident.Parent;
@@ -191,7 +187,7 @@ namespace DMSService
                         if (/*callsNum == clientsCall.Count || */waitForMoreCalls == false)
                         {
                             //publishujes incident
-                            string mrid = DMSService.Instance.Tree.Data[(long)incidentBreaker].MRID;
+                            string mrid = DMSServiceHost.Instance.Tree.Data[(long)incidentBreaker].MRID;
                             IncidentReport incident = new IncidentReport() { MrID = mrid };
                             incident.Crewtype = CrewType.Investigation;
 
@@ -199,14 +195,14 @@ namespace DMSService
                             SwitchStateReport elementStateReport = new SwitchStateReport() { MrID = mrid, Time = DateTime.UtcNow, State = 1 };
                             //ElementStateReport elementStateReport = new ElementStateReport() { MrID = mrid, Time = DateTime.UtcNow, State = "OPENED" };                        
 
-                            IMSClient.AddElementStateReport(elementStateReport);
+                            IMSProxy.AddElementStateReport(elementStateReport);
                             pub.PublishUIBreaker(true, (long)incidentBreaker);
 
                             List<UIUpdateModel> networkChange = new List<UIUpdateModel>();
                             Switch sw;
                             try
                             {
-                                sw = (Switch)DMSService.Instance.Tree.Data[(long)incidentBreaker];
+                                sw = (Switch)DMSServiceHost.Instance.Tree.Data[(long)incidentBreaker];
                             }
                             catch (Exception)
                             {
@@ -216,12 +212,12 @@ namespace DMSService
                             sw.State = SwitchState.Open;
                             sw.Incident = true;
                             networkChange.Add(new UIUpdateModel(sw.ElementGID, false, OMSSCADACommon.States.OPEN));
-                            Node n = (Node)DMSService.Instance.Tree.Data[sw.End2];
+                            Node n = (Node)DMSServiceHost.Instance.Tree.Data[sw.End2];
                             n.IsEnergized = false;
                             networkChange.Add(new UIUpdateModel(n.ElementGID, false));
-                            networkChange = EnergizationAlgorithm.TraceDown(n, networkChange, false, false, DMSService.Instance.Tree);
+                            networkChange = EnergizationAlgorithm.TraceDown(n, networkChange, false, false, DMSServiceHost.Instance.Tree);
 
-                            Source s = (Source)DMSService.Instance.Tree.Data[DMSService.Instance.Tree.Roots[0]];
+                            Source s = (Source)DMSServiceHost.Instance.Tree.Data[DMSServiceHost.Instance.Tree.Roots[0]];
                             networkChange.Add(new UIUpdateModel(s.ElementGID, true));
 
 
@@ -230,10 +226,10 @@ namespace DMSService
                             List<long> listOfConsumersWithoutPower = gids.Where(x => (DMSType)ModelCodeHelper.ExtractTypeFromGlobalId(x) == DMSType.ENERGCONSUMER).ToList();
                             foreach (long gid in listOfConsumersWithoutPower)
                             {
-                                ResourceDescription resDes = DMSService.Instance.Gda.GetValues(gid);
+                                ResourceDescription resDes = DMSServiceHost.Instance.Gda.GetValues(gid);
                                 try { incident.LostPower += resDes.GetProperty(ModelCode.ENERGCONSUMER_PFIXED).AsFloat(); } catch { }
                             }
-                            IMSClient.AddReport(incident);
+                            IMSProxy.AddReport(incident);
 
                             Thread.Sleep(3000);
 
@@ -307,7 +303,7 @@ namespace DMSService
             string s = Regex.Match(mrid.ToUpper().Trim(), @"\d+").Value;
             if (mrid.Contains("ec_") || mrid.Contains("EC_"))
             {
-                foreach (ResourceDescription rd in DMSService.Instance.EnergyConsumersRD)
+                foreach (ResourceDescription rd in DMSServiceHost.Instance.EnergyConsumersRD)
                 {
                     if (rd.GetProperty(ModelCode.IDOBJ_MRID).AsString() == "EC_" + s)
                     {
@@ -318,7 +314,7 @@ namespace DMSService
             }
             else if (mrid.Contains("ec") || mrid.Contains("EC"))
             {
-                foreach (ResourceDescription rd in DMSService.Instance.EnergyConsumersRD)
+                foreach (ResourceDescription rd in DMSServiceHost.Instance.EnergyConsumersRD)
                 {
                     if (rd.GetProperty(ModelCode.IDOBJ_MRID).AsString() == "EC_" + s)
                     {

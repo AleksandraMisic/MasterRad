@@ -1,5 +1,6 @@
 ﻿using IMSContract;
 using IncidentManagementSystem.Model;
+using OMSCommon;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -10,35 +11,29 @@ using System.Threading.Tasks;
 
 namespace IncidentManagementSystem.Service
 {
-    public class IncidentManagementSystemService
+    public class IMSServiceHost
     {
         private ServiceHost svc = null;
+
         public void Start()
         {
-            Database.SetInitializer<IncidentContext>(new DropCreateDatabaseIfModelChanges<IncidentContext>());
-            //Database.SetInitializer<IncidentCloudContext>(new DropCreateDatabaseIfModelChanges<IncidentCloudContext>());
+            //Database.SetInitializer<IncidentContext>(new DropCreateDatabaseIfModelChanges<IncidentContext>());
 
             LoadCrews();
 
             svc = new ServiceHost(typeof(IMSService));
-            NetTcpBinding binding = new NetTcpBinding();
-            binding.CloseTimeout = TimeSpan.FromMinutes(10);
-            binding.OpenTimeout = TimeSpan.FromMinutes(10);
-            binding.ReceiveTimeout = TimeSpan.FromMinutes(10);
-            binding.SendTimeout = TimeSpan.FromMinutes(10);
-            binding.MaxReceivedMessageSize = Int32.MaxValue;
             svc.AddServiceEndpoint(typeof(IIMSContract),
-                binding,
-                new Uri("net.tcp://localhost:6090/IncidentManagementSystemService"));
+                NetTcpBindingCreator.Create(),
+                new Uri("net.tcp://localhost:6000/IMSService"));
           
-            // redosled obratiti  paznju
             svc.Open();
-            Console.WriteLine("IncidentManagementSystemService ready and waiting for requests.");
+            Console.WriteLine("IMSService ready and waiting for requests.");
         }
+
         public void Stop()
         {
             svc.Close();
-            Console.WriteLine("IncidentManagementSystemService server stopped.");
+            Console.WriteLine("IMSService has stopped.");
         }
 
         private void LoadCrews()
@@ -72,21 +67,6 @@ namespace IncidentManagementSystem.Service
                     catch (Exception e) { }
                 }
             }
-            //using (var ctxCloud = new IncidentCloudContext())
-            //{
-            //    foreach (Crew c in crews)
-            //    {
-            //        try
-            //        {
-            //            if (!ctxCloud.Crews.Any(e => e.Id == c.Id))
-            //            {
-            //                ctxCloud.Crews.Add(c);
-            //                ctxCloud.SaveChanges();
-            //            }
-            //        }
-            //        catch (Exception e) { }
-            //    }
-            //}
         }
     }
 }

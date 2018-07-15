@@ -2,17 +2,12 @@
 using PubSubscribe;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.ServiceModel;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using TransactionManagerContract;
 using DMSCommon.Model;
 using DMSCommon.TreeGraph;
-using OMSSCADACommon;
-using System.Net.Mail;
 using DMSCommon;
+using DMS.Hosts;
 
 namespace DMSService
 {
@@ -25,7 +20,7 @@ namespace DMSService
         public void Enlist()
         {
             Console.WriteLine("Pozvan je enlist na DMS-u");
-            oldTree = DMSService.Instance.Tree;
+            oldTree = DMS.Hosts.DMSServiceHost.Instance.Tree;
             IDistributedTransactionCallback callback = OperationContext.Current.GetCallbackChannel<IDistributedTransactionCallback>();
             callback.CallbackEnlist(true);
         }
@@ -33,12 +28,12 @@ namespace DMSService
         public void Commit()
         {
             Console.WriteLine("Pozvan je Commit na DMS-u");
-            DMSService.Instance.Tree = newTree;
-            if (DMSService.updatesCount >= 2)
+            DMSServiceHost.Instance.Tree = newTree;
+            if (DMSServiceHost.updatesCount >= 2)
             {
                 Publisher publisher = new Publisher();
                 List<UIUpdateModel> update = new List<UIUpdateModel>();
-                Source s = (Source)DMSService.Instance.Tree.Data[DMSService.Instance.Tree.Roots[0]];
+                Source s = (Source)DMSServiceHost.Instance.Tree.Data[DMSServiceHost.Instance.Tree.Roots[0]];
                 update.Add(new UIUpdateModel(true, s.ElementGID));
 
                 publisher.PublishUpdateDigital(update);
@@ -53,8 +48,8 @@ namespace DMSService
         {
             Console.WriteLine("Pozvan je prepare na DMS-u");
 
-            newTree = DMSService.Instance.InitializeNetwork(delta);
-            DMSService.updatesCount += 1;
+            newTree = DMSServiceHost.Instance.InitializeNetwork(delta);
+            DMSServiceHost.updatesCount += 1;
             IDistributedTransactionCallback callback = OperationContext.Current.GetCallbackChannel<IDistributedTransactionCallback>();
 
             if (newTree.Data.Values.Count != 0)
@@ -71,7 +66,7 @@ namespace DMSService
         {
             Console.WriteLine("Pozvan je RollBack na DMSu");
             newTree = null;
-            DMSService.Instance.Tree = oldTree;
+            DMSServiceHost.Instance.Tree = oldTree;
             IDistributedTransactionCallback callback = OperationContext.Current.GetCallbackChannel<IDistributedTransactionCallback>();
             callback.CallbackRollback("Something went wrong on DMS");
         }

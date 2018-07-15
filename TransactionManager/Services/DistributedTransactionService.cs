@@ -20,71 +20,58 @@ namespace TransactionManager
     {
         // properties for providing communication infrastructure for 2PC protocol
         List<IDistributedTransaction> transactionProxys;
-        List<TransactionCallback> transactionCallbacks;
+        List<DistributedTransactionCallback> transactionCallbacks;
         IDistributedTransaction proxyTransactionNMS;
         IDistributedTransaction proxyTransactionDMS;
         ITransactionSCADA proxyTransactionSCADA;
-        TransactionCallback callBackTransactionNMS;
-        TransactionCallback callBackTransactionDMS;
-        TransactionCallback callBackTransactionSCADA;
+        DistributedTransactionCallback callBackTransactionNMS;
+        DistributedTransactionCallback callBackTransactionDMS;
+        DistributedTransactionCallback callBackTransactionSCADA;
         IDMSContract proxyToDispatcherDMS;
 
         ModelGDATMS gdaTMS;
 
-        private IMSClient imsClient;
-        private IMSClient IMSClient
+        private IMSProxy imsProxy;
+        private IMSProxy IMSProxy
         {
             get
             {
-                if (imsClient == null)
+                if (imsProxy == null)
                 {
-                    NetTcpBinding binding = new NetTcpBinding();
-                    binding.CloseTimeout = TimeSpan.FromMinutes(10);
-                    binding.OpenTimeout = TimeSpan.FromMinutes(10);
-                    binding.ReceiveTimeout = TimeSpan.FromMinutes(10);
-                    binding.SendTimeout = TimeSpan.FromMinutes(10);
-                    binding.MaxReceivedMessageSize = Int32.MaxValue;
-                    imsClient = new IMSClient(new EndpointAddress("net.tcp://localhost:6090/IncidentManagementSystemService"), binding);
+                    imsProxy = new IMSProxy();
                 }
-                return imsClient;
+                return imsProxy;
             }
-            set { imsClient = value; }
+            set { imsProxy = value; }
         }
 
-        private SCADAClient scadaClient;
-        private SCADAClient ScadaClient
+        private SCADAProxy scadaProxy;
+        private SCADAProxy ScadaProxy
         {
             get
             {
-                NetTcpBinding binding = new NetTcpBinding();
-                binding.CloseTimeout = TimeSpan.FromMinutes(10);
-                binding.OpenTimeout = TimeSpan.FromMinutes(10);
-                binding.ReceiveTimeout = TimeSpan.FromMinutes(10);
-                binding.SendTimeout = TimeSpan.FromMinutes(10);
-                binding.MaxReceivedMessageSize = Int32.MaxValue;
-
-                if (scadaClient == null)
+                if (scadaProxy == null)
                 {
-                    scadaClient = new SCADAClient(new EndpointAddress("net.tcp://localhost:4000/SCADAService"), binding);
+                    scadaProxy = new SCADAProxy();
                 }
-                return scadaClient;
+                return scadaProxy;
             }
-            set { scadaClient = value; }
+            set { scadaProxy = value; }
         }
 
         public List<IDistributedTransaction> TransactionProxys { get => transactionProxys; set => transactionProxys = value; }
-        public List<TransactionCallback> TransactionCallbacks { get => transactionCallbacks; set => transactionCallbacks = value; }
+        public List<DistributedTransactionCallback> TransactionCallbacks { get => transactionCallbacks; set => transactionCallbacks = value; }
         public IDistributedTransaction ProxyTransactionNMS { get => proxyTransactionNMS; set => proxyTransactionNMS = value; }
         public IDistributedTransaction ProxyTransactionDMS { get => proxyTransactionDMS; set => proxyTransactionDMS = value; }
         public ITransactionSCADA ProxyTransactionSCADA { get => proxyTransactionSCADA; set => proxyTransactionSCADA = value; }
-        public TransactionCallback CallBackTransactionNMS { get => callBackTransactionNMS; set => callBackTransactionNMS = value; }
-        public TransactionCallback CallBackTransactionDMS { get => callBackTransactionDMS; set => callBackTransactionDMS = value; }
-        public TransactionCallback CallBackTransactionSCADA { get => callBackTransactionSCADA; set => callBackTransactionSCADA = value; }
+        public DistributedTransactionCallback CallBackTransactionNMS { get => callBackTransactionNMS; set => callBackTransactionNMS = value; }
+        public DistributedTransactionCallback CallBackTransactionDMS { get => callBackTransactionDMS; set => callBackTransactionDMS = value; }
+        public DistributedTransactionCallback CallBackTransactionSCADA { get => callBackTransactionSCADA; set => callBackTransactionSCADA = value; }
 
         public DistributedTransactionService()
         {
             TransactionProxys = new List<IDistributedTransaction>();
-            TransactionCallbacks = new List<TransactionCallback>();
+            TransactionCallbacks = new List<DistributedTransactionCallback>();
 
             InitializeChanels();
 
@@ -104,7 +91,7 @@ namespace TransactionManager
             binding.MaxReceivedMessageSize = Int32.MaxValue;
 
             // duplex channel for NMS transaction
-            CallBackTransactionNMS = new TransactionCallback();
+            CallBackTransactionNMS = new DistributedTransactionCallback();
             TransactionCallbacks.Add(CallBackTransactionNMS);
             DuplexChannelFactory<IDistributedTransaction> factoryTransactionNMS = new DuplexChannelFactory<IDistributedTransaction>(CallBackTransactionNMS,
                                                          binding,
@@ -113,7 +100,7 @@ namespace TransactionManager
             TransactionProxys.Add(ProxyTransactionNMS);
 
             // duplex channel for DMS transaction
-            CallBackTransactionDMS = new TransactionCallback();
+            CallBackTransactionDMS = new DistributedTransactionCallback();
             TransactionCallbacks.Add(CallBackTransactionDMS);
             DuplexChannelFactory<IDistributedTransaction> factoryTransactionDMS = new DuplexChannelFactory<IDistributedTransaction>(CallBackTransactionDMS,
                                                             binding,
@@ -122,7 +109,7 @@ namespace TransactionManager
             TransactionProxys.Add(ProxyTransactionDMS);
 
             // duplex channel for SCADA transaction
-            CallBackTransactionSCADA = new TransactionCallback();
+            CallBackTransactionSCADA = new DistributedTransactionCallback();
             TransactionCallbacks.Add(CallBackTransactionSCADA);
             DuplexChannelFactory<ITransactionSCADA> factoryTransactionSCADA = new DuplexChannelFactory<ITransactionSCADA>(CallBackTransactionSCADA,
                                                             binding,
@@ -278,32 +265,24 @@ namespace TransactionManager
                 {
                     try
                     {
-                        if (ScadaClient.State == CommunicationState.Created)
+                        if (ScadaProxy.State == CommunicationState.Created)
                         {
-                            ScadaClient.Open();
+                            ScadaProxy.Open();
                         }
 
-                        if (ScadaClient.Ping())
+                        if (ScadaProxy.Ping())
                             break;
                     }
                     catch (Exception e)
                     {
-                        //Console.WriteLine(e);
-                        Console.WriteLine("GetNetwork() -> SCADA is not available yet.");
-                        NetTcpBinding binding = new NetTcpBinding();
-                        binding.CloseTimeout = TimeSpan.FromMinutes(10);
-                        binding.OpenTimeout = TimeSpan.FromMinutes(10);
-                        binding.ReceiveTimeout = TimeSpan.FromMinutes(10);
-                        binding.SendTimeout = TimeSpan.FromMinutes(10);
-                        binding.MaxReceivedMessageSize = Int32.MaxValue;
-                        if (ScadaClient.State == CommunicationState.Faulted)
-                            ScadaClient = new SCADAClient(new EndpointAddress("net.tcp://localhost:4000/SCADAService"), binding);
+                        if (ScadaProxy.State == CommunicationState.Faulted)
+                            ScadaProxy = new SCADAProxy();
                     }
                     Thread.Sleep(500);
                 } while (true);
                 Console.WriteLine("GetNetwork() -> SCADA is available.");
 
-                Response r = ScadaClient.ExecuteCommand(c);
+                Response r = ScadaProxy.ExecuteCommand(c);
                 descMeas = MappingEngineTransactionManager.Instance.MappResult(r);
             }
             catch (Exception e)
@@ -315,34 +294,28 @@ namespace TransactionManager
             {
                 try
                 {
-                    if (IMSClient.State == CommunicationState.Created)
+                    if (IMSProxy.State == CommunicationState.Created)
                     {
-                        IMSClient.Open();
+                        IMSProxy.Open();
                     }
 
-                    if (IMSClient.Ping())
+                    if (IMSProxy.Ping())
                         break;
                 }
                 catch (Exception e)
                 {
                     //Console.WriteLine(e);
                     Console.WriteLine("GetNetwork() -> IMS is not available yet.");
-                    if (IMSClient.State == CommunicationState.Faulted)
+                    if (IMSProxy.State == CommunicationState.Faulted)
                     {
-                        NetTcpBinding binding = new NetTcpBinding();
-                        binding.CloseTimeout = TimeSpan.FromMinutes(10);
-                        binding.OpenTimeout = TimeSpan.FromMinutes(10);
-                        binding.ReceiveTimeout = TimeSpan.FromMinutes(10);
-                        binding.SendTimeout = TimeSpan.FromMinutes(10);
-                        binding.MaxReceivedMessageSize = Int32.MaxValue;
-                        IMSClient = new IMSClient(new EndpointAddress("net.tcp://localhost:6090/IncidentManagementSystemService"), binding);
+                        IMSProxy = new IMSProxy();
                     }
                 }
                 Thread.Sleep(1000);
             } while (true);
 
-            var crews = IMSClient.GetCrews();
-            var incidentReports = IMSClient.GetAllReports();
+            var crews = IMSProxy.GetCrews();
+            var incidentReports = IMSProxy.GetAllReports();
 
             TMSAnswerToClient answer = new TMSAnswerToClient(resourceDescriptionFromNMS, listOfDMSElement, GraphDeep, descMeas, crews, incidentReports);
             return answer;
@@ -355,7 +328,7 @@ namespace TransactionManager
                 Command c = MappingEngineTransactionManager.Instance.MappCommand(command, mrid, commandtype, value);
 
                 // to do: ping
-                Response r = scadaClient.ExecuteCommand(c);
+                Response r = scadaProxy.ExecuteCommand(c);
                 //Response r = SCADAClientInstance.ExecuteCommand(c);
 
             }
@@ -365,7 +338,7 @@ namespace TransactionManager
 
         public void SendCrew(IncidentReport report, Crew crew)
         {
-            proxyToDispatcherDMS.SendCrewToDms(report, crew);
+            proxyToDispatcherDMS.SendCrew(report, crew);
             return;
         }
 
@@ -409,22 +382,22 @@ namespace TransactionManager
 
         public List<List<SwitchStateReport>> GetElementStateReportsForMrID(string mrID)
         {
-            return IMSClient.GetElementStateReportsForMrID(mrID);
+            return IMSProxy.GetElementStateReportsForMrID(mrID);
         }
 
         public List<List<IncidentReport>> GetReportsForMrID(string mrID)
         {
-            return IMSClient.GetReportsForMrID(mrID);
+            return IMSProxy.GetReportsForMrID(mrID);
         }
 
         public List<List<IncidentReport>> GetReportsForSpecificDateSortByBreaker(List<string> mrids, DateTime date)
         {
-            return IMSClient.GetReportsForSpecificDateSortByBreaker(mrids, date);
+            return IMSProxy.GetReportsForSpecificDateSortByBreaker(mrids, date);
         }
 
         public List<List<IncidentReport>> GetAllReportsSortByBreaker(List<string> mrids)
         {
-            return IMSClient.GetAllReportsSortByBreaker(mrids);
+            return IMSProxy.GetAllReportsSortByBreaker(mrids);
         }
 
         public void Enlist()
@@ -451,7 +424,7 @@ namespace TransactionManager
 
         public List<IncidentReport> GetAllIncidentReports()
         {
-            return IMSClient.GetAllReports();
+            return IMSProxy.GetAllReports();
         }
         #endregion
     }
