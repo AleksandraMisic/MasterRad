@@ -1,18 +1,14 @@
-﻿using OMSSCADACommon.Commands;
+﻿using OMSCommon;
+using OMSSCADACommon.Commands;
 using OMSSCADACommon.Responses;
 using SCADAContracts;
 using System.ServiceModel;
 
 namespace SCADAContracts
 {
-    public class SCADAClient : ClientBase<ISCADAContract>, ISCADAContract
+    public class SCADAProxy : ClientBase<ISCADAContract>, ISCADAContract
     {
-        public SCADAClient(string endpointName, NetTcpBinding binding) : base(binding, new EndpointAddress(endpointName))
-        {
-
-        }
-
-        public SCADAClient(EndpointAddress address, NetTcpBinding binding) : base(binding, address)
+        public SCADAProxy() : base(NetTcpBindingCreator.Create(), new EndpointAddress("net.tcp://localhost:4000/SCADAService"))
         {
 
         }

@@ -30,9 +30,9 @@ using DispatcherApp.ViewModel.ShellFillerModelViews;
 using UIShell.ViewModel;
 using UIShell.Model;
 using UIShell.View;
-using TransactionManagerContract;
 using TransactionManagerContract.ClientDMS;
 using TransactionManagerContract.ClientIMS;
+using TransactionManagerContract;
 
 namespace DispatcherApp.ViewModel
 {
@@ -144,159 +144,6 @@ namespace DispatcherApp.ViewModel
                 List<IncidentReport> reportsList = iMSProxy.GetAllReports();
             }
             catch (Exception e) { }
-
-            //foreach (Source source in sourcesList)
-            //{
-            //    if (!LocalCache.Sources.TryGetValue(source.MRID, out Source source1))
-            //    {
-            //        LocalCache.Sources.Add(source.MRID, source);
-            //    }
-            //}
-
-            //InitNetwork();
-            //InitElementsAndProperties(answerFromTransactionManager);
-            //DrawElementsOnGraph(answerFromTransactionManager.GraphDeep);
-        }
-
-        public void InitNetwork()
-        {
-            this.Network.Clear();
-            this.properties.Clear();
-            //this.UINetworks.Clear();
-            //this.networModelControls.Clear();
-            this.NetworkMapsBySourceButton.Clear();
-            this.networkDepth.Clear();
-            this.Sources.Clear();
-            //this.MainCanvases.Clear();
-            this.IncidentReports.Clear();
-            this.mainCanvas.Children.Clear();
-            this.Crews.Clear();
-            this.Breakers.Clear();
-
-            #region FakeNetwork
-            //Source s1 = new Source(0, -1, "ES_2") { ElementGID = 0 };
-            //Source s2 = new Source(0, -1, "ES_3") { ElementGID = 23 };
-            //s2.IsEnergized = false;
-            //Node n10 = new Node(24, "CN_10");
-            //n10.Parent = s2.ElementGID;
-            //s2.End2 = n10.ElementGID;
-            //ACLine b15 = new ACLine(25, "ACLS_1");
-            //b15.End1 = n10.ElementGID;
-            //n10.Children.Add(b15.ElementGID);
-            //Consumer b16 = new Consumer(27, "EC_4");
-            //b16.End1 = n10.ElementGID;
-            //b16.End2 = -1;
-            //n10.Children.Add(b16.ElementGID);
-            //Node n11 = new Node(26, "CN_2");
-            //b15.End2 = n11.ElementGID;
-            //n11.Parent = b15.ElementGID;
-            //Consumer b17 = new Consumer(28, "EC_4");
-            //b17.End1 = n11.ElementGID;
-            //b17.End2 = -1;
-            //n11.Children.Add(b17.ElementGID);
-            //Consumer b18 = new Consumer(29, "EC_4");
-            //b18.End1 = n11.ElementGID;
-            //b18.End2 = -1;
-            //n11.Children.Add(b18.ElementGID);
-            //Node n1 = new Node(1, "CN_1") { ElementGID = 1 };
-            //n1.Parent = s1.ElementGID;
-            //s1.End2 = n1.ElementGID;
-            //ACLine b1 = new ACLine(2, "ACLS_1");
-            //b1.End1 = n1.ElementGID;
-            //n1.Children.Add(b1.ElementGID);
-            //Node n2 = new Node(3, "CN_2");
-            //b1.End2 = n2.ElementGID;
-            //n2.Parent = b1.ElementGID;
-            //Switch b2 = new Switch(4, "BR_1");
-            //b2.End1 = n2.ElementGID;
-            //n2.Children.Add(b2.ElementGID);
-            //ACLine b3 = new ACLine(5, "ACLS_3");
-            //b3.End1 = n2.ElementGID;
-            //n2.Children.Add(b3.ElementGID);
-            //Consumer b10 = new Consumer(17, "EC_4");
-            //b10.End1 = n2.ElementGID;
-            //b10.End2 = -1;
-            //n2.Children.Add(b10.ElementGID);
-            //Node n3 = new Node(6, "CN_3");
-            //b2.End2 = n3.ElementGID;
-            //n3.Parent = b2.ElementGID;
-            //Switch b4 = new Switch(7, "BR_2");
-            //b4.End1 = n3.ElementGID;
-            //n3.Children.Add(b4.ElementGID);
-            //ACLine b5 = new ACLine(8, "ACLS_2");
-            //b5.End1 = n3.ElementGID;
-            //b5.IsEnergized = false;
-            //n3.Children.Add(b5.ElementGID);
-            //Node n4 = new Node(9, "CN_4");
-            //b4.End2 = n4.ElementGID;
-            //n4.Parent = b4.ElementGID;
-            //Consumer b6 = new Consumer(10, "EC_1");
-            //b6.End1 = n4.ElementGID;
-            //n4.Children.Add(b6.ElementGID);
-            //Node n5 = new Node(11, "CN_5");
-            //b5.End2 = n5.ElementGID;
-            //n5.Parent = b5.ElementGID;
-            //Consumer b7 = new Consumer(12, "EC_2");
-            //b7.End1 = n5.ElementGID;
-            //n5.Children.Add(b7.ElementGID);
-            //b7.IsEnergized = false;
-            //Node n6 = new Node(13, "CN_6");
-            //b3.End2 = n6.ElementGID;
-            //n6.Parent = b3.ElementGID;
-            //n6.IsEnergized = false;
-            //Switch b8 = new Switch(14, "BR_3");
-            //b8.End1 = n6.ElementGID;
-            //b8.IsEnergized = false;
-            //n6.Children.Add(b8.ElementGID);
-            //Node n7 = new Node(15, "CN_7");
-            //b8.End2 = n7.ElementGID;
-            //n7.Parent = b8.ElementGID;
-            //Consumer b9 = new Consumer(16, "EC_3");
-            //b9.End1 = n7.ElementGID;
-            //b9.End2 = -1;
-            //n7.Children.Add(b9.ElementGID);
-            //Consumer b11 = new Consumer(20, "EC_5");
-            //b11.End1 = n7.ElementGID;
-            //b11.End2 = -1;
-            //n7.Children.Add(b11.ElementGID);
-            ////Consumer b12 = new Consumer(21, "EC_5");
-            ////b12.End1 = n1.ElementGID;
-            ////b12.End2 = -1;
-            ////n1.Children.Add(b12.ElementGID);
-
-            //Sources.Add(s1.ElementGID);
-            //Sources.Add(s2.ElementGID);
-
-            //Network.Add(s1.ElementGID, s1);
-            //Network.Add(s2.ElementGID, s2);
-            //Network.Add(n1.ElementGID, n1);
-            //Network.Add(n2.ElementGID, n2);
-            //Network.Add(n3.ElementGID, n3);
-            //Network.Add(n4.ElementGID, n4);
-            //Network.Add(n5.ElementGID, n5);
-            //Network.Add(n6.ElementGID, n6);
-            //Network.Add(n7.ElementGID, n7);
-            //Network.Add(b1.ElementGID, b1);
-            //Network.Add(b2.ElementGID, b2);
-            //Network.Add(b3.ElementGID, b3);
-            //Network.Add(b4.ElementGID, b4);
-            //Network.Add(b5.ElementGID, b5);
-            //Network.Add(b6.ElementGID, b6);
-            //Network.Add(b7.ElementGID, b7);
-            //Network.Add(b8.ElementGID, b8);
-            //Network.Add(b9.ElementGID, b9);
-            //Network.Add(b10.ElementGID, b10);
-            //Network.Add(b11.ElementGID, b11);
-            //Network.Add(b15.ElementGID, b15);
-            //Network.Add(n10.ElementGID, n10);
-            //Network.Add(n11.ElementGID, n11);
-            //Network.Add(b16.ElementGID, b16);
-            //Network.Add(b17.ElementGID, b17);
-            //Network.Add(b18.ElementGID, b18);
-            ////Network.Add(b12.ElementGID, b12);
-            ////Network.Add(n8.ElementGID, n8);
-            #endregion
-
         }
 
         public void InitElementsAndProperties(TMSAnswerToClient answerFromTransactionManager)
@@ -1647,20 +1494,20 @@ namespace DispatcherApp.ViewModel
                     binding.SendTimeout = new TimeSpan(1, 0, 0, 0);
                     binding.MaxReceivedMessageSize = Int32.MaxValue;
 
-                    ChannelFactory<IOMSClient> factoryToTMS = new ChannelFactory<IOMSClient>(binding,
-                        new EndpointAddress("net.tcp://localhost:6080/TransactionManagerService"));
-                    //ProxyToOMS = factoryToTMS.CreateChannel();
-                    TMSAnswerToClient answerFromTransactionManager = new TMSAnswerToClient();
+                    //ChannelFactory<IOMSClient> factoryToTMS = new ChannelFactory<IOMSClient>(binding,
+                    //    new EndpointAddress("net.tcp://localhost:6080/TransactionManagerService"));
+                    ////ProxyToOMS = factoryToTMS.CreateChannel();
+                    //TMSAnswerToClient answerFromTransactionManager = new TMSAnswerToClient();
 
-                    try
-                    {
-                        //answerFromTransactionManager = ProxyToOMS.GetNetwork("");
-                    }
-                    catch (Exception e) { }
+                    //try
+                    //{
+                    //    //answerFromTransactionManager = ProxyToOMS.GetNetwork("");
+                    //}
+                    //catch (Exception e) { }
 
-                    InitNetwork();
-                    InitElementsAndProperties(answerFromTransactionManager);
-                    DrawElementsOnGraph(answerFromTransactionManager.GraphDeep);
+                    //InitNetwork();
+                    //InitElementsAndProperties(answerFromTransactionManager);
+                    //DrawElementsOnGraph(answerFromTransactionManager.GraphDeep);
 
                     return;
                 }

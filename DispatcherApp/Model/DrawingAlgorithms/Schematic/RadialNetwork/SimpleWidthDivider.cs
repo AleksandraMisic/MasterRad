@@ -231,16 +231,13 @@ namespace DispatcherApp.Model.DrawingAlgorithms.Schematic.RadialNetwork
 
         private void PlaceSwitch(Switch breaker, double offset, int y, double cellWidth)
         {
-            SwitchControl switchControl = new SwitchControl(breaker, 10);
+            breaker.IsEnergized = false;
+            SwitchUserControl switchControl = new SwitchUserControl();
+            switchControl.DataContext = breaker;
 
             Canvas.SetLeft(switchControl, offset + cellWidth / 2 - (2 + 10 + 10 / 2));
             Canvas.SetTop(switchControl, y * cellHeight - cellHeight / 3 - 10 / 2);
             Panel.SetZIndex(switchControl, 5);
-
-            //switchControl.Button.Command = PropertiesCommand;
-            switchControl.Button.CommandParameter = breaker.ElementGID;
-            switchControl.ButtonCanvas.ToolTip = breaker.MRID;
-
             result.Add(switchControl);
         }
 

@@ -92,6 +92,9 @@
     <Compile Include="View\CustomControls\NetworkElementsControls\ACLineControl.cs" />
     <Compile Include="View\CustomControls\NetworkElementsControls\ConsumerControl.cs" />
     <Compile Include="View\CustomControls\NetworkElementsControls\NodeControl.cs" />
+    <Compile Include="View\CustomControls\NetworkElementsControls\SwitchUserControl.xaml.cs">
+      <DependentUpon>SwitchUserControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\CustomControls\PropertiesControls\ACLinePropertiesControl.xaml.cs">
       <DependentUpon>ACLinePropertiesControl.xaml</DependentUpon>
     </Compile>
@@ -152,6 +155,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="View\CustomControls\NetworkElementsControls\SwitchUserControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\CustomControls\PropertiesControls\ACLinePropertiesControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

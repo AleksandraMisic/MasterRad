@@ -1,0 +1,36 @@
+﻿<UserControl x:Class="DispatcherApp.View.CustomControls.NetworkElementsControls.SwitchUserControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:sys="clr-namespace:System;assembly=mscorlib"
+             xmlns:local="clr-namespace:DispatcherApp.View.CustomControls.NetworkElementsControls"
+             mc:Ignorable="d">
+    <UserControl.Resources>
+        <GridLength x:Key="ColumnWidth">10</GridLength>
+    </UserControl.Resources>
+    <Grid Width="Auto" Height="Auto">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="{StaticResource ColumnWidth}"/>
+            <ColumnDefinition Width="2"/>
+            <ColumnDefinition Width="{StaticResource ColumnWidth}"/>
+            <ColumnDefinition Width="2"/>
+            <ColumnDefinition Width="{StaticResource ColumnWidth}"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="{StaticResource ColumnWidth}"/>
+        </Grid.RowDefinitions>
+        <Canvas Grid.Column="0">
+            <Canvas.Background>
+                <ImageBrush ImageSource="../../Resources/Images/incident.png"/>
+            </Canvas.Background>
+        </Canvas>
+        <Button Name="MainButton" Grid.Column="2" Style="{StaticResource ResourceKey=SwitchControl}">
+        </Button>
+        <Canvas Grid.Column="4">
+            <Canvas.Background>
+                <ImageBrush ImageSource="../../Resources/Images/crew.png"/>
+            </Canvas.Background>
+        </Canvas>
+    </Grid>
+</UserControl>

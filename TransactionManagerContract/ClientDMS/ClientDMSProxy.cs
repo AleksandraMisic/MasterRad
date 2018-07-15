@@ -5,13 +5,15 @@ using System.ServiceModel;
 using System.Text;
 using System.Threading.Tasks;
 using DMSCommon.Model;
+using DMSContract;
+using IMSContract;
 using OMSCommon;
 
-namespace DMSContract.Client
+namespace TransactionManagerContract.ClientDMS
 {
-    public class ClientProxy : ClientBase<IClient>, IClient
+    public class ClientDMSProxy : ClientBase<IDMSContract>, IDMSContract
     {
-        public ClientProxy() : base(NetTcpBindingCreator.Create(), new EndpointAddress("net.tcp://localhost:6010/ClientService"))
+        public ClientDMSProxy() : base(NetTcpBindingCreator.Create(), new EndpointAddress("net.tcp://localhost:7000/ClientDMSService"))
         {
 
         }
@@ -22,6 +24,11 @@ namespace DMSContract.Client
         }
 
         public List<Consumer> GetAllConsumers()
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<Element> GetAllElements()
         {
             throw new NotImplementedException();
         }
@@ -52,6 +59,11 @@ namespace DMSContract.Client
         }
 
         public Source GetTreeRoot()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SendCrew(IncidentReport report, Crew crew)
         {
             throw new NotImplementedException();
         }
