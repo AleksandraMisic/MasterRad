@@ -48,7 +48,9 @@
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -79,6 +81,12 @@
     <Compile Include="Model\Properties\ACLineSegmentProperties.cs" />
     <Compile Include="Model\Properties\BreakerProperties.cs" />
     <Compile Include="Model\Properties\ConnectivityNodeProperties.cs" />
+    <Compile Include="Model\Properties\DMSProperties\ACLineProperties.cs" />
+    <Compile Include="Model\Properties\DMSProperties\ConsumerProperties.cs" />
+    <Compile Include="Model\Properties\DMSProperties\NodeProperties.cs" />
+    <Compile Include="Model\Properties\DMSProperties\SourceProperties.cs" />
+    <Compile Include="Model\Properties\DMSProperties\SwitchProperties.cs" />
+    <Compile Include="Model\Properties\DMSProperties\ElementProperties.cs" />
     <Compile Include="Model\Properties\ElementProperties.cs" />
     <Compile Include="Model\Properties\EnergyConsumerProperties.cs" />
     <Compile Include="Model\Properties\EnergySourceProperties.cs" />
@@ -89,9 +97,24 @@
     <Compile Include="ViewModel\ShellFillerViewModels\NetworkViewViewModel.cs" />
     <Compile Include="ViewModel\ShellFillerViewModels\PropertiesModelView.cs" />
     <Compile Include="ViewModel\ShellFillerViewModels\ReportExplorerModelView.cs" />
-    <Compile Include="View\CustomControls\NetworkElementsControls\ACLineControl.cs" />
-    <Compile Include="View\CustomControls\NetworkElementsControls\ConsumerControl.cs" />
-    <Compile Include="View\CustomControls\NetworkElementsControls\NodeControl.cs" />
+    <Compile Include="View\CustomControls\NetworkElementsControls\ACLineUserControl.xaml.cs">
+      <DependentUpon>ACLineUserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\CustomControls\NetworkElementsControls\ConsumerUserControl.xaml.cs">
+      <DependentUpon>ConsumerUserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\CustomControls\NetworkElementsControls\NodeUserControl.xaml.cs">
+      <DependentUpon>NodeUserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\CustomControls\NetworkElementsControls\RegularLineControl.xaml.cs">
+      <DependentUpon>RegularLineControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\CustomControls\NetworkElementsControls\SourceUserControl.xaml.cs">
+      <DependentUpon>SourceUserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\CustomControls\NetworkElementsControls\SwitchLineControl.xaml.cs">
+      <DependentUpon>SwitchLineControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\CustomControls\NetworkElementsControls\SwitchUserControl.xaml.cs">
       <DependentUpon>SwitchUserControl.xaml</DependentUpon>
     </Compile>
@@ -155,6 +178,30 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="View\CustomControls\NetworkElementsControls\ACLineUserControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\CustomControls\NetworkElementsControls\ConsumerUserControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\CustomControls\NetworkElementsControls\NodeUserControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\CustomControls\NetworkElementsControls\RegularLineControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\CustomControls\NetworkElementsControls\SourceUserControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\CustomControls\NetworkElementsControls\SwitchLineControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\CustomControls\NetworkElementsControls\SwitchUserControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

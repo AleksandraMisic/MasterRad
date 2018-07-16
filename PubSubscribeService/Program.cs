@@ -41,12 +41,14 @@ namespace PubSubscribeService
 
         private static void HostPublishService()
         {
+            publishServiceHost = new ServiceHost(typeof(PublishingService));
             publishServiceHost.AddServiceEndpoint(typeof(IPublishing), NetTcpBindingCreator.Create(), "net.tcp://localhost:3001/Pub");
             publishServiceHost.Open();
         }
 
         private static void HostSubscribeService()
         {
+            subscribeServiceHost = new ServiceHost(typeof(SubscriptionService));
             subscribeServiceHost.AddServiceEndpoint(typeof(ISubscription), NetTcpBindingCreator.Create(), "net.tcp://localhost:3002/Sub");
             subscribeServiceHost.Open();
         }

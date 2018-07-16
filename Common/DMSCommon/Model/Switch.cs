@@ -4,7 +4,7 @@ using System.Text;
 namespace DMSCommon.Model
 {
     [DataContract]
-    public class Switch:Branch
+    public class Switch : Branch
     {
         [EnumMember]
         private SwitchState _state;

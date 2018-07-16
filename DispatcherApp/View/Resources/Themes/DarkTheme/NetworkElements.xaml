@@ -2,25 +2,22 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:local="clr-namespace:DispatcherApp.View.Resources.Themes.DarkTheme">
 
-    <SolidColorBrush x:Key="SwitchColorClosed" Color="#1EDE00">
+    <SolidColorBrush x:Key="EnergizedColor" Color="#1EDE00">
     </SolidColorBrush>
 
-    <SolidColorBrush x:Key="SwitchColorMouseOverClosed" Color="#8FFF7E">
+    <SolidColorBrush x:Key="EnergizedColorMouseOver" Color="#8FFF7E">
     </SolidColorBrush>
 
-    <SolidColorBrush x:Key="SwitchColorPressedClosed" Color="#16A500">
+    <SolidColorBrush x:Key="EnergizedColorMousePressed" Color="#16A500">
     </SolidColorBrush>
 
-    <ControlTemplate x:Key="SwitchControlTemplate">
-    </ControlTemplate>
-
-    <SolidColorBrush x:Key="SwitchColorClosedDeenergized" Color="#002feb">
+    <SolidColorBrush x:Key="DeenergizedColor" Color="#002feb">
     </SolidColorBrush>
 
-    <SolidColorBrush x:Key="SwitchColorMouseOverClosedDeenergized" Color="LightBlue">
+    <SolidColorBrush x:Key="DeenergizedColorMouseOver" Color="LightBlue">
     </SolidColorBrush>
 
-    <SolidColorBrush x:Key="SwitchColorPressedClosedDeenergized" Color="DarkBlue">
+    <SolidColorBrush x:Key="DeenergizedColorMousePressed" Color="DarkBlue">
     </SolidColorBrush>
 
     <SolidColorBrush x:Key="SwitchColorSearching" Color="#FFFF00">
@@ -60,7 +57,7 @@
         <Setter Property="Button.Template">
             <Setter.Value>
                 <ControlTemplate>
-                    <Border Name="Border" Background="Green" CornerRadius="2">
+                    <Border Name="Border" Background="{StaticResource EnergizedColor}" CornerRadius="2">
                         <Canvas>
                             <Border Height="5" Width="5" Background="DarkOrange" BorderBrush="White" BorderThickness="1" CornerRadius="5">
                                 <TextBlock Text="S" Foreground="White" ToolTip="Under SCADA" HorizontalAlignment="Center" VerticalAlignment="Center"/>
@@ -69,15 +66,15 @@
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="Button.IsMouseOver" Value="True">
-                            <Setter Property="Button.Background" Value="LightGreen" TargetName="Border">
+                            <Setter Property="Button.Background" Value="{StaticResource EnergizedColorMouseOver}" TargetName="Border">
                             </Setter>
                         </Trigger>
                         <Trigger Property="Button.IsPressed" Value="True">
-                            <Setter Property="Button.Background" Value="LightGreen" TargetName="Border">
+                            <Setter Property="Button.Background" Value="{StaticResource EnergizedColorMousePressed}" TargetName="Border">
                             </Setter>
                         </Trigger>
                         <DataTrigger Binding="{Binding IsEnergized}" Value="False">
-                            <Setter Property="Button.Background" Value="Blue" TargetName="Border">
+                            <Setter Property="Button.Background" Value="{StaticResource DeenergizedColor}" TargetName="Border">
                             </Setter>
                         </DataTrigger>
                         <MultiDataTrigger>
@@ -85,7 +82,7 @@
                                 <Condition Binding="{Binding IsEnergized}" Value="False"/>
                                 <Condition Binding="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsMouseOver}" Value="True"/>
                             </MultiDataTrigger.Conditions>
-                            <Setter Property="Button.Background" Value="Orange" TargetName="Border">
+                            <Setter Property="Button.Background" Value="{StaticResource DeenergizedColorMouseOver}" TargetName="Border">
                             </Setter>
                         </MultiDataTrigger>
                         <MultiDataTrigger>
@@ -93,13 +90,150 @@
                                 <Condition Binding="{Binding IsEnergized}" Value="False"/>
                                 <Condition Binding="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsPressed}" Value="True"/>
                             </MultiDataTrigger.Conditions>
-                            <Setter Property="Button.Background" Value="Orange" TargetName="Border">
+                            <Setter Property="Button.Background" Value="{StaticResource DeenergizedColorMousePressed}" TargetName="Border">
                             </Setter>
                         </MultiDataTrigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
+    </Style>
+
+    <Style x:Key="ConsumerControl">
+        <Setter Property="Button.Template">
+            <Setter.Value>
+                <ControlTemplate>
+                    <Border Name="Border" Background="{StaticResource EnergizedColor}" CornerRadius="5">
+                        <Grid>
+                            <Canvas>
+                                <Canvas.Background>
+                                    <ImageBrush ImageSource="../../Images/call.png"/>
+                                </Canvas.Background>
+                            </Canvas>
+                            <Canvas>
+                                <Border Height="5" Width="5" Background="DarkOrange" BorderBrush="White" BorderThickness="1" CornerRadius="5">
+                                    <TextBlock Text="S" Foreground="White" ToolTip="Under SCADA" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                            </Canvas>
+                        </Grid>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="Button.IsMouseOver" Value="True">
+                            <Setter Property="Button.Background" Value="{StaticResource EnergizedColorMouseOver}" TargetName="Border">
+                            </Setter>
+                        </Trigger>
+                        <Trigger Property="Button.IsPressed" Value="True">
+                            <Setter Property="Button.Background" Value="{StaticResource EnergizedColorMousePressed}" TargetName="Border">
+                            </Setter>
+                        </Trigger>
+                        <DataTrigger Binding="{Binding IsEnergized}" Value="False">
+                            <Setter Property="Button.Background" Value="{StaticResource DeenergizedColor}" TargetName="Border">
+                            </Setter>
+                        </DataTrigger>
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding IsEnergized}" Value="False"/>
+                                <Condition Binding="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsMouseOver}" Value="True"/>
+                            </MultiDataTrigger.Conditions>
+                            <Setter Property="Button.Background" Value="{StaticResource DeenergizedColorMouseOver}" TargetName="Border">
+                            </Setter>
+                        </MultiDataTrigger>
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding IsEnergized}" Value="False"/>
+                                <Condition Binding="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsPressed}" Value="True"/>
+                            </MultiDataTrigger.Conditions>
+                            <Setter Property="Button.Background" Value="{StaticResource DeenergizedColorMousePressed}" TargetName="Border">
+                            </Setter>
+                        </MultiDataTrigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="ACLineControl">
+        <Setter Property="Button.Template">
+            <Setter.Value>
+                <ControlTemplate>
+                    <Border Name="Border" Background="{StaticResource EnergizedColor}" CornerRadius="2">
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="Button.IsMouseOver" Value="True">
+                            <Setter Property="Button.Background" Value="{StaticResource EnergizedColorMouseOver}" TargetName="Border">
+                            </Setter>
+                        </Trigger>
+                        <Trigger Property="Button.IsPressed" Value="True">
+                            <Setter Property="Button.Background" Value="{StaticResource EnergizedColorMousePressed}" TargetName="Border">
+                            </Setter>
+                        </Trigger>
+                        <DataTrigger Binding="{Binding IsEnergized}" Value="False">
+                            <Setter Property="Button.Background" Value="{StaticResource DeenergizedColor}" TargetName="Border">
+                            </Setter>
+                        </DataTrigger>
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding IsEnergized}" Value="False"/>
+                                <Condition Binding="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsMouseOver}" Value="True"/>
+                            </MultiDataTrigger.Conditions>
+                            <Setter Property="Button.Background" Value="{StaticResource DeenergizedColorMouseOver}" TargetName="Border">
+                            </Setter>
+                        </MultiDataTrigger>
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding IsEnergized}" Value="False"/>
+                                <Condition Binding="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsPressed}" Value="True"/>
+                            </MultiDataTrigger.Conditions>
+                            <Setter Property="Button.Background" Value="{StaticResource DeenergizedColorMousePressed}" TargetName="Border">
+                            </Setter>
+                        </MultiDataTrigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="NodeControl">
+        <Setter Property="Button.Template">
+            <Setter.Value>
+                <ControlTemplate>
+                    <Border Name="Border" Background="Black" CornerRadius="2">
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="Button.IsMouseOver" Value="True">
+                            <Setter Property="Button.Background" Value="Gray" TargetName="Border">
+                            </Setter>
+                        </Trigger>
+                        <Trigger Property="Button.IsPressed" Value="True">
+                            <Setter Property="Button.Background" Value="Gray" TargetName="Border">
+                            </Setter>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="RegularPolyline" TargetType="Polyline">
+        <Setter Property="StrokeThickness" Value="0.5"/>
+        <Setter Property="Stroke" Value="{StaticResource EnergizedColor}"/>
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding IsEnergized}" Value="False">
+                <Setter Property="Stroke" Value="{StaticResource DeenergizedColor}">
+                </Setter>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style x:Key="SwitchUpperPolyline" TargetType="Polyline">
+        <Setter Property="StrokeThickness" Value="0.5"/>
+        <Setter Property="Stroke" Value="{StaticResource EnergizedColor}"/>
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding Parent.IsEnergized}" Value="False">
+                <Setter Property="Stroke" Value="{StaticResource DeenergizedColor}">
+                </Setter>
+            </DataTrigger>
+        </Style.Triggers>
     </Style>
 
 </ResourceDictionary>
