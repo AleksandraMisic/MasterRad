@@ -134,7 +134,7 @@ namespace DMSService
                     Publisher publisher = new Publisher();
                     if (networkChange.Count > 0)
                     {
-                        publisher.PublishUpdateDigital(networkChange);
+                        publisher.PublishUpdateDigital(mrID, state);
                     }
                     if (isIncident)
                     {
@@ -182,7 +182,7 @@ namespace DMSService
                 Publisher publisher = new Publisher();
                 if (networkChange.Count > 0)
                 {
-                    publisher.PublishUpdateAnalog(networkChange);
+                    publisher.PublishUpdateAnalog(mrID, value);
                 }
             }
             else

@@ -1,5 +1,6 @@
 ﻿using DMSCommon;
 using IMSContract;
+using OMSCommon;
 using OMSSCADACommon;
 using PubSubContract;
 using System;
@@ -9,8 +10,8 @@ using System.ServiceModel;
 
 namespace PubSubscribe
 {
-    public delegate void PublishDigitalUpdateEvent(List<UIUpdateModel> update);
-    public delegate void PublishAnalogUpdateEvent(List<UIUpdateModel> update);
+    public delegate void PublishDigitalUpdateEvent(string mrid, States state);
+    public delegate void PublishAnalogUpdateEvent(string mrid, float value);
     public delegate void PublishCrewEvent(UIUpdateModel update);
     public delegate void PublishReportIncident(IncidentReport report);
     public delegate void PublishCallIncident(UIUpdateModel call);
@@ -38,16 +39,10 @@ namespace PubSubscribe
         private void CreateProxy()
         {
             try
-            {  //***git
-                NetTcpBinding binding = new NetTcpBinding();
-                binding.CloseTimeout = TimeSpan.FromMinutes(10);
-                binding.OpenTimeout = TimeSpan.FromMinutes(10);
-                binding.ReceiveTimeout = TimeSpan.FromMinutes(10);
-                binding.SendTimeout = TimeSpan.FromMinutes(10);
-                binding.MaxReceivedMessageSize = Int32.MaxValue;
-                EndpointAddress endpointAddress = new EndpointAddress("net.tcp://localhost:7002/Sub");
+            {  
+                EndpointAddress endpointAddress = new EndpointAddress("net.tcp://localhost:3002/Sub");
                 InstanceContext callback = new InstanceContext(this);
-                DuplexChannelFactory<ISubscription> channelFactory = new DuplexChannelFactory<ISubscription>(callback, binding, endpointAddress);
+                DuplexChannelFactory<ISubscription> channelFactory = new DuplexChannelFactory<ISubscription>(callback, NetTcpBindingCreator.Create(), endpointAddress);
                 subscriptionProxy = channelFactory.CreateChannel();
             }
             catch (Exception e)
@@ -84,14 +79,14 @@ namespace PubSubscribe
             }
         }
 
-        public void PublishDigitalUpdate(List<UIUpdateModel> update)
+        public void PublishDigitalUpdate(string mrid, States state)
         {
-            publishDigitalUpdateEvent?.Invoke(update);
+            publishDigitalUpdateEvent?.Invoke(mrid, state);
         }
 
-        public void PublishAnalogUpdate(List<UIUpdateModel> update)
+        public void PublishAnalogUpdate(string mrid, float value)
         {
-            publishAnalogUpdateEvent?.Invoke(update);
+            publishAnalogUpdateEvent?.Invoke(mrid, value);
         }
 
         public void PublishCrewUpdate(UIUpdateModel update)

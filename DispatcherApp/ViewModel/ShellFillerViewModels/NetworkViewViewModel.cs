@@ -181,6 +181,8 @@ namespace DispatcherApp.ViewModel.ShellFillerModelViews
             List<DigitalMeasurement> digitalMeasurements = new List<DigitalMeasurement>();
             List<AnalogMeasurement> analogMeasurements = new List<AnalogMeasurement>();
 
+            PropertiesModelView propertiesModelView = new PropertiesModelView();
+
             if (rd != null)
             {
                 StaticProperties staticProperties = new StaticProperties();
@@ -203,6 +205,8 @@ namespace DispatcherApp.ViewModel.ShellFillerModelViews
 
                         short type = ModelCodeHelper.ExtractTypeFromGlobalId(meas);
 
+                        PropertiesModelView.Measurements.Clear();
+
                         if (type == (short)DMSType.DISCRETE)
                         {
                             DigitalMeasurement digitalMeasurement = new DigitalMeasurement();
@@ -213,6 +217,8 @@ namespace DispatcherApp.ViewModel.ShellFillerModelViews
                             digitalMeasurement.State = state;
 
                             digitalMeasurements.Add(digitalMeasurement);
+
+                            PropertiesModelView.Measurements.Add(digitalMeasurement.MRID, digitalMeasurement);
                         }
                         else if (type == (short)DMSType.ANALOG)
                         {
@@ -224,12 +230,12 @@ namespace DispatcherApp.ViewModel.ShellFillerModelViews
                             analogMeasurement.Value = value;
 
                             analogMeasurements.Add(analogMeasurement);
+
+                            PropertiesModelView.Measurements.Add(analogMeasurement.MRID, analogMeasurement);
                         }
                     }
                 }
             }
-
-            PropertiesModelView propertiesModelView = new PropertiesModelView();
 
             if (digitalMeasurements.Count == 0 && analogMeasurements.Count == 0)
             {

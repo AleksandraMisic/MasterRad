@@ -14,22 +14,22 @@ namespace PubSubscribeService.Services
         {
         }
 
-        public void PublishDigitalUpdate(List<UIUpdateModel> deltaUpdateDigital)
+        public void PublishDigitalUpdate(string mrid, States state)
         {
             foreach (IPublishing subscriber in PubSubscribeDB.Subscribers)
             {
-                PublishThreadData threadObj = new PublishThreadData(subscriber, deltaUpdateDigital, true);
+                PublishThreadData threadObj = new PublishThreadData(subscriber, mrid, state, 0, true);
 
                 Thread thread = new Thread(threadObj.PublishDigitalDelta);
                 thread.Start();
             }
         }
 
-        public void PublishAnalogUpdate(List<UIUpdateModel> deltaUpdateAnalog)
+        public void PublishAnalogUpdate(string mrid, float value)
         {
             foreach (IPublishing subscriber in PubSubscribeDB.Subscribers)
             {
-                PublishThreadData threadObj = new PublishThreadData(subscriber, deltaUpdateAnalog, false);
+                PublishThreadData threadObj = new PublishThreadData(subscriber, mrid, 0, value, false);
 
                 Thread thread = new Thread(threadObj.PublishAnalogDelta);
                 thread.Start();
@@ -85,7 +85,9 @@ namespace PubSubscribeService.Services
     {
         private IPublishing subscriber;
 
-        private List<UIUpdateModel> digitalDeltaUpdate;
+        private string mrid;
+        private States state;
+        private float value;
         private List<UIUpdateModel> analogDeltaUpdate;
         private UIUpdateModel crewUpdate;
         private IncidentReport report;
@@ -94,13 +96,15 @@ namespace PubSubscribeService.Services
         private long incidentBreaker;
 
         // for publishing digital, and analog delta
-        public PublishThreadData(IPublishing subscriber, List<UIUpdateModel> deltaUpdate, bool isDigital)
+        public PublishThreadData(IPublishing subscriber, string mrid, States state, float value, bool isDigital)
         {
             this.subscriber = subscriber;
+            this.mrid = mrid;
+
             if (isDigital)
-                this.digitalDeltaUpdate = deltaUpdate;
+                this.state = state;
             else
-                this.analogDeltaUpdate = deltaUpdate;
+                this.value = value;
         }
 
         // for publishing crew update
@@ -145,18 +149,45 @@ namespace PubSubscribeService.Services
             }
         }
 
-        public List<UIUpdateModel> DigitalDeltaUpdate
+        public string MRID 
         {
             get
             {
-                return digitalDeltaUpdate;
+                return mrid;
             }
 
             set
             {
-                digitalDeltaUpdate = value;
+                mrid = value;
             }
         }
+
+        public States State
+        {
+            get
+            {
+                return state;
+            }
+
+            set
+            {
+                state = value;
+            }
+        }
+
+        public float Value
+        {
+            get
+            {
+                return value;
+            }
+
+            set
+            {
+                value = value;
+            }
+        }
+
         public List<UIUpdateModel> AnalogDeltaUpdate
         {
             get
@@ -179,7 +210,7 @@ namespace PubSubscribeService.Services
         {
             try
             {
-                subscriber.PublishDigitalUpdate(DigitalDeltaUpdate);
+                subscriber.PublishDigitalUpdate(MRID, State);
             }
             catch (Exception e)
             {
@@ -191,7 +222,7 @@ namespace PubSubscribeService.Services
         {
             try
             {
-                subscriber.PublishAnalogUpdate(AnalogDeltaUpdate);
+                subscriber.PublishAnalogUpdate(MRID, Value);
             }
             catch (Exception e)
             {

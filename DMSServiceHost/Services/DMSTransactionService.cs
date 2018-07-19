@@ -36,7 +36,7 @@ namespace DMSService
                 Source s = (Source)DMSServiceHost.Instance.Tree.Data[DMSServiceHost.Instance.Tree.Roots[0]];
                 update.Add(new UIUpdateModel(true, s.ElementGID));
 
-                publisher.PublishUpdateDigital(update);
+                //publisher.PublishUpdateDigital(update);
             }
 
 

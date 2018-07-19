@@ -233,7 +233,7 @@ namespace DMSService
 
                             Thread.Sleep(3000);
 
-                            pub.PublishUpdateDigital(networkChange);
+                            //pub.PublishUpdateDigital(s.MRID, true);
                             pub.PublishIncident(incident);
 
                             clientsCall.Clear();

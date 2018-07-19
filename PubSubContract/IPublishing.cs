@@ -10,10 +10,10 @@ namespace PubSubContract
     public interface IPublishing
     {
         [OperationContract(IsOneWay = true)]
-        void PublishDigitalUpdate(List<UIUpdateModel> update);
+        void PublishDigitalUpdate(string mrid, States state);
 
         [OperationContract(IsOneWay = true)]
-        void PublishAnalogUpdate(List<UIUpdateModel> update);
+        void PublishAnalogUpdate(string mrid, float value);
 
         [OperationContract(IsOneWay = true)]
         void PublishCrewUpdate(UIUpdateModel update);

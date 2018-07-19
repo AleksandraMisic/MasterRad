@@ -1,5 +1,6 @@
 ﻿using DMSCommon;
 using IMSContract;
+using OMSCommon;
 using OMSSCADACommon;
 using PubSubContract;
 using System;
@@ -23,20 +24,20 @@ namespace PubSubscribe
             CreateProxy();
         }
 
-        public void PublishUpdateDigital(List<UIUpdateModel> update)
+        public void PublishUpdateDigital(string mrid, States state)
         {
             try
             {
-                proxy.PublishDigitalUpdate(update);
+                proxy.PublishDigitalUpdate(mrid, state);
             }
-            catch { }
+            catch (Exception e) { }
         }
 
-        public void PublishUpdateAnalog(List<UIUpdateModel> update)
+        public void PublishUpdateAnalog(string mrid, float value)
         {
             try
             {
-                proxy.PublishAnalogUpdate(update);
+                proxy.PublishAnalogUpdate(mrid, value);
             }
             catch { }
         }
@@ -83,15 +84,9 @@ namespace PubSubscribe
             string address = "";
             try
             {
-                address = "net.tcp://localhost:7001/Pub";
+                address = "net.tcp://localhost:3001/Pub";
                 EndpointAddress endpointAddress = new EndpointAddress(address);
-                NetTcpBinding binding = new NetTcpBinding();
-                binding.CloseTimeout = TimeSpan.FromMinutes(10);
-                binding.OpenTimeout = TimeSpan.FromMinutes(10);
-                binding.ReceiveTimeout = TimeSpan.FromMinutes(10);
-                binding.SendTimeout = TimeSpan.FromMinutes(10);
-                binding.MaxReceivedMessageSize = Int32.MaxValue;
-                proxy = ChannelFactory<IPublishing>.CreateChannel(binding, endpointAddress);
+                proxy = ChannelFactory<IPublishing>.CreateChannel(NetTcpBindingCreator.Create(), endpointAddress);
             }
             catch (Exception e)
             {

@@ -82,8 +82,6 @@ namespace DispatcherApp.ViewModel
 
         private RelayCommand closeControlCommand;
 
-        private RelayCommand propertiesCommand;
-
         private RelayCommand sendCrewCommand;
 
         private RelayCommand executeSwitchCommand;
@@ -104,14 +102,12 @@ namespace DispatcherApp.ViewModel
             TopMenu = new ObservableCollection<UserControl>();
             TopMenu.Add(new TopMenu());
 
-            subscriber = new Subscriber();
-            subscriber.Subscribe();
-            subscriber.publishDigitalUpdateEvent += GetDigitalUpdate;
-            subscriber.publishAnalogUpdateEvent += GetAnalogUpdate;
-            subscriber.publishCrewEvent += GetCrewUpdate;
-            subscriber.publishIncident += GetIncident;
-            subscriber.publishCall += GetCallFromConsumers;
-            subscriber.publiesBreakers += SearchForIncident;
+            //subscriber = new Subscriber();
+            //subscriber.Subscribe();
+            //subscriber.publishCrewEvent += GetCrewUpdate;
+            //subscriber.publishIncident += GetIncident;
+            //subscriber.publishCall += GetCallFromConsumers;
+            //subscriber.publiesBreakers += SearchForIncident;
 
             dMSProxy = new ClientDMSProxy();
             
@@ -663,97 +659,6 @@ namespace DispatcherApp.ViewModel
         #endregion Properties
 
         #region Publish methods
-        private void GetDigitalUpdate(List<UIUpdateModel> update)
-        {
-            if (update != null)
-            {
-                if (update.ElementAt(0).IsElementAdded == true)
-                {
-                    NetTcpBinding binding = new NetTcpBinding();
-                    binding.CloseTimeout = new TimeSpan(1, 0, 0, 0);
-                    binding.OpenTimeout = new TimeSpan(1, 0, 0, 0);
-                    binding.ReceiveTimeout = new TimeSpan(1, 0, 0, 0);
-                    binding.SendTimeout = new TimeSpan(1, 0, 0, 0);
-                    binding.MaxReceivedMessageSize = Int32.MaxValue;
-
-                    //ChannelFactory<IOMSClient> factoryToTMS = new ChannelFactory<IOMSClient>(binding,
-                    //    new EndpointAddress("net.tcp://localhost:6080/TransactionManagerService"));
-                    ////ProxyToOMS = factoryToTMS.CreateChannel();
-                    //TMSAnswerToClient answerFromTransactionManager = new TMSAnswerToClient();
-
-                    //try
-                    //{
-                    //    //answerFromTransactionManager = ProxyToOMS.GetNetwork("");
-                    //}
-                    //catch (Exception e) { }
-
-                    //InitNetwork();
-                    //InitElementsAndProperties(answerFromTransactionManager);
-                    //DrawElementsOnGraph(answerFromTransactionManager.GraphDeep);
-
-                    return;
-                }
-
-                int i = 0;
-                foreach (UIUpdateModel sum in update)
-                {
-                    //ElementProperties property;
-                    ////properties.TryGetValue(sum.Gid, out property);
-                    //if (property != null)
-                    //{
-                    //    property.IsEnergized = sum.IsEnergized;
-
-                    //    if (property is BreakerProperties && i == 0)
-                    //    {
-                    //        BreakerProperties breakerProperties = property as BreakerProperties;
-                    //        breakerProperties.State = sum.State;
-
-                    //        if (sum.State == OMSSCADACommon.States.CLOSED)
-                    //        {
-                    //            breakerProperties.CanCommand = false;
-                    //        }
-
-                    //        Measurement measurement;
-                    //        DigitalMeasurement digitalMeasurement;
-                    //        try
-                    //        {
-                    //            Measurements.TryGetValue(property.Measurements[0].GID, out measurement);
-                    //            digitalMeasurement = (DigitalMeasurement)measurement;
-                    //        }
-                    //        catch (Exception)
-                    //        {
-                    //            continue;
-                    //        }
-
-                    //        if (digitalMeasurement != null)
-                    //        {
-                    //            digitalMeasurement.State = sum.State;
-                    //        }
-                    //    }
-                    //    if (property is EnergyConsumerProperties)
-                    //    {
-                    //        EnergyConsumerProperties energyConsumerProperties = property as EnergyConsumerProperties;
-                    //        energyConsumerProperties.Call = false;
-                    //    }
-                    //}
-                    i++;
-                }
-            }
-        }
-
-        private void GetAnalogUpdate(List<UIUpdateModel> update)
-        {
-            //if (update != null)
-            //{
-            //    AnalogMeasurement analogMeasurement = (AnalogMeasurement)this.Measurements.Where(meas => meas.Value.GID == update[0].Gid).FirstOrDefault().Value;
-
-            //    if (analogMeasurement != null)
-            //    {
-            //        analogMeasurement.Value = update[0].AnValue;
-            //    }
-            //}
-        }
-
         private void GetCrewUpdate(UIUpdateModel update)
         {
             Console.WriteLine(update.Response.ToString());
