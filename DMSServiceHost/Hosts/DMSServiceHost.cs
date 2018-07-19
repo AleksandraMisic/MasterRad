@@ -36,6 +36,7 @@ namespace DMS.Hosts
         private List<ResourceDescription> energyConsumers = new List<ResourceDescription>();
         private List<ResourceDescription> energySources = new List<ResourceDescription>();
         private List<ResourceDescription> discreteMeasurements = new List<ResourceDescription>();
+        private List<ResourceDescription> analogMeasurements = new List<ResourceDescription>();
 
         private ModelResourcesDesc modelResourcesDesc = new ModelResourcesDesc();
         private ModelGdaDMS gda = new ModelGdaDMS();
@@ -125,6 +126,8 @@ namespace DMS.Hosts
         public List<ResourceDescription> EnergyConsumersRD { get => energyConsumers; set => energyConsumers = value; }
         public List<ResourceDescription> EnergySourcesRD { get => energySources; set => energySources = value; }
         public List<ResourceDescription> DiscreteMeasurementsRD { get => discreteMeasurements; set => discreteMeasurements = value; }
+        public List<ResourceDescription> AnalogMeasurementsRD { get => analogMeasurements; set => analogMeasurements = value; }
+
         public ModelGdaDMS Gda { get => gda; set => gda = value; }
         #endregion
 
@@ -233,6 +236,7 @@ namespace DMS.Hosts
                 Gda.GetExtentValuesExtended(ModelCode.ENERGCONSUMER).ForEach(n => EnergyConsumersRD.Add(n));
                 Gda.GetExtentValuesExtended(ModelCode.ENERGSOURCE).ForEach(n => EnergySourcesRD.Add(n));
                 Gda.GetExtentValuesExtended(ModelCode.DISCRETE).ForEach(n => DiscreteMeasurementsRD.Add(n));
+                Gda.GetExtentValuesExtended(ModelCode.ANALOG).ForEach(n => AnalogMeasurementsRD.Add(n));
 
                 //Posto smo uveli bazu RD-na napunicemo liste na DMS-u iz cloud baze
                 //using (NMSAdoNet ctx = new NMSAdoNet())
@@ -551,6 +555,21 @@ namespace DMS.Hosts
                         consumer.End1 = n.ElementGID;
                         n.Children.Add(consumer.ElementGID);
                         Consumers.Add(consumer);
+
+                        if (response != null)
+                        {
+                            var psr = EnergyConsumersRD.Where(m => m.GetProperty(ModelCode.IDOBJ_MRID).AsString() == mrid).FirstOrDefault();
+                            var meas = AnalogMeasurementsRD.Where(m => m.GetProperty(ModelCode.MEASUREMENT_PSR).AsLong() == psr.Id).FirstOrDefault();
+
+                            if (meas != null)
+                            {
+                                consumer.UnderSCADA = true;
+                            }
+                            else
+                            {
+                                consumer.UnderSCADA = false;
+                            }
+                        }
 
                         retVal.AddChild(n.ElementGID, consumer.ElementGID, consumer);
                     }

@@ -5,29 +5,31 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:sys="clr-namespace:System;assembly=mscorlib"
              xmlns:local="clr-namespace:DispatcherApp.View.CustomControls.NetworkElementsControls"
+             xmlns:converters="clr-namespace:DispatcherApp.View.Resources.Converters"
              mc:Ignorable="d">
     <UserControl.Resources>
         <GridLength x:Key="ColumnWidth">10</GridLength>
+        <converters:BoolToVisibility x:Key="BoolToVisibility"/>
     </UserControl.Resources>
     <Grid Width="Auto" Height="Auto">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="{StaticResource ColumnWidth}"/>
-            <ColumnDefinition Width="2"/>
-            <ColumnDefinition Width="{StaticResource ColumnWidth}"/>
-            <ColumnDefinition Width="2"/>
-            <ColumnDefinition Width="{StaticResource ColumnWidth}"/>
+            <ColumnDefinition Name="IncidentColumn"/>
+            <ColumnDefinition Name="Gap1" Width="2"/>
+            <ColumnDefinition Name="MainColumn"/>
+            <ColumnDefinition Name="Gap2" Width="2"/>
+            <ColumnDefinition Name="CrewColumn"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="{StaticResource ColumnWidth}"/>
+            <RowDefinition Name="MainRow"/>
         </Grid.RowDefinitions>
-        <Canvas Grid.Column="0">
+        <Canvas Grid.Column="0" Visibility="{Binding Incident, Converter={StaticResource ResourceKey=BoolToVisibility}}">
             <Canvas.Background>
                 <ImageBrush ImageSource="../../Resources/Images/incident.png"/>
             </Canvas.Background>
         </Canvas>
         <Button Name="MainButton" Grid.Column="2" Style="{StaticResource ResourceKey=SwitchControl}">
         </Button>
-        <Canvas Grid.Column="4">
+        <Canvas Grid.Column="4" Visibility="{Binding CrewSent, Converter={StaticResource ResourceKey=BoolToVisibility}}">
             <Canvas.Background>
                 <ImageBrush ImageSource="../../Resources/Images/crew.png"/>
             </Canvas.Background>

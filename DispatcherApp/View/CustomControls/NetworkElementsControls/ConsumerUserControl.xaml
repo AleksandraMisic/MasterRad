@@ -7,7 +7,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid Width="Auto" Height="Auto">
-        <Button Name="Button" Width="10" Height="10" Style="{StaticResource ResourceKey=ConsumerControl}">
+        <Button Name="Button" Style="{StaticResource ResourceKey=ConsumerControl}">
         </Button>
     </Grid>
 </UserControl>

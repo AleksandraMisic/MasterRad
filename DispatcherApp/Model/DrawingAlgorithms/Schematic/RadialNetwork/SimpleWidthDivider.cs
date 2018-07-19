@@ -23,6 +23,9 @@ namespace DispatcherApp.Model.DrawingAlgorithms.Schematic.RadialNetwork
         private Dictionary<long, ElementProperties> properties;
         private ObservableCollection<UIElement> result;
 
+        private double currentHeight = 8;
+        private double startHeight = 8;
+
         private FrameworkElement frameworkElement;
 
         public SimpleWidthDivider()
@@ -186,7 +189,7 @@ namespace DispatcherApp.Model.DrawingAlgorithms.Schematic.RadialNetwork
 
                 if (branch is Consumer)
                 {
-                    point2.Y -= cellWidth /3;
+                    point2.Y = y * cellHeight - cellHeight / 5;
 
                     if (branchProperties != null)
                     {
@@ -227,13 +230,36 @@ namespace DispatcherApp.Model.DrawingAlgorithms.Schematic.RadialNetwork
         {
             ConsumerUserControl consumerControl = new ConsumerUserControl();
 
-            if (properties.TryGetValue(consumer.ElementGID, out ElementProperties branchProperties))
+            double var = 80 * cellWidth / 100;
+
+            if (var > startHeight)
             {
-                consumerControl.DataContext = branchProperties as ConsumerProperties;
+                currentHeight = startHeight;
+            }
+            else
+            {
+                currentHeight = var;
             }
 
-            Canvas.SetLeft(consumerControl, offset + cellWidth / 2 - 10 / 2);
-            Canvas.SetTop(consumerControl, y * cellHeight - cellHeight / 5 - 10 / 2);
+            if (properties.TryGetValue(consumer.ElementGID, out ElementProperties elementProperties))
+            {
+                ConsumerProperties consumerProperties = elementProperties as ConsumerProperties;
+
+                consumerControl.DataContext = consumerProperties;
+
+                consumerProperties.ScadaCornerRadius = 2 * currentHeight / 6;
+                consumerProperties.ScadaSize = 2 * currentHeight / 3;
+                consumerProperties.FontSize = 90 * consumerProperties.ScadaSize / 100;
+
+                consumerProperties.ScadaTop = -(2 * currentHeight / 3 / 3);
+                consumerProperties.ScadaLeft = -(2 * currentHeight / 3 / 3);
+            }
+
+            consumerControl.Button.Width = currentHeight;
+            consumerControl.Button.Height = currentHeight;
+
+            Canvas.SetLeft(consumerControl, offset + cellWidth / 2 - currentHeight / 2);
+            Canvas.SetTop(consumerControl, y * cellHeight - cellHeight / 5 - currentHeight / 2);
             Panel.SetZIndex(consumerControl, 5);
 
             consumerControl.Button.Command = NetworkViewViewModel.OpenPropertiesCommand;
@@ -246,14 +272,41 @@ namespace DispatcherApp.Model.DrawingAlgorithms.Schematic.RadialNetwork
         private void PlaceSwitch(Switch breaker, double offset, int y, double cellWidth)
         {
             SwitchUserControl switchControl = new SwitchUserControl();
+            double var = 80 * cellWidth / 100;
 
-            if (properties.TryGetValue(breaker.ElementGID, out ElementProperties switchProperties))
+            if (var > startHeight)
             {
-                switchControl.DataContext = switchProperties as SwitchProperties;
+                currentHeight = startHeight;
+            }
+            else
+            {
+                currentHeight = var;
             }
 
-            Canvas.SetLeft(switchControl, offset + cellWidth / 2 - (2 + 10 + 10 / 2));
-            Canvas.SetTop(switchControl, y * cellHeight - cellHeight / 3 - 10 / 2);
+            if (properties.TryGetValue(breaker.ElementGID, out ElementProperties elementProperties))
+            {
+                SwitchProperties switchProperties = elementProperties as SwitchProperties;
+
+                switchControl.DataContext = switchProperties;
+
+                switchProperties.CornerRadius = currentHeight/10;
+                switchProperties.ScadaCornerRadius = 2 * currentHeight / 6;
+                switchProperties.ScadaSize = 2 * currentHeight / 3;
+                switchProperties.FontSize = 90 * switchProperties.ScadaSize / 100;
+
+                switchProperties.ScadaTop = -(2 * currentHeight / 3 / 3);
+                switchProperties.ScadaLeft = -(2 * currentHeight / 3 / 3);
+            }
+
+            switchControl.IncidentColumn.Width = new GridLength(currentHeight);
+            switchControl.MainColumn.Width = new GridLength(currentHeight);
+            switchControl.CrewColumn.Width = new GridLength(currentHeight);
+            switchControl.MainRow.Height = new GridLength(currentHeight);
+            switchControl.Gap1.Width = new GridLength(currentHeight/5);
+            switchControl.Gap2.Width = new GridLength(currentHeight/5);
+
+            Canvas.SetLeft(switchControl, offset + cellWidth / 2 - (2 + currentHeight + currentHeight / 2));
+            Canvas.SetTop(switchControl, y * cellHeight - cellHeight / 3 - currentHeight / 2);
             Panel.SetZIndex(switchControl, 5);
 
             switchControl.MainButton.Command = NetworkViewViewModel.OpenPropertiesCommand;
@@ -272,8 +325,22 @@ namespace DispatcherApp.Model.DrawingAlgorithms.Schematic.RadialNetwork
                 acLineControl.DataContext = branchProperties as ACLineProperties;
             }
 
-            Canvas.SetLeft(acLineControl, offset + cellWidth / 2 - 1.75);
-            Canvas.SetTop(acLineControl, y * cellHeight - cellHeight / 3 - 10 / 2);
+            double var = 80 * cellWidth / 100;
+
+            if (var > startHeight)
+            {
+                currentHeight = startHeight;
+            }
+            else
+            {
+                currentHeight = var;
+            }
+
+            acLineControl.Button.Height = currentHeight;
+            acLineControl.Button.Width = currentHeight/3;
+
+            Canvas.SetLeft(acLineControl, offset + cellWidth / 2 - currentHeight/3/2);
+            Canvas.SetTop(acLineControl, y * cellHeight - cellHeight / 3 - currentHeight / 2);
             Panel.SetZIndex(acLineControl, 5);
 
             acLineControl.Button.Command = NetworkViewViewModel.OpenPropertiesCommand;

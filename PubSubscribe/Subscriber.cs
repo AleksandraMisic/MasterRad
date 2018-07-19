@@ -16,6 +16,7 @@ namespace PubSubscribe
     public delegate void PublishReportIncident(IncidentReport report);
     public delegate void PublishCallIncident(UIUpdateModel call);
     public delegate void PublishUIBreakers(bool IsIncident,long incidentBreaker);
+    public delegate void PublishEnergizationChange(List<UIUpdateModel> update);
 
     /// <summary>
     /// Client for Subscribing service
@@ -30,6 +31,7 @@ namespace PubSubscribe
         public event PublishReportIncident publishIncident;
         public event PublishCallIncident publishCall;
         public event PublishUIBreakers publiesBreakers;
+        public event PublishEnergizationChange publiesEnergizationChange;
 
         public Subscriber()
         {
@@ -107,6 +109,11 @@ namespace PubSubscribe
         public void PublishUIBreakers(bool IsIncident, long incidentBreaker)
         {
             publiesBreakers?.Invoke(IsIncident, incidentBreaker);
-        }       
+        }
+
+        public void PublishEnergizationChange(List<UIUpdateModel> update)
+        {
+            publiesEnergizationChange?.Invoke(update);
+        }
     }
 }

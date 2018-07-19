@@ -15,6 +15,13 @@ namespace DispatcherApp.Model.Properties.DMSProperties
         private long parentGid;
         private ElementProperties parent;
 
+        private double cornerRadius;
+        private double scadaSize;
+        private double scadaCornerRadius;
+        private double fontSize;
+        private double scadaTop;
+        private double scadaLeft;
+
         public bool Incident
         {
             get
@@ -90,6 +97,84 @@ namespace DispatcherApp.Model.Properties.DMSProperties
             {
                 this.parent = value;
                 RaisePropertyChanged("Parent");
+            }
+        }
+
+        public double CornerRadius
+        {
+            get
+            {
+                return this.cornerRadius;
+            }
+            set
+            {
+                this.cornerRadius = value;
+                RaisePropertyChanged("CornerRadius");
+            }
+        }
+
+        public double ScadaCornerRadius
+        {
+            get
+            {
+                return this.scadaCornerRadius;
+            }
+            set
+            {
+                this.scadaCornerRadius = value;
+                RaisePropertyChanged("ScadaCornerRadius");
+            }
+        }
+
+        public double ScadaSize
+        {
+            get
+            {
+                return this.scadaSize;
+            }
+            set
+            {
+                this.scadaSize = value;
+                RaisePropertyChanged("ScadaSize");
+            }
+        }
+
+        public double FontSize
+        {
+            get
+            {
+                return this.fontSize;
+            }
+            set
+            {
+                this.fontSize = value;
+                RaisePropertyChanged("FontSize");
+            }
+        }
+
+        public double ScadaTop
+        {
+            get
+            {
+                return this.scadaTop;
+            }
+            set
+            {
+                this.scadaTop = value;
+                RaisePropertyChanged("ScadaTop");
+            }
+        }
+
+        public double ScadaLeft
+        {
+            get
+            {
+                return this.scadaLeft;
+            }
+            set
+            {
+                this.scadaLeft = value;
+                RaisePropertyChanged("ScadaLeft");
             }
         }
     }

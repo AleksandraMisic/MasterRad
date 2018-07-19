@@ -6,8 +6,10 @@ using DispatcherApp.Model.Properties.NMSProperties;
 using DispatcherApp.View;
 using DispatcherApp.View.CustomControls.PropertiesControls;
 using DispatcherApp.View.ShellFillers;
+using DMSCommon;
 using DMSCommon.Model;
 using FTN.Common;
+using PubSubscribe;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -29,9 +31,13 @@ namespace DispatcherApp.ViewModel.ShellFillerModelViews
         private static ShellPosition position;
         private ObservableCollection<UIElement> itemsSourceForCanvas;
 
+        private static Dictionary<long, ElementProperties> properties;
+
         private static ClientDMSProxy cdClient;
         private static ClientNMSProxy cnClient;
         private static ClientSCADAProxy csClient;
+
+        private static Subscriber subscriber;
 
         private static RelayCommand openPropertiesCommand;
 
@@ -45,6 +51,12 @@ namespace DispatcherApp.ViewModel.ShellFillerModelViews
         {
             get { return itemsSourceForCanvas; }
             set { itemsSourceForCanvas = value; }
+        }
+
+        public Dictionary<long, ElementProperties> Properties
+        {
+            get { return properties; }
+            set { properties = value; }
         }
 
         public static RelayCommand OpenPropertiesCommand
@@ -62,9 +74,16 @@ namespace DispatcherApp.ViewModel.ShellFillerModelViews
         static NetworkViewViewModel()
         {
             Position = ShellPosition.CENTER;
+
             cdClient = new ClientDMSProxy();
             cnClient = new ClientNMSProxy();
             csClient = new ClientSCADAProxy();
+
+            subscriber = new Subscriber();
+            subscriber.Subscribe();
+            subscriber.publiesEnergizationChange += HandleEnergizationChange;
+
+            properties = new Dictionary<long, ElementProperties>();
         }
 
         public NetworkViewViewModel()
@@ -76,16 +95,12 @@ namespace DispatcherApp.ViewModel.ShellFillerModelViews
         {
             List<Element> list = cdClient.GetNetwork(mrid);
 
-            InitElementProperties(list);
-
             SimpleWidthDivider simpleWidthDivider = new SimpleWidthDivider(list, InitElementProperties(list));
             simpleWidthDivider.DrawNetwork(10, this.itemsSourceForCanvas);
         }
 
         public Dictionary<long, ElementProperties> InitElementProperties(List<Element> elements)
         {
-            Dictionary<long, ElementProperties> properties = new Dictionary<long, ElementProperties>();
-
             if (elements != null)
             {
                 foreach (Element element in elements)
@@ -113,7 +128,7 @@ namespace DispatcherApp.ViewModel.ShellFillerModelViews
                             GID = consumer.ElementGID,
                             IsEnergized = consumer.IsEnergized,
                             IsUnderScada = consumer.UnderSCADA,
-                            //Call = consumer.Call
+                            Call = false
                         };
 
                         properties.Add(consumerProperties.GID, consumerProperties);
@@ -306,6 +321,17 @@ namespace DispatcherApp.ViewModel.ShellFillerModelViews
 
             // JAKO lose !!!!!!!!!!!!!!!
             new MainShellViewModel().PlaceOrFocusControlInShell(PropertiesModelView.Position, sfs, true, "Properties");
+        }
+
+        private static void HandleEnergizationChange(List<UIUpdateModel> updateList)
+        {
+            foreach (UIUpdateModel update in updateList)
+            {
+                if(properties.TryGetValue(update.Gid, out ElementProperties elementProperties))
+                {
+                    elementProperties.IsEnergized = update.IsEnergized;
+                }
+            }
         }
     }
 }

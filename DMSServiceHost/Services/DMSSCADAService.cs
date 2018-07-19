@@ -134,8 +134,10 @@ namespace DMSService
                     Publisher publisher = new Publisher();
                     if (networkChange.Count > 0)
                     {
-                        publisher.PublishUpdateDigital(mrID, state);
+                        publisher.PublishDigitalUpdate(mrID, state);
+                        publisher.PublishEnergizationChange(networkChange);
                     }
+
                     if (isIncident)
                     {
                         List<long> gids = new List<long>();
@@ -182,7 +184,7 @@ namespace DMSService
                 Publisher publisher = new Publisher();
                 if (networkChange.Count > 0)
                 {
-                    publisher.PublishUpdateAnalog(mrID, value);
+                    publisher.PublishAnalogUpdate(mrID, value);
                 }
             }
             else

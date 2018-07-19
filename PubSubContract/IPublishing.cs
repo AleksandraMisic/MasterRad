@@ -26,5 +26,8 @@ namespace PubSubContract
 
         [OperationContract(IsOneWay = true)]
         void PublishUIBreakers(bool isIncident,long incidentBreaker);
+
+        [OperationContract(IsOneWay = true)]
+        void PublishEnergizationChange(List<UIUpdateModel> update);
     }
 }

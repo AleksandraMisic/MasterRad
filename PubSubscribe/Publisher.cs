@@ -15,31 +15,13 @@ namespace PubSubscribe
     /// <summary>
     /// Client for Publishing service
     /// </summary>
-    public class Publisher
+    public class Publisher : IPublishing
     {
         IPublishing proxy;
 
         public Publisher()
         {
             CreateProxy();
-        }
-
-        public void PublishUpdateDigital(string mrid, States state)
-        {
-            try
-            {
-                proxy.PublishDigitalUpdate(mrid, state);
-            }
-            catch (Exception e) { }
-        }
-
-        public void PublishUpdateAnalog(string mrid, float value)
-        {
-            try
-            {
-                proxy.PublishAnalogUpdate(mrid, value);
-            }
-            catch { }
         }
 
         // not used
@@ -94,6 +76,43 @@ namespace PubSubscribe
                 //TODO log error;
             }
 
+        }
+
+        public void PublishDigitalUpdate(string mrid, States state)
+        {
+            try
+            {
+                proxy.PublishDigitalUpdate(mrid, state);
+            }
+            catch (Exception e) { }
+        }
+
+        public void PublishAnalogUpdate(string mrid, float value)
+        {
+            try
+            {
+                proxy.PublishAnalogUpdate(mrid, value);
+            }
+            catch { }
+        }
+
+        public void PublishCrewUpdate(UIUpdateModel update)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void PublishUIBreakers(bool isIncident, long incidentBreaker)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void PublishEnergizationChange(List<UIUpdateModel> update)
+        {
+            try
+            {
+                proxy.PublishEnergizationChange(update);
+            }
+            catch { }
         }
     }
 }

@@ -79,6 +79,17 @@ namespace PubSubscribeService.Services
                 thread.Start();
             }
         }
+
+        public void PublishEnergizationChange(List<UIUpdateModel> update)
+        {
+            foreach (IPublishing subscriber in PubSubscribeDB.Subscribers)
+            {
+                PublishThreadData threadObj = new PublishThreadData(subscriber, update);
+
+                Thread thread = new Thread(threadObj.PublishEnergizationChange);
+                thread.Start();
+            }
+        }
     }
 
     internal class PublishThreadData
@@ -89,7 +100,8 @@ namespace PubSubscribeService.Services
         private States state;
         private float value;
         private List<UIUpdateModel> analogDeltaUpdate;
-        private UIUpdateModel crewUpdate;
+        private UIUpdateModel update;
+        private List<UIUpdateModel> updateList;
         private IncidentReport report;
         private UIUpdateModel call;
         private bool Isincident;
@@ -111,7 +123,13 @@ namespace PubSubscribeService.Services
         public PublishThreadData(IPublishing subscriber, UIUpdateModel update)
         {
             this.subscriber = subscriber;
-            this.crewUpdate = update;
+            this.update = update;
+        }
+
+        public PublishThreadData(IPublishing subscriber, List<UIUpdateModel> update)
+        {
+            this.subscriber = subscriber;
+            this.updateList = update;
         }
 
         // for publishing incident
@@ -184,7 +202,7 @@ namespace PubSubscribeService.Services
 
             set
             {
-                value = value;
+                this.value = value;
             }
         }
 
@@ -200,7 +218,7 @@ namespace PubSubscribeService.Services
                 analogDeltaUpdate = value;
             }
         }
-        public UIUpdateModel CrewUpdate { get => crewUpdate; set => crewUpdate = value; }
+        public UIUpdateModel CrewUpdate { get => update; set => update = value; }
         public IncidentReport Report { get => report; set => report = value; }
         public UIUpdateModel Call { get => call; set => call = value; }
         public bool IsIncident { get => Isincident; set => Isincident = value; }
@@ -271,6 +289,18 @@ namespace PubSubscribeService.Services
             try
             {
                 subscriber.PublishUIBreakers(IsIncident, IncidentBreaker);
+            }
+            catch (Exception e)
+            {
+                PubSubscribeDB.RemoveSubsriber(subscriber);
+            }
+        }
+
+        public void PublishEnergizationChange()
+        {
+            try
+            {
+                subscriber.PublishEnergizationChange(updateList);
             }
             catch (Exception e)
             {
