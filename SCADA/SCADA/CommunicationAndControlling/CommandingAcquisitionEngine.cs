@@ -653,7 +653,30 @@ namespace SCADA.CommunicationAndControlling
 
         public OMSSCADACommon.Responses.Response ReadSingleAnalog(string id)
         {
-            throw new NotImplementedException();
+            Analog analog = null;
+            OMSSCADACommon.Responses.Response response = new OMSSCADACommon.Responses.Response();
+            
+            ProcessVariable pv;
+            if (dbContext.GetProcessVariableByName(id, out pv))
+            {
+                analog = (Analog)pv;
+            }
+            // does this ID exist in the database
+            if (analog == null)
+            {
+                response.ResultMessage = ResultMessage.INVALID_ID;
+                return response;
+            }
+
+            AnalogVariable analogVariable = new AnalogVariable()
+            {
+                Id = id,
+                Value = analog.AcqValue
+            };
+
+            response.Variables.Add(analogVariable);
+
+            return response;
         }
 
         public OMSSCADACommon.Responses.Response ReadSingleCounter(string id)
@@ -663,7 +686,32 @@ namespace SCADA.CommunicationAndControlling
 
         public OMSSCADACommon.Responses.Response ReadSingleDigital(string id)
         {
-            throw new NotImplementedException();
+            Digital digital = null;
+            OMSSCADACommon.Responses.Response response = new OMSSCADACommon.Responses.Response();
+
+            // getting PV from db
+            ProcessVariable pv;
+            if (dbContext.GetProcessVariableByName(id, out pv))
+            {
+                digital = (Digital)pv;
+            }
+
+            // does this ID exist in the database
+            if (digital == null)
+            {
+                response.ResultMessage = ResultMessage.INVALID_ID;
+                return response;
+            }
+
+            DigitalVariable digitalVariable = new DigitalVariable()
+            {
+                Id = id,
+                State = digital.State
+            };
+
+            response.Variables.Add(digitalVariable);
+
+            return response;
         }
 
         public OMSSCADACommon.Responses.Response ReadAll()
@@ -733,8 +781,6 @@ namespace SCADA.CommunicationAndControlling
 
             // to do:
             // ovde analogProcessor provera opsega, alarma...bla, bla
-
-
 
             RTU rtu;
             if ((rtu = dbContext.GetRTUByName(analog.ProcContrName)) != null)
@@ -822,7 +868,6 @@ namespace SCADA.CommunicationAndControlling
                 response.ResultMessage = ResultMessage.INVALID_DIG_COMM;
                 return response;
             }
-
 
             RTU rtu;
             if ((rtu = dbContext.GetRTUByName(digital.ProcContrName)) != null)

@@ -46,6 +46,8 @@
   <ItemGroup>
     <Compile Include="Commands\Command.cs" />
     <Compile Include="Commands\ReadAll.cs" />
+    <Compile Include="Commands\ReadSingleAnalog.cs" />
+    <Compile Include="Commands\ReadSingleDigital.cs" />
     <Compile Include="Commands\WriteSingleAnalog.cs" />
     <Compile Include="Commands\WriteSingleDigital.cs" />
     <Compile Include="CommandTypes.cs" />

@@ -31,6 +31,7 @@ namespace DispatcherApp.ViewModel.ShellFillerModelViews
 
         private static ClientDMSProxy cdClient;
         private static ClientNMSProxy cnClient;
+        private static ClientSCADAProxy csClient;
 
         private static RelayCommand openPropertiesCommand;
 
@@ -63,6 +64,7 @@ namespace DispatcherApp.ViewModel.ShellFillerModelViews
             Position = ShellPosition.CENTER;
             cdClient = new ClientDMSProxy();
             cnClient = new ClientNMSProxy();
+            csClient = new ClientSCADAProxy();
         }
 
         public NetworkViewViewModel()
@@ -206,12 +208,20 @@ namespace DispatcherApp.ViewModel.ShellFillerModelViews
                             DigitalMeasurement digitalMeasurement = new DigitalMeasurement();
                             digitalMeasurement.ReadFromResourceDescription(rd);
 
+                            csClient.GetDiscreteMeasurement(rd.GetProperty(ModelCode.IDOBJ_MRID).AsString(), out OMSSCADACommon.States state);
+                            
+                            digitalMeasurement.State = state;
+
                             digitalMeasurements.Add(digitalMeasurement);
                         }
                         else if (type == (short)DMSType.ANALOG)
                         {
                             AnalogMeasurement analogMeasurement = new AnalogMeasurement();
                             analogMeasurement.ReadFromResourceDescription(rd);
+
+                            csClient.GetAnalogMeasurement(rd.GetProperty(ModelCode.IDOBJ_MRID).AsString(), out float value);
+
+                            analogMeasurement.Value = value;
 
                             analogMeasurements.Add(analogMeasurement);
                         }

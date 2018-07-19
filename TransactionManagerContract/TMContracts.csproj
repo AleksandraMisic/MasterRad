@@ -49,6 +49,8 @@
     <Compile Include="ClientIMS\ClientIMSProxy.cs" />
     <Compile Include="ClientNMS\ClientNMSProxy.cs" />
     <Compile Include="ClientNMS\IClientNMS.cs" />
+    <Compile Include="ClientSCADA\ClientSCADAProxy.cs" />
+    <Compile Include="ClientSCADA\IClientSCADA.cs" />
     <Compile Include="IOMSClient.cs" />
     <Compile Include="DistributedTransaction\IDistributedTransaction.cs" />
     <Compile Include="DistributedTransaction\IDistributedTransactionCallback.cs" />
@@ -86,8 +88,6 @@
       <Name>NetworkModelGDAContract</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="ClientSCADA\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

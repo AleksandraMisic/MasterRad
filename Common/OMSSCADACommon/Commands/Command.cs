@@ -9,6 +9,8 @@ namespace OMSSCADACommon.Commands
     [KnownType(typeof(ReadAll))]
     [KnownType(typeof(WriteSingleDigital))]
     [KnownType(typeof(WriteSingleAnalog))]
+    [KnownType(typeof(ReadSingleDigital))]
+    [KnownType(typeof(ReadSingleAnalog))]
     public abstract class Command
     {
         [IgnoreDataMember]

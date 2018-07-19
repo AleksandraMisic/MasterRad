@@ -61,15 +61,6 @@ namespace DispatcherApp.ViewModel
         private Subscriber subscriber;
 
         #region Bindings
-        private Dictionary<long, Element> Network = new Dictionary<long, Element>();
-        private Dictionary<long, string> Sources = new Dictionary<long, string>();
-
-        private ObservableCollection<Element> breakers = new ObservableCollection<Element>();
-
-        private Dictionary<long, ElementProperties> properties = new Dictionary<long, ElementProperties>();
-        private Dictionary<long, ResourceDescription> resourceProperties = new Dictionary<long, ResourceDescription>();
-        private ElementProperties currentProperty = new ElementProperties();
-        private long currentPropertyMRID;
 
         private int commandsIndex = 0;
         private bool test = true;
@@ -77,20 +68,10 @@ namespace DispatcherApp.ViewModel
         private ObservableCollection<IncidentReport> incidentReports = new ObservableCollection<IncidentReport>();
         private ObservableCollection<Crew> crews = new ObservableCollection<Crew>();
 
-        private Dictionary<long, Measurement> measurements = new Dictionary<long, Measurement>();
-
-        private Dictionary<long, ObservableCollection<UIElement>> uiNetworks = new Dictionary<long, ObservableCollection<UIElement>>();
-        private ObservableCollection<UIElement> mainCanvases = new ObservableCollection<UIElement>();
-        private Dictionary<long, int> networkDepth = new Dictionary<long, int>();
-        private Canvas mainCanvas = new Canvas();
         private double startHeight = 20;
         private double startWidth = 3;
         private double currentHeight = 20;
         private double currentWidth = 3;
-
-        private ObservableCollection<TreeViewItem> networkMapsBySource = new ObservableCollection<TreeViewItem>();
-        private ObservableCollection<Button> networkMapsBySourceButton = new ObservableCollection<Button>();
-        private Dictionary<long, NetworkModelControlExtended> networModelControls = new Dictionary<long, NetworkModelControlExtended>();
         #endregion
 
         #region Commands
@@ -146,225 +127,7 @@ namespace DispatcherApp.ViewModel
             }
             catch (Exception e) { }
         }
-
-        public void InitElementsAndProperties(TMSAnswerToClient answerFromTransactionManager)
-        {
-            if (answerFromTransactionManager != null && answerFromTransactionManager.Elements != null && answerFromTransactionManager.ResourceDescriptions != null)
-            {
-                foreach (Element element in answerFromTransactionManager.Elements)
-                {
-                    this.Network.Add(element.ElementGID, element);
-                }
-
-                foreach (ResourceDescription rd in answerFromTransactionManager.ResourceDescriptions)
-                {
-                    Element element = null;
-                    this.Network.TryGetValue(rd.GetProperty(ModelCode.IDOBJ_GID).AsLong(), out element);
-
-                    if (element != null)
-                    {
-                        if (element is Source)
-                        {
-                            this.Sources.Add(element.ElementGID, element.MRID);
-                            EnergySourceProperties properties = new EnergySourceProperties() { IsEnergized = element.IsEnergized, IsUnderScada = element.UnderSCADA };
-                            properties.ReadFromResourceDescription(rd);
-                            this.properties.Add(element.ElementGID, properties);
-                        }
-                        else if (element is Consumer)
-                        {
-                            EnergyConsumerProperties properties = new EnergyConsumerProperties() { IsEnergized = element.IsEnergized, IsUnderScada = element.UnderSCADA };
-                            properties.ReadFromResourceDescription(rd);
-                            this.properties.Add(element.ElementGID, properties);
-                        }
-                        else if (element is ACLine)
-                        {
-                            ACLineSegmentProperties properties = new ACLineSegmentProperties() { IsEnergized = element.IsEnergized, IsUnderScada = element.UnderSCADA };
-                            properties.ReadFromResourceDescription(rd);
-                            this.properties.Add(element.ElementGID, properties);
-                        }
-                        else if (element is Node)
-                        {
-                            ConnectivityNodeProperties properties = new ConnectivityNodeProperties() { IsEnergized = element.IsEnergized, IsUnderScada = element.UnderSCADA };
-                            properties.ReadFromResourceDescription(rd);
-                            this.properties.Add(element.ElementGID, properties);
-                        }
-                        else if (element is Switch)
-                        {
-                            Switch breaker = element as Switch;
-                            this.Breakers.Add(element);
-                            BreakerProperties properties = new BreakerProperties() { IsEnergized = element.IsEnergized, IsUnderScada = element.UnderSCADA, Incident = element.Incident, CanCommand = breaker.CanCommand };
-
-                            if (breaker.State == SwitchState.Open)
-                            {
-                                properties.State = OMSSCADACommon.States.OPEN;
-                            }
-                            else if (breaker.State == SwitchState.Closed)
-                            {
-                                properties.State = OMSSCADACommon.States.CLOSED;
-                            }
-
-                            properties.ValidCommands.Add(CommandTypes.CLOSE);
-                            this.CommandIndex = 0;
-
-                            properties.ReadFromResourceDescription(rd);
-                            this.properties.Add(element.ElementGID, properties);
-                        }
-                    }
-                }
-
-                foreach (ElementProperties properties in this.properties.Values)
-                {
-                    Element element = null;
-                    this.Network.TryGetValue(properties.GID, out element);
-
-                    if (element != null && element is Branch)
-                    {
-                        Element node = null;
-                        Branch currentBranch = (Branch)element;
-                        this.Network.TryGetValue(currentBranch.End1, out node);
-
-                        if (node != null)
-                        {
-                            Element branch = null;
-                            Node parent = (Node)node;
-                            this.Network.TryGetValue(parent.Parent, out branch);
-
-                            if (branch != null)
-                            {
-                                ElementProperties parentProperties = null;
-                                this.properties.TryGetValue(branch.ElementGID, out parentProperties);
-
-                                if (parentProperties != null)
-                                {
-                                    properties.Parent = parentProperties;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            foreach (ResourceDescription rd in answerFromTransactionManager.ResourceDescriptionsOfMeasurment)
-            {
-                ResourceDescription meas;
-                try
-                {
-                    meas = answerFromTransactionManager.ResourceDescriptions.Where(p => p.GetProperty(ModelCode.IDOBJ_MRID).AsString() == rd.GetProperty(ModelCode.IDOBJ_MRID).AsString()).FirstOrDefault();
-                }
-                catch { continue; }
-
-                if (meas != null)
-                {
-                    try
-                    {
-                        long psr = meas.GetProperty(ModelCode.MEASUREMENT_PSR).AsLong();
-                        DMSType type = (DMSType)ModelCodeHelper.ExtractTypeFromGlobalId(psr);
-
-                        if (type == DMSType.BREAKER)
-                        {
-                            meas.UpdateProperty(rd.GetProperty(ModelCode.DISCRETE_NORMVAL));
-                            DigitalMeasurement measurement = new DigitalMeasurement();
-                            measurement.ReadFromResourceDescription(meas);
-
-                            Element element = null;
-                            Network.TryGetValue(psr, out element);
-
-                            Switch breaker = null;
-                            if (element != null)
-                            {
-                                breaker = element as Switch;
-
-                                if (breaker != null)
-                                {
-                                    if (breaker.State == SwitchState.Open)
-                                    {
-                                        measurement.State = OMSSCADACommon.States.OPEN;
-                                    }
-                                    else if (breaker.State == SwitchState.Closed)
-                                    {
-                                        measurement.State = OMSSCADACommon.States.CLOSED;
-                                    }
-                                }
-                            }
-
-                            ElementProperties properties;
-                            Properties.TryGetValue(psr, out properties);
-
-                            if (properties != null)
-                            {
-                                properties.Measurements.Add(measurement);
-                            }
-
-                            this.Measurements.Add(measurement.GID, measurement);
-                        }
-                        else if (type == DMSType.ENERGCONSUMER)
-                        {
-                            meas.UpdateProperty(rd.GetProperty(ModelCode.ANALOG_NORMVAL));
-                            AnalogMeasurement measurement = new AnalogMeasurement();
-                            measurement.ReadFromResourceDescription(meas);
-
-                            ElementProperties properties;
-                            Properties.TryGetValue(psr, out properties);
-
-                            if (properties != null)
-                            {
-                                properties.Measurements.Add(measurement);
-                            }
-
-                            properties.IsUnderScada = true;
-                            this.Measurements.Add(measurement.GID, measurement);
-                        }
-                    }
-                    catch { }
-                }
-            }
-
-            if (answerFromTransactionManager.Crews != null)
-            {
-                foreach (Crew crew in answerFromTransactionManager.Crews)
-                {
-                    this.Crews.Add(crew);
-                }
-            }
-
-            if (answerFromTransactionManager.IncidentReports != null)
-            {
-                foreach (IncidentReport incident in answerFromTransactionManager.IncidentReports)
-                {
-                    this.IncidentReports.Insert(0, incident);
-                }
-            }
-        }
         
-        #endregion
-
-        #region DrawGraph
-
-        private void PlaceSource(long id, string mrid)
-        {
-            Button sourceButton = new Button() { Width = 18, Height = 18 };
-            sourceButton.Background = Brushes.Transparent;
-            sourceButton.BorderThickness = new Thickness(0);
-            sourceButton.BorderBrush = Brushes.Transparent;
-            sourceButton.ToolTip = mrid;
-            sourceButton.Content = new Image() { Source = new BitmapImage(new Uri(Directory.GetCurrentDirectory() + "/../../View/Resources/Images/triangle.png")) };
-            Canvas.SetLeft(sourceButton, mainCanvas.Width / 2 - sourceButton.Width / 2);
-            Canvas.SetZIndex(sourceButton, 5);
-            mainCanvas.Children.Add(sourceButton);
-
-            SetProperties(sourceButton, id);
-        }
-
-        private void SetProperties(Button button, long id)
-        {
-            ElementProperties property;
-            Element element;
-            this.properties.TryGetValue(id, out property);
-            this.Network.TryGetValue(id, out element);
-
-            button.Command = PropertiesCommand;
-            button.CommandParameter = id;
-        }
         #endregion
 
         #region Command execution
@@ -464,18 +227,6 @@ namespace DispatcherApp.ViewModel
             }
         }
 
-        public RelayCommand PropertiesCommand
-        {
-            get
-            {
-                return propertiesCommand ?? new RelayCommand(
-                    (parameter) =>
-                    {
-                        ExecutePropertiesCommand(parameter);
-                    });
-            }
-        }
-
         public RelayCommand SendCrewCommand
         {
             get
@@ -519,10 +270,10 @@ namespace DispatcherApp.ViewModel
                 List<List<IncidentReport>> reportsByBreaker = new List<List<IncidentReport>>();
                 List<string> mrids = new List<string>();
 
-                foreach (Switch breaker in this.Breakers)
-                {
-                    mrids.Add(breaker.MRID);
-                }
+                //foreach (Switch breaker in this.Breakers)
+                //{
+                //    mrids.Add(breaker.MRID);
+                //}
 
                 if (!allDates)
                 {
@@ -690,23 +441,23 @@ namespace DispatcherApp.ViewModel
 
         private void ExecuteSwitchCommandd(object parameter)
         {
-            Measurement measurement = this.Measurements.Where(m => m.Value.MRID == (string)parameter).FirstOrDefault().Value;
-            if (measurement != null)
-            {
-                ElementProperties elementProperties;
-                Properties.TryGetValue(measurement.Psr, out elementProperties);
+            //Measurement measurement = this.Measurements.Where(m => m.Value.MRID == (string)parameter).FirstOrDefault().Value;
+            //if (measurement != null)
+            //{
+            //    ElementProperties elementProperties;
+            //    Properties.TryGetValue(measurement.Psr, out elementProperties);
 
-                if (elementProperties != null)
-                {
-                    elementProperties.CanCommand = false;
-                }
-            }
+            //    if (elementProperties != null)
+            //    {
+            //        elementProperties.CanCommand = false;
+            //    }
+            //}
 
-            try
-            {
-                //ProxyToOMS.SendCommandToSCADA(TypeOfSCADACommand.WriteDigital, (string)parameter, CommandTypes.CLOSE, 0);
-            }
-            catch { }
+            //try
+            //{
+            //    //ProxyToOMS.SendCommandToSCADA(TypeOfSCADACommand.WriteDigital, (string)parameter, CommandTypes.CLOSE, 0);
+            //}
+            //catch { }
         }
 
         private void ExecuteSendCrewCommand(object parameter)
@@ -769,46 +520,6 @@ namespace DispatcherApp.ViewModel
             //}
             //catch {  }
         }
-
-        private void ExecutePropertiesCommand(object parameter)
-        {
-            //Element element;
-            //properties.TryGetValue((long)parameter, out currentProperty);
-            //Network.TryGetValue((long)parameter, out element);
-
-            //if (currentProperty != null)
-            //{
-            //    CurrentPropertyMRID = currentProperty.GID;
-            //    bool exists = false;
-            //    int i = 0;
-
-            //    for (i = 0; i < RightTabControlTabs.Count; i++)
-            //    {
-            //        if (RightTabControlTabs[i].Header as string == "Properties")
-            //        {
-            //            SetTabContent(RightTabControlTabs[i], element);
-            //            exists = true;
-            //            this.RightTabControlIndex = i;
-            //            break;
-            //        }
-            //    }
-
-            //    if (!exists)
-            //    {
-            //        BorderTabItem ti = new BorderTabItem() { Header = "Properties", Style = (Style)frameworkElement.FindResource("TabItemRightStyle") };
-            //        ti.Title.Text = "Properties";
-            //        SetTabContent(ti, element);
-            //        //if (!RightTabControlTabs.Contains(ti))
-            //        //{
-            //        this.RightTabControlTabs.Add(ti);
-            //        this.RightTabControlIndex = this.RightTabControlTabs.Count - 1;
-            //        //}
-            //    }
-
-            //    this.RightTabControlVisibility = Visibility.Visible;
-            //}
-        }
-
         #endregion
 
         #region Properties
@@ -900,42 +611,6 @@ namespace DispatcherApp.ViewModel
             }
         }
 
-        public ObservableCollection<TreeViewItem> NetworkMapsBySource
-        {
-            get
-            {
-                return networkMapsBySource;
-            }
-            set
-            {
-                networkMapsBySource = value;
-            }
-        }
-
-        public ObservableCollection<UIElement> MainCanvases
-        {
-            get
-            {
-                return mainCanvases;
-            }
-            set
-            {
-                mainCanvases = value;
-            }
-        }
-
-        public ObservableCollection<Button> NetworkMapsBySourceButton
-        {
-            get
-            {
-                return networkMapsBySourceButton;
-            }
-            set
-            {
-                networkMapsBySourceButton = value;
-            }
-        }
-
         public ObservableCollection<ChartSeries> ChartSeries
         {
             get
@@ -957,82 +632,6 @@ namespace DispatcherApp.ViewModel
             set
             {
                 chartBorderItems = value;
-            }
-        }
-
-        public ObservableCollection<Element> Breakers
-        {
-            get
-            {
-                return breakers;
-            }
-            set
-            {
-                breakers = value;
-            }
-        }
-
-        public Dictionary<long, ObservableCollection<UIElement>> UINetworks
-        {
-            get
-            {
-                return uiNetworks;
-            }
-            set
-            {
-                uiNetworks = value;
-            }
-        }
-
-        public Dictionary<long, ElementProperties> Properties
-        {
-            get
-            {
-                return properties;
-            }
-            set
-            {
-                properties = value;
-                RaisePropertyChanged("Properties");
-            }
-        }
-
-        public ElementProperties CurrentProperty
-        {
-            get
-            {
-                return currentProperty;
-            }
-            set
-            {
-                currentProperty = value;
-                RaisePropertyChanged("CurrentProperty");
-            }
-        }
-
-        public long CurrentPropertyMRID
-        {
-            get
-            {
-                return currentPropertyMRID;
-            }
-            set
-            {
-                currentPropertyMRID = value;
-                RaisePropertyChanged("CurrentPropertyMRID");
-            }
-        }
-
-        public Dictionary<long, Measurement> Measurements
-        {
-            get
-            {
-                return measurements;
-            }
-            set
-            {
-                measurements = value;
-                RaisePropertyChanged("Measurements");
             }
         }
 
@@ -1061,7 +660,6 @@ namespace DispatcherApp.ViewModel
                 RaisePropertyChanged("ChartSubtitle");
             }
         }
-
         #endregion Properties
 
         #region Publish methods
@@ -1099,45 +697,45 @@ namespace DispatcherApp.ViewModel
                 int i = 0;
                 foreach (UIUpdateModel sum in update)
                 {
-                    ElementProperties property;
-                    properties.TryGetValue(sum.Gid, out property);
-                    if (property != null)
-                    {
-                        property.IsEnergized = sum.IsEnergized;
+                    //ElementProperties property;
+                    ////properties.TryGetValue(sum.Gid, out property);
+                    //if (property != null)
+                    //{
+                    //    property.IsEnergized = sum.IsEnergized;
 
-                        if (property is BreakerProperties && i == 0)
-                        {
-                            BreakerProperties breakerProperties = property as BreakerProperties;
-                            breakerProperties.State = sum.State;
+                    //    if (property is BreakerProperties && i == 0)
+                    //    {
+                    //        BreakerProperties breakerProperties = property as BreakerProperties;
+                    //        breakerProperties.State = sum.State;
 
-                            if (sum.State == OMSSCADACommon.States.CLOSED)
-                            {
-                                breakerProperties.CanCommand = false;
-                            }
+                    //        if (sum.State == OMSSCADACommon.States.CLOSED)
+                    //        {
+                    //            breakerProperties.CanCommand = false;
+                    //        }
 
-                            Measurement measurement;
-                            DigitalMeasurement digitalMeasurement;
-                            try
-                            {
-                                Measurements.TryGetValue(property.Measurements[0].GID, out measurement);
-                                digitalMeasurement = (DigitalMeasurement)measurement;
-                            }
-                            catch (Exception)
-                            {
-                                continue;
-                            }
+                    //        Measurement measurement;
+                    //        DigitalMeasurement digitalMeasurement;
+                    //        try
+                    //        {
+                    //            Measurements.TryGetValue(property.Measurements[0].GID, out measurement);
+                    //            digitalMeasurement = (DigitalMeasurement)measurement;
+                    //        }
+                    //        catch (Exception)
+                    //        {
+                    //            continue;
+                    //        }
 
-                            if (digitalMeasurement != null)
-                            {
-                                digitalMeasurement.State = sum.State;
-                            }
-                        }
-                        if (property is EnergyConsumerProperties)
-                        {
-                            EnergyConsumerProperties energyConsumerProperties = property as EnergyConsumerProperties;
-                            energyConsumerProperties.Call = false;
-                        }
-                    }
+                    //        if (digitalMeasurement != null)
+                    //        {
+                    //            digitalMeasurement.State = sum.State;
+                    //        }
+                    //    }
+                    //    if (property is EnergyConsumerProperties)
+                    //    {
+                    //        EnergyConsumerProperties energyConsumerProperties = property as EnergyConsumerProperties;
+                    //        energyConsumerProperties.Call = false;
+                    //    }
+                    //}
                     i++;
                 }
             }
@@ -1145,15 +743,15 @@ namespace DispatcherApp.ViewModel
 
         private void GetAnalogUpdate(List<UIUpdateModel> update)
         {
-            if (update != null)
-            {
-                AnalogMeasurement analogMeasurement = (AnalogMeasurement)this.Measurements.Where(meas => meas.Value.GID == update[0].Gid).FirstOrDefault().Value;
+            //if (update != null)
+            //{
+            //    AnalogMeasurement analogMeasurement = (AnalogMeasurement)this.Measurements.Where(meas => meas.Value.GID == update[0].Gid).FirstOrDefault().Value;
 
-                if (analogMeasurement != null)
-                {
-                    analogMeasurement.Value = update[0].AnValue;
-                }
-            }
+            //    if (analogMeasurement != null)
+            //    {
+            //        analogMeasurement.Value = update[0].AnValue;
+            //    }
+            //}
         }
 
         private void GetCrewUpdate(UIUpdateModel update)
@@ -1218,88 +816,88 @@ namespace DispatcherApp.ViewModel
                 IncidentReports.Insert(0, report);
             }
 
-            try
-            {
-                ElementProperties element = Properties.Where(p => p.Value.MRID == report.MrID).FirstOrDefault().Value;
-                if (report.IncidentState == IncidentState.REPAIRED)
-                {
-                    element.Incident = false;
-                    if (element.IsUnderScada)
-                    {
-                        element.CanCommand = true;
-                    }
-                }
-                else
-                {
-                    element.Incident = true;
-                }
+            //try
+            //{
+            //    ElementProperties element = Properties.Where(p => p.Value.MRID == report.MrID).FirstOrDefault().Value;
+            //    if (report.IncidentState == IncidentState.REPAIRED)
+            //    {
+            //        element.Incident = false;
+            //        if (element.IsUnderScada)
+            //        {
+            //            element.CanCommand = true;
+            //        }
+            //    }
+            //    else
+            //    {
+            //        element.Incident = true;
+            //    }
 
-                if (report.IncidentState == IncidentState.INVESTIGATING || report.IncidentState == IncidentState.REPAIRING)
-                {
-                    element.CrewSent = true;
+            //    if (report.IncidentState == IncidentState.INVESTIGATING || report.IncidentState == IncidentState.REPAIRING)
+            //    {
+            //        element.CrewSent = true;
 
-                    tokenSource = new CancellationTokenSource();
-                    CancellationToken token = tokenSource.Token;
-                    Task.Factory.StartNew(() => ProgressBarChange(temp, token), token);
-                }
-                else
-                {
-                    element.CrewSent = false;
-                }
-            }
-            catch { }
+            //        tokenSource = new CancellationTokenSource();
+            //        CancellationToken token = tokenSource.Token;
+            //        Task.Factory.StartNew(() => ProgressBarChange(temp, token), token);
+            //    }
+            //    else
+            //    {
+            //        element.CrewSent = false;
+            //    }
+            //}
+            //catch { }
         }
 
         private void GetCallFromConsumers(UIUpdateModel call)
         {
-            ElementProperties property;
-            properties.TryGetValue(call.Gid, out property);
+            //ElementProperties property;
+            //properties.TryGetValue(call.Gid, out property);
 
-            EnergyConsumerProperties consumerProperties = property as EnergyConsumerProperties;
+            //EnergyConsumerProperties consumerProperties = property as EnergyConsumerProperties;
 
-            if (consumerProperties != null)
-            {
-                consumerProperties.IsEnergized = call.IsEnergized;
-                consumerProperties.Call = true;
-            }
+            //if (consumerProperties != null)
+            //{
+            //    consumerProperties.IsEnergized = call.IsEnergized;
+            //    consumerProperties.Call = true;
+            //}
         }
 
         private void SearchForIncident(bool isIncident, long incidentBreaker)
         {
-            ElementProperties propBr;
-            properties.TryGetValue(incidentBreaker, out propBr);
-            if (propBr != null)
-            {
-                try
-                {
-                    if (isIncident == false)
-                    {
-                        tokenSource.Cancel();
-                        Thread.Sleep(50);
+            //ElementProperties propBr;
+            //properties.TryGetValue(incidentBreaker, out propBr);
+            //if (propBr != null)
+            //{
+            //    try
+            //    {
+            //        if (isIncident == false)
+            //        {
+            //            tokenSource.Cancel();
+            //            Thread.Sleep(50);
 
-                        tokenSource = new CancellationTokenSource();
-                        CancellationToken token = tokenSource.Token;
+            //            tokenSource = new CancellationTokenSource();
+            //            CancellationToken token = tokenSource.Token;
 
-                        blinkTask = Task.Factory.StartNew(() => Blink(propBr, token), token);
-                        propBr.IsCandidate = true;
-                    }
-                    else if (isIncident)
-                    {
-                        tokenSource.Cancel();
-                        Thread.Sleep(50);
+            //            blinkTask = Task.Factory.StartNew(() => Blink(propBr, token), token);
+            //            propBr.IsCandidate = true;
+            //        }
+            //        else if (isIncident)
+            //        {
+            //            tokenSource.Cancel();
+            //            Thread.Sleep(50);
 
-                        tokenSource = new CancellationTokenSource();
-                        CancellationToken token = tokenSource.Token;
+            //            tokenSource = new CancellationTokenSource();
+            //            CancellationToken token = tokenSource.Token;
 
-                        blinkTask = Task.Factory.StartNew(() => FinalCandidate(propBr, token), token);
-                        propBr.IsCandidate = true;
-                    }
-                }
-                catch (Exception)
-                {
-                    return;
-                }
-            }
+            //            blinkTask = Task.Factory.StartNew(() => FinalCandidate(propBr, token), token);
+            //            propBr.IsCandidate = true;
+            //        }
+            //    }
+            //    catch (Exception)
+            //    {
+            //        return;
+            //    }
+            //}
         }
 
         private async Task ProgressBarChange(IncidentReport report, CancellationToken ct)

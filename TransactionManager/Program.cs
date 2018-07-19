@@ -20,10 +20,12 @@ namespace TransactionManager
                 DistributedTransactionHost distributedTransactionHost = new DistributedTransactionHost();
                 ClientDMSHost clientDMSHost = new ClientDMSHost();
                 ClientNMSHost clientNMSHost = new ClientNMSHost();
+                ClientSCADAHost clientSCADAHost = new ClientSCADAHost();
 
                 distributedTransactionHost.Start();
                 clientDMSHost.Start();
                 clientNMSHost.Start();
+                clientSCADAHost.Start();
 
                 Console.ReadLine();
 
@@ -31,7 +33,7 @@ namespace TransactionManager
                 
                 clientDMSHost.Stop();
                 clientNMSHost.Stop();
-
+                clientSCADAHost.Stop();
             }
             catch(Exception e) { }
         }
