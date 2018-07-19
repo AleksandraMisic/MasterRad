@@ -18,18 +18,19 @@ namespace TransactionManager
             try
             {
                 DistributedTransactionHost distributedTransactionHost = new DistributedTransactionHost();
-                
                 ClientDMSHost clientDMSHost = new ClientDMSHost();
+                ClientNMSHost clientNMSHost = new ClientNMSHost();
 
                 distributedTransactionHost.Start();
-                
                 clientDMSHost.Start();
+                clientNMSHost.Start();
 
                 Console.ReadLine();
 
                 distributedTransactionHost.Stop();
                 
                 clientDMSHost.Stop();
+                clientNMSHost.Stop();
 
             }
             catch(Exception e) { }

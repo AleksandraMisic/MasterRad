@@ -27,6 +27,7 @@ namespace TransactionManager.Hosts
             svc.Open();
             Console.WriteLine("ClientDMSService ready and waiting for requests.");
         }
+
         public void Stop()
         {
             svc.Close();

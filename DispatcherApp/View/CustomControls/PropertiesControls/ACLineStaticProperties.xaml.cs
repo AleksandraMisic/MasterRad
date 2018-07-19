@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -12,14 +13,14 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace DispatcherApp.View
+namespace DispatcherApp.View.CustomControls.PropertiesControls
 {
     /// <summary>
-    /// Interaction logic for ACLinePropertiesControl.xaml
+    /// Interaction logic for ACLineStaticProperties.xaml
     /// </summary>
-    public partial class ACLinePropertiesControl : UserControl
+    public partial class ACLineStaticProperties : UserControl
     {
-        public ACLinePropertiesControl()
+        public ACLineStaticProperties()
         {
             InitializeComponent();
         }

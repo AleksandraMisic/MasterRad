@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -12,14 +13,14 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace DispatcherApp.View
+namespace DispatcherApp.View.CustomControls.PropertiesControls
 {
     /// <summary>
-    /// Interaction logic for SwitchPropertiesControl.xaml
+    /// Interaction logic for AnalogMeasurementControl.xaml
     /// </summary>
-    public partial class SwitchPropertiesControl : UserControl
+    public partial class AnalogMeasurementControl : UserControl
     {
-        public SwitchPropertiesControl()
+        public AnalogMeasurementControl()
         {
             InitializeComponent();
         }

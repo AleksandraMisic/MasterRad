@@ -38,16 +38,14 @@ namespace DispatcherApp.ViewModel
 {
     public class MainShellViewModel : AbstractMainShellViewModel
     {
-        public Task blinkTask;
-
-        public CancellationTokenSource tokenSource = new CancellationTokenSource();
-
         private ClientDMSProxy dMSProxy;
         private ClientIMSProxy iMSProxy;
 
-        private FrameworkElement frameworkElement = new FrameworkElement();
+        private static Dictionary<string, bool> isSourceOpen = null;
 
-        private Dictionary<string, bool> isSourceOpen = new Dictionary<string, bool>();
+        public Task blinkTask;
+
+        public CancellationTokenSource tokenSource = new CancellationTokenSource();
 
         private ObservableCollection<ChartSeries> chartSeries = new ObservableCollection<ChartSeries>();
         private ObservableCollection<UIElement> chartBorderItems = new ObservableCollection<UIElement>();
@@ -99,24 +97,27 @@ namespace DispatcherApp.ViewModel
         private RelayCommand openNetworkExplorerCommand;
         private RelayCommand openIncidentExplorerCommand;
         private RelayCommand openReportExplorerCommand;
-        private RelayCommand openPropertiesCommand;
         private RelayCommand openOutputCommand;
-        private RelayCommand openNetworkViewCommand;
 
-        private RelayCommand _closeControlCommand;
+        private RelayCommand closeControlCommand;
 
-        private RelayCommand _propertiesCommand;
+        private RelayCommand propertiesCommand;
 
-        private RelayCommand _sendCrewCommand;
+        private RelayCommand sendCrewCommand;
 
-        private RelayCommand _executeSwitchCommand;
+        private RelayCommand executeSwitchCommand;
 
-        private RelayCommand _generateIncidentByDateChartCommand;
-        private RelayCommand _generateIncidentByBreakerChartCommand;
-        private RelayCommand _generateStatesByBreakerChartCommand;
+        private RelayCommand generateIncidentByDateChartCommand;
+        private RelayCommand generateIncidentByBreakerChartCommand;
+        private RelayCommand generateStatesByBreakerChartCommand;
         #endregion
 
         #region Constructor
+        static MainShellViewModel()
+        {
+            isSourceOpen = new Dictionary<string, bool>();
+        }
+
         public MainShellViewModel()
         {
             TopMenu = new ObservableCollection<UserControl>();
@@ -371,7 +372,7 @@ namespace DispatcherApp.ViewModel
         {
             get
             {
-                return _generateIncidentByDateChartCommand ?? new RelayCommand(
+                return generateIncidentByDateChartCommand ?? new RelayCommand(
                     (parameter) =>
                     {
                         ExecuteGenerateIncidentByDateChartCommand(parameter);
@@ -383,7 +384,7 @@ namespace DispatcherApp.ViewModel
         {
             get
             {
-                return _generateIncidentByBreakerChartCommand ?? new RelayCommand(
+                return generateIncidentByBreakerChartCommand ?? new RelayCommand(
                     (parameter) =>
                     {
                         ExecuteGenerateIncidentByBreakerChartCommand(parameter);
@@ -395,7 +396,7 @@ namespace DispatcherApp.ViewModel
         {
             get
             {
-                return _generateStatesByBreakerChartCommand ?? new RelayCommand(
+                return generateStatesByBreakerChartCommand ?? new RelayCommand(
                     (parameter) =>
                     {
                         ExecuteGenerateStatesByBreakerChartCommand(parameter);
@@ -439,18 +440,6 @@ namespace DispatcherApp.ViewModel
             }
         }
 
-        public RelayCommand OpenPropertiesCommand
-        {
-            get
-            {
-                return openPropertiesCommand ?? new RelayCommand(
-                    (parameter) =>
-                    {
-                        ExecuteOpenPropertiesCommand();
-                    });
-            }
-        }
-
         public RelayCommand OpenOutputCommand
         {
             get
@@ -463,23 +452,11 @@ namespace DispatcherApp.ViewModel
             }
         }
 
-        public RelayCommand OpenNetworkViewCommand
-        {
-            get
-            {
-                return openNetworkViewCommand ?? new RelayCommand(
-                    (parameter) =>
-                    {
-                        ExecuteOpenNetworkViewCommand(parameter);
-                    });
-            }
-        }
-
         public RelayCommand CloseControlCommand
         {
             get
             {
-                return _closeControlCommand ?? new RelayCommand(
+                return closeControlCommand ?? new RelayCommand(
                     (parameter) =>
                     {
                         ExecuteCloseControlCommand(parameter);
@@ -491,7 +468,7 @@ namespace DispatcherApp.ViewModel
         {
             get
             {
-                return _propertiesCommand ?? new RelayCommand(
+                return propertiesCommand ?? new RelayCommand(
                     (parameter) =>
                     {
                         ExecutePropertiesCommand(parameter);
@@ -503,7 +480,7 @@ namespace DispatcherApp.ViewModel
         {
             get
             {
-                return _sendCrewCommand ?? new RelayCommand(
+                return sendCrewCommand ?? new RelayCommand(
                     (parameter) =>
                     {
                         ExecuteSendCrewCommand(parameter);
@@ -515,7 +492,7 @@ namespace DispatcherApp.ViewModel
         {
             get
             {
-                return _executeSwitchCommand ?? new RelayCommand(
+                return executeSwitchCommand ?? new RelayCommand(
                     (parameter) =>
                     {
                         ExecuteSwitchCommandd(parameter);
@@ -858,6 +835,18 @@ namespace DispatcherApp.ViewModel
             {
                 maxValue = value;
                 RaisePropertyChanged("MaxValue");
+            }
+        }
+
+        public static Dictionary<string, bool> IsSourceOpen
+        {
+            get
+            {
+                return isSourceOpen;
+            }
+            set
+            {
+                isSourceOpen = value;
             }
         }
 
@@ -1383,7 +1372,7 @@ namespace DispatcherApp.ViewModel
                 
                 networkExplorer.DataContext = nevm;
 
-                nevm.GetAllSources(this);
+                nevm.GetAllSources();
 
                 ShellFillerShell sfs = new ShellFillerShell() { DataContext = this };
 
@@ -1490,45 +1479,6 @@ namespace DispatcherApp.ViewModel
 
             PlaceOrFocusControlInShell(NetworkViewViewModel.Position, null, true, (string)parameter);
         }
-
-        private void PlaceOrFocusControlInShell(ShellPosition position, ShellFillerShell sfs, bool isFocus, string parameter)
-        {
-            var currentTabControl = ShellProperties[position];
-
-            if (!isFocus)
-            {
-                TabItem tabItem = new TabItem() { Header = sfs.Header.Text };
-
-                tabItem.Content = sfs;
-                tabItem.Header = sfs.Header.Text;
-
-                currentTabControl.TabControlTabs.Add(tabItem);
-                currentTabControl.TabControlIndex = currentTabControl.TabControlTabs.Count - 1;
-                RaisePropertyChanged("ShellProperties");
-
-                if (position != ShellPosition.CENTER)
-                {
-                    currentTabControl.TabControlVisibility = Visibility.Visible;
-                }
-                else
-                {
-                    sfs.Header.Text = "";
-                }
-            }
-            else
-            {
-                int i = 0;
-                for (i = 0; i < currentTabControl.TabControlTabs.Count; i++)
-                {
-                    if ((string)currentTabControl.TabControlTabs[i].Header == parameter)
-                    {
-                        break;
-                    }
-                }
-
-                currentTabControl.TabControlIndex = i;
-            }
-        }
         #endregion
 
         #region Execute close commands
@@ -1538,7 +1488,7 @@ namespace DispatcherApp.ViewModel
             var header = ((object[])parameter)[0];
             var position = ((object[])parameter)[1];
 
-            var properties = this.ShellProperties[(ShellPosition)position];
+            var properties = ShellProperties[(ShellPosition)position];
 
             properties.TabControlTabs.Remove(properties.TabControlTabs.Where(tab => tab.Header == header).First());
 

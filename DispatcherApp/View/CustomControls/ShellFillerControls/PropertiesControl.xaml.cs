@@ -12,14 +12,14 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace DispatcherApp.View
+namespace DispatcherApp.View.ShellFillers
 {
     /// <summary>
-    /// Interaction logic for SourcePropertiesControl.xaml
+    /// Interaction logic for EmptyPropertiesControl.xaml
     /// </summary>
-    public partial class SourcePropertiesControl : UserControl
+    public partial class PropertiesControl : UserControl
     {
-        public SourcePropertiesControl()
+        public PropertiesControl()
         {
             InitializeComponent();
         }

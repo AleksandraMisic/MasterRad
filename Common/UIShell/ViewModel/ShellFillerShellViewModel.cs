@@ -30,7 +30,7 @@ namespace UIShell.ViewModel
             var position = ((object[])parameter)[1];
             AbstractMainShellViewModel mainShellViewModel = ((object[])parameter)[3] as AbstractMainShellViewModel;
 
-            var properties = mainShellViewModel.ShellProperties[(ShellPosition)position];
+            var properties = AbstractMainShellViewModel.ShellProperties[(ShellPosition)position];
 
             properties.TabControlTabs.Remove(properties.TabControlTabs.Where(tab => tab.Header == header).First());
 

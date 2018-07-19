@@ -19,13 +19,13 @@ namespace UIShell.ViewModel
     {
         #region Fields
 
-        protected Dictionary<ShellPosition, ShellFillerShellProperties> shellProperties;
+        protected static Dictionary<ShellPosition, ShellFillerShellProperties> shellProperties;
 
         #endregion
 
         #region Properties
 
-        public Dictionary<ShellPosition, ShellFillerShellProperties> ShellProperties
+        public static Dictionary<ShellPosition, ShellFillerShellProperties> ShellProperties
         {
             get
             {
@@ -34,7 +34,6 @@ namespace UIShell.ViewModel
             set
             {
                 shellProperties = value;
-                RaisePropertyChanged("ShellProperties");
             }
         }
 
@@ -44,7 +43,7 @@ namespace UIShell.ViewModel
 
         #region Constructors
 
-        public AbstractMainShellViewModel()
+        static AbstractMainShellViewModel()
         {
             ShellProperties = new Dictionary<ShellPosition, ShellFillerShellProperties>();
 
@@ -52,6 +51,11 @@ namespace UIShell.ViewModel
             {
                 ShellProperties.Add((ShellPosition)position, new ShellFillerShellProperties());
             }
+        }
+
+        public AbstractMainShellViewModel()
+        {
+            
         }
 
         #endregion
@@ -70,7 +74,7 @@ namespace UIShell.ViewModel
 
         #endregion
 
-        protected void PlaceOrFocusControlInShell(ShellPosition position, ShellFillerShell sfs, bool isFocus, string parameter)
+        public void PlaceOrFocusControlInShell(ShellPosition position, ShellFillerShell sfs, bool isFocus, string parameter)
         {
             var currentTabControl = ShellProperties[position];
 
@@ -101,6 +105,11 @@ namespace UIShell.ViewModel
                 {
                     if ((string)currentTabControl.TabControlTabs[i].Header == parameter)
                     {
+                        if (sfs != null)
+                        {
+                            currentTabControl.TabControlTabs[i].Content = sfs;
+                        }
+
                         break;
                     }
                 }

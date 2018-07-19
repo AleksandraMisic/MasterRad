@@ -1,9 +1,6 @@
-﻿using DispatcherApp.Model;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.ObjectModel;
+using System.Windows;
+using System.Windows.Controls;
 using UIShell.Model;
 using UIShell.ViewModel;
 
@@ -13,6 +10,14 @@ namespace DispatcherApp.ViewModel.ShellFillerModelViews
     {
         private static bool isOpen;
         private static ShellPosition position;
+        private Visibility measurementVisibility;
+        private Visibility digitalMeasurementVisibility;
+        private Visibility analogMeasurementVisibility;
+
+        ObservableCollection<UserControl> digitalControls = null;
+        ObservableCollection<UserControl> analogControls = null;
+
+        private RelayCommand openPropertiesCommand;
 
         public override bool IsOpen
         {
@@ -26,6 +31,36 @@ namespace DispatcherApp.ViewModel.ShellFillerModelViews
             set { position = value; }
         }
 
+        public Visibility MeasurementVisibility
+        {
+            get { return measurementVisibility; }
+            set { measurementVisibility = value; }
+        }
+
+        public Visibility DigitalMeasurementVisibility
+        {
+            get { return digitalMeasurementVisibility; }
+            set { digitalMeasurementVisibility = value; }
+        }
+
+        public Visibility AnalogMeasurementVisibility
+        {
+            get { return analogMeasurementVisibility; }
+            set { analogMeasurementVisibility = value; }
+        }
+
+        public ObservableCollection<UserControl> DigitalControls
+        {
+            get { return digitalControls; }
+            set { digitalControls = value; }
+        }
+
+        public ObservableCollection<UserControl> AnalogControls
+        {
+            get { return analogControls; }
+            set { analogControls = value; }
+        }
+
         static PropertiesModelView()
         {
             Position = ShellPosition.RIGHT;
@@ -33,7 +68,8 @@ namespace DispatcherApp.ViewModel.ShellFillerModelViews
 
         public PropertiesModelView()
         {
-
+            digitalControls = new ObservableCollection<UserControl>();
+            analogControls = new ObservableCollection<UserControl>();
         }
     }
 }

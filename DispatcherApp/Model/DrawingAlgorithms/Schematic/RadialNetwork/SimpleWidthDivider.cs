@@ -1,6 +1,7 @@
 ﻿using DispatcherApp.Model.Properties.DMSProperties;
 using DispatcherApp.View.CustomControls;
 using DispatcherApp.View.CustomControls.NetworkElementsControls;
+using DispatcherApp.ViewModel.ShellFillerModelViews;
 using DMSCommon.Model;
 using System;
 using System.Collections.Generic;
@@ -124,8 +125,8 @@ namespace DispatcherApp.Model.DrawingAlgorithms.Schematic.RadialNetwork
             Canvas.SetTop(nodeControl, y * cellHeight - nodeControl.Button.Height / 2);
             Canvas.SetZIndex(nodeControl, 5);
 
-            //node.Command = PropertiesCommand;
-            //nodeControl.CommandParameter = node.ElementGID;
+            nodeControl.Button.Command = NetworkViewViewModel.OpenPropertiesCommand;
+            nodeControl.Button.CommandParameter = node.ElementGID;
             nodeControl.ToolTip = node.MRID;
 
             this.result.Add(nodeControl);
@@ -235,7 +236,7 @@ namespace DispatcherApp.Model.DrawingAlgorithms.Schematic.RadialNetwork
             Canvas.SetTop(consumerControl, y * cellHeight - cellHeight / 5 - 10 / 2);
             Panel.SetZIndex(consumerControl, 5);
 
-            //switchControl.Button.Command = PropertiesCommand;
+            consumerControl.Button.Command = NetworkViewViewModel.OpenPropertiesCommand;
             consumerControl.Button.CommandParameter = consumer.ElementGID;
             consumerControl.ToolTip = consumer.MRID;
 
@@ -255,6 +256,10 @@ namespace DispatcherApp.Model.DrawingAlgorithms.Schematic.RadialNetwork
             Canvas.SetTop(switchControl, y * cellHeight - cellHeight / 3 - 10 / 2);
             Panel.SetZIndex(switchControl, 5);
 
+            switchControl.MainButton.Command = NetworkViewViewModel.OpenPropertiesCommand;
+            switchControl.MainButton.CommandParameter = breaker.ElementGID;
+            switchControl.MainButton.ToolTip = breaker.MRID;
+
             result.Add(switchControl);
         }
 
@@ -271,7 +276,7 @@ namespace DispatcherApp.Model.DrawingAlgorithms.Schematic.RadialNetwork
             Canvas.SetTop(acLineControl, y * cellHeight - cellHeight / 3 - 10 / 2);
             Panel.SetZIndex(acLineControl, 5);
 
-            //switchControl.Button.Command = PropertiesCommand;
+            acLineControl.Button.Command = NetworkViewViewModel.OpenPropertiesCommand;
             acLineControl.Button.CommandParameter = acLine.ElementGID;
             acLineControl.ToolTip = acLine.MRID;
 

@@ -47,6 +47,8 @@
   <ItemGroup>
     <Compile Include="ClientDMS\ClientDMSProxy.cs" />
     <Compile Include="ClientIMS\ClientIMSProxy.cs" />
+    <Compile Include="ClientNMS\ClientNMSProxy.cs" />
+    <Compile Include="ClientNMS\IClientNMS.cs" />
     <Compile Include="IOMSClient.cs" />
     <Compile Include="DistributedTransaction\IDistributedTransaction.cs" />
     <Compile Include="DistributedTransaction\IDistributedTransactionCallback.cs" />
@@ -78,6 +80,10 @@
     <ProjectReference Include="..\OMSCommon\OMSCommon.csproj">
       <Project>{C4572A3C-F667-4434-97BC-825B1D3858E0}</Project>
       <Name>OMSCommon</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ServiceContracts\NetworkModelQueryContract\NetworkModelGDAContract.csproj">
+      <Project>{B726FB71-D295-41EE-9644-B2B0B1BC8911}</Project>
+      <Name>NetworkModelGDAContract</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

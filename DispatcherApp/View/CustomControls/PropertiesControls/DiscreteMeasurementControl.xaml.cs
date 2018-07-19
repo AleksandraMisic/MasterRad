@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -12,14 +13,14 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace DispatcherApp.View
+namespace DispatcherApp.View.CustomControls.PropertiesControls
 {
     /// <summary>
-    /// Interaction logic for ConsumerPropertiesControl.xaml
+    /// Interaction logic for DiscreteMeasurementControl.xaml
     /// </summary>
-    public partial class ConsumerPropertiesControl : UserControl
+    public partial class DiscreteMeasurementControl : UserControl
     {
-        public ConsumerPropertiesControl()
+        public DiscreteMeasurementControl()
         {
             InitializeComponent();
         }

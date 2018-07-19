@@ -91,6 +91,7 @@
     <Compile Include="Model\Properties\EnergyConsumerProperties.cs" />
     <Compile Include="Model\Properties\EnergySourceProperties.cs" />
     <Compile Include="Model\Measurements\Measurement.cs" />
+    <Compile Include="Model\Properties\NMSProperties\StaticProperties.cs" />
     <Compile Include="ViewModel\MainShellViewModel.cs" />
     <Compile Include="ViewModel\ShellFillerViewModels\IncidentExplorerViewModel.cs" />
     <Compile Include="ViewModel\ShellFillerViewModels\NetworkExplorerViewModel.cs" />
@@ -118,19 +119,25 @@
     <Compile Include="View\CustomControls\NetworkElementsControls\SwitchUserControl.xaml.cs">
       <DependentUpon>SwitchUserControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="View\CustomControls\PropertiesControls\ACLinePropertiesControl.xaml.cs">
-      <DependentUpon>ACLinePropertiesControl.xaml</DependentUpon>
-    </Compile>
     <Compile Include="View\CustomControls\BasicCommandsControl.xaml.cs">
       <DependentUpon>BasicCommandsControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="View\CustomControls\PropertiesControls\ConsumerPropertiesControl.xaml.cs">
-      <DependentUpon>ConsumerPropertiesControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="View\CustomControls\PropertiesControls\EmptyPropertiesControl.xaml.cs">
-      <DependentUpon>EmptyPropertiesControl.xaml</DependentUpon>
+    <Compile Include="View\CustomControls\PropertiesControls\ACLineStaticProperties.xaml.cs">
+      <DependentUpon>ACLineStaticProperties.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\CustomControls\NetworkElementsControls\SwitchControl.cs" />
+    <Compile Include="View\CustomControls\PropertiesControls\AnalogMeasurementControl.xaml.cs">
+      <DependentUpon>AnalogMeasurementControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\CustomControls\PropertiesControls\DiscreteMeasurementControl.xaml.cs">
+      <DependentUpon>DiscreteMeasurementControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\CustomControls\PropertiesControls\GeneralStaticPropertiesControl.xaml.cs">
+      <DependentUpon>GeneralStaticPropertiesControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\CustomControls\PropertiesControls\MeasurementsControl.xaml.cs">
+      <DependentUpon>MeasurementsControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\CustomControls\ShellFillerControls\IncidentExplorer.xaml.cs">
       <DependentUpon>IncidentExplorer.xaml</DependentUpon>
     </Compile>
@@ -141,17 +148,11 @@
       <DependentUpon>NetworkViewControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\CustomControls\ShellFillerControls\NetworkModelControlExtended.cs" />
-    <Compile Include="View\CustomControls\PropertiesControls\NodePropertiesControl.xaml.cs">
-      <DependentUpon>NodePropertiesControl.xaml</DependentUpon>
-    </Compile>
     <Compile Include="View\CustomControls\ShellFillerControls\OutputControl.xaml.cs">
       <DependentUpon>OutputControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="View\CustomControls\PropertiesControls\SourcePropertiesControl.xaml.cs">
-      <DependentUpon>SourcePropertiesControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="View\CustomControls\PropertiesControls\SwitchPropertiesControl.xaml.cs">
-      <DependentUpon>SwitchPropertiesControl.xaml</DependentUpon>
+    <Compile Include="View\CustomControls\ShellFillerControls\PropertiesControl.xaml.cs">
+      <DependentUpon>PropertiesControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\CustomControls\ShellFillerControls\ReportExplorer.xaml.cs">
       <DependentUpon>ReportExplorer.xaml</DependentUpon>
@@ -206,21 +207,29 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="View\CustomControls\PropertiesControls\ACLinePropertiesControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="View\CustomControls\BasicCommandsControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="View\CustomControls\PropertiesControls\ConsumerPropertiesControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
+    <Page Include="View\CustomControls\PropertiesControls\ACLineStaticProperties.xaml">
       <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="View\CustomControls\PropertiesControls\EmptyPropertiesControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
+    <Page Include="View\CustomControls\PropertiesControls\AnalogMeasurementControl.xaml">
       <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\CustomControls\PropertiesControls\DiscreteMeasurementControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\CustomControls\PropertiesControls\GeneralStaticPropertiesControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\CustomControls\PropertiesControls\MeasurementsControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\CustomControls\ShellFillerControls\IncidentExplorer.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -234,11 +243,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="View\CustomControls\PropertiesControls\NodePropertiesControl.xaml">
+    <Page Include="View\CustomControls\ShellFillerControls\OutputControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="View\CustomControls\ShellFillerControls\OutputControl.xaml">
+    <Page Include="View\CustomControls\ShellFillerControls\PropertiesControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -261,14 +270,6 @@
     <Page Include="View\Resources\Themes\DarkTheme\DarkTheme.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="View\CustomControls\PropertiesControls\SourcePropertiesControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="View\CustomControls\PropertiesControls\SwitchPropertiesControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
     </Page>
     <Page Include="View\CustomControls\TopMenu.xaml">
       <SubType>Designer</SubType>
