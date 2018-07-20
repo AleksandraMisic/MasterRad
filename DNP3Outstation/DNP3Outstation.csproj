@@ -54,12 +54,13 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Communication\CommunicationEngine.cs" />
     <Compile Include="Model\Database.cs" />
     <Compile Include="Model\Device.cs" />
-    <Compile Include="ViewModel\DevicesExplorerViewModel.cs" />
+    <Compile Include="ViewModel\DeviceInfoViewModel.cs" />
     <Compile Include="ViewModel\MainshellViewModel.cs" />
-    <Compile Include="View\ShellFillers\DevicesExplorer.xaml.cs">
-      <DependentUpon>DevicesExplorer.xaml</DependentUpon>
+    <Compile Include="View\ShellFillers\DeviceInfo.xaml.cs">
+      <DependentUpon>DeviceInfo.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\TopMenu.xaml.cs">
       <DependentUpon>TopMenu.xaml</DependentUpon>
@@ -76,7 +77,7 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="View\ShellFillers\DevicesExplorer.xaml">
+    <Page Include="View\ShellFillers\DeviceInfo.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -123,13 +124,15 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="DNP3XMLSchemaParser\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\Common\UIShell\UIShell.csproj">
       <Project>{339a9bf8-9468-4889-9f76-9c9deae5df49}</Project>
       <Name>UIShell</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SCADA\DNP3ConfigParser\DNP3ConfigParser.csproj">
+      <Project>{2D480CA6-F26C-43C9-A6D4-2C5DEB77EBD8}</Project>
+      <Name>DNP3ConfigParser</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

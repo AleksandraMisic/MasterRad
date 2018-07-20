@@ -448,8 +448,6 @@ namespace SCADA.CommunicationAndControlling
                 {
                     bool isChange = false;
                     RTU rtu;
-                    // sporno
-                    //while (!Database.IsConfigurationRunning)
 
                     if ((rtu = dbContext.GetRTUByName(answer.ProcessControllerName)) != null)
                     {
@@ -505,7 +503,7 @@ namespace SCADA.CommunicationAndControlling
 
                                             break;
 
-                                            // analog input
+                                        // analog input
                                         case FunctionCodes.ReadInputRegisters:
                                             {
                                                 RegisterReadResponse response = (RegisterReadResponse)mdbHandler.Response;

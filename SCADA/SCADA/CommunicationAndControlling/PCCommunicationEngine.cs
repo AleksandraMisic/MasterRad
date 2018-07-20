@@ -4,6 +4,8 @@ using System.Threading;
 using PCCommon;
 using SCADA.ConfigurationParser;
 using PCCommon.Communication;
+using DNP3ConfigParser.Configuration;
+using DNP3ConfigParser.Configurations.DNP3DeviceProfileJan2010ConfigModel;
 
 namespace SCADA.CommunicationAndControlling
 {
@@ -30,28 +32,47 @@ namespace SCADA.CommunicationAndControlling
         /// </summary>
         /// <param name="configPath"></param>
         /// <returns></returns>
-        public bool ConfigureEngine(string basePath, string configPath)
+        public void ConfigureEngine(string basePath, string configPath)
         {
-            bool retVal = false;
             CommunicationModelParser parser = new CommunicationModelParser(basePath);
 
             if (parser.DeserializeCommunicationModel())
             {
                 processControllers = parser.GetProcessControllers();
-                retVal = CreateChannels();
             }
+        }
 
-            return retVal;
+        public void ConfigureEngine(Dictionary<string, UniversalNetworkConfiguration> configuration)
+        {
+            foreach (KeyValuePair<string, UniversalNetworkConfiguration> networkConfig in configuration)
+            {
+                ProcessController processController = new ProcessController();
+
+                switch (networkConfig.Value.Version)
+                {
+                    case "http://www.dnp3.org/DNP3/DeviceProfile/Jan2010":
+
+                        NetworkConfiguration networkConfiguration = networkConfig.Value as NetworkConfiguration;
+
+                        processController.Name = networkConfig.Key;
+                        processController.HostName = networkConfiguration.IpAddress;
+                        processController.HostPort = 20000;
+                        processController.TransportHandler = (TransportHandler)Enum.Parse(typeof(TransportHandler), "TCP");
+
+                        processControllers.Add(processController.Name, processController);
+
+                        break;
+                }
+            }
         }
 
         /// <summary>
         /// Creating concrete communication channel for each Process Controller
         /// </summary>
         /// <returns></returns>
-        private bool CreateChannels()
+        public bool CreateChannels()
         {
             List<ProcessController> failedProcessControllers = new List<ProcessController>();
-
 
             foreach (var rtu in processControllers)
             {
@@ -72,7 +93,7 @@ namespace SCADA.CommunicationAndControlling
             if (failedProcessControllers.Count != 0)
                 failedProcessControllers.Clear();
 
-            // if there is no any controller, do not start Processing
+            //if there are no controllera, do not start Processing
             if (processControllers.Count == 0)
                 return false;
 
@@ -82,7 +103,6 @@ namespace SCADA.CommunicationAndControlling
         private bool SetupCommunication(ProcessController rtu)
         {
             bool retval = false;
-
 
             switch (rtu.TransportHandler)
             {
@@ -103,7 +123,7 @@ namespace SCADA.CommunicationAndControlling
                     break;
 
                 default:
-                    // not implemented yet
+                    
                     break;
             }
             return retval;

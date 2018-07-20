@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DNP3ConfigParser.Configurations
+namespace DNP3ConfigParser.Configuration
 {
-    public class LinkConfiguration
+    public class UniversalNetworkConfiguration : UniversalConfiguration
     {
     }
 }

@@ -18,9 +18,9 @@ namespace DNP3Outstation.View.ShellFillers
     /// <summary>
     /// Interaction logic for DevicesExplorer.xaml
     /// </summary>
-    public partial class DevicesExplorer : UserControl
+    public partial class DeviceInfo : UserControl
     {
-        public DevicesExplorer()
+        public DeviceInfo()
         {
             InitializeComponent();
         }

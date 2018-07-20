@@ -4,6 +4,12 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using SCADA.CommunicationAndControlling;
+using DNP3ConfigParser.Parsers;
+using System.Xml.Linq;
+using DNP3ConfigParser.Configuration;
+using System.Collections.Generic;
+using DNP3ConfigParser.Configurations.DNP3DeviceProfileJan2010ConfigModel;
+using DNP3ConfigParser.Configuration.DNP3DeviceProfileJan2010ConfigModel;
 
 namespace SCADA
 {
@@ -24,11 +30,36 @@ namespace SCADA
             CancellationToken cancellationToken;
             Task requestsConsumer, answersConsumer, acqRequestsProducer;
 
+            var path = Directory.GetCurrentDirectory() + "..\\..\\..\\DNP3ConfigFiles\\";
+
+            Dictionary<string, UniversalNetworkConfiguration> universalConfigurations = new Dictionary<string, UniversalNetworkConfiguration>();
+            
+            foreach (string directory in Directory.GetDirectories(path))
+            {
+                XDocument document = XDocument.Load(directory + "\\open_dnp3_slave.xml");
+                XNamespace ns = document.Root.GetDefaultNamespace();
+
+                switch (ns.NamespaceName)
+                {
+                    case "http://www.dnp3.org/DNP3/DeviceProfile/Jan2010":
+
+                        DNP3DeviceProfileJan2010Parser parser = new DNP3DeviceProfileJan2010Parser(document);
+                        parser.Parse();
+                        parser.Configuration.NetworkConfiguration.Version = ns.NamespaceName;
+
+                        universalConfigurations.Add(parser.Configuration.DeviceConfiguration.DeviceName, parser.Configuration.NetworkConfiguration);
+                        break;
+                }
+            }
+
             PCCommunicationEngine PCCommEng = new PCCommunicationEngine();
+            PCCommEng.ConfigureEngine(basePath, pcConfig);
+
+            PCCommEng.ConfigureEngine(universalConfigurations);
 
             while (true)
             {
-                if (!PCCommEng.ConfigureEngine(basePath, pcConfig))
+                if (!PCCommEng.CreateChannels())
                 {
                     Console.WriteLine("\nStart the simulator then press any key to continue the application.\n");
                     Console.ReadKey();

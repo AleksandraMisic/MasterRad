@@ -123,7 +123,6 @@ namespace PCCommon.Communication
                 return false;
             }
 
-
             if (tcpClient != null)
             {
                 try
@@ -155,8 +154,6 @@ namespace PCCommon.Communication
 
                     throw;
                 }
-
-
 
                 return retVal;
             }
@@ -205,6 +202,7 @@ namespace PCCommon.Communication
             return retVal;
         }
     }
+
     public class UdpCommObj : CommunicationObject
     {
         public override bool ProcessRequest(IORequestBlock forProcess)
@@ -217,6 +215,7 @@ namespace PCCommon.Communication
             throw new NotImplementedException();
         }
     }
+
     public class UartCommObj : CommunicationObject
     {
         public override bool ProcessRequest(IORequestBlock forProcess)
@@ -257,6 +256,7 @@ namespace PCCommon.Communication
             return retVal;
         }
     }
+
     public class UdpCommObjFactory : CommunicationObjectFactory
     {
         public override CommunicationObject CreateNew()
@@ -269,6 +269,7 @@ namespace PCCommon.Communication
             throw new NotImplementedException();
         }
     }
+
     public class UartCommObjFactory : CommunicationObjectFactory
     {
         public override CommunicationObject CreateNew()

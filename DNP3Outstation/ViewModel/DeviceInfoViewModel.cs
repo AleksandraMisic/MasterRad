@@ -5,30 +5,25 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
+using UIShell.Model;
 using UIShell.ViewModel;
 
 namespace DNP3Outstation.ViewModel
 {
-    public class DevicesExplorerViewModel : SingleShellFillerViewModel
+    public class DeviceInfoViewModel : SingleShellFillerViewModel
     {
         private static bool isOpen;
-        private ObservableCollection<TreeViewItem> devices;
+        private static ShellPosition position;
 
-        public DevicesExplorerViewModel()
+        public static ShellPosition Position
         {
-            devices = new ObservableCollection<TreeViewItem>();
+            get { return position; }
+            set { position = value; }
         }
 
-        public ObservableCollection<TreeViewItem> Devices
+        public DeviceInfoViewModel()
         {
-            get
-            {
-                return devices;
-            }
-            set
-            {
-                devices = value;
-            }
+            Position = ShellPosition.LEFT;
         }
 
         public override bool IsOpen

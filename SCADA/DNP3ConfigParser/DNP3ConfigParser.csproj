@@ -40,16 +40,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Configuration\DeviceConfiguration.cs" />
-    <Compile Include="Configuration\LinkConfiguration.cs" />
-    <Compile Include="Configuration\NetworkConfiguration.cs" />
+    <Compile Include="Configuration\DNP3DeviceProfileJan2010ConfigModel\CompleteConfiguration.cs" />
+    <Compile Include="Configuration\DNP3DeviceProfileJan2010ConfigModel\DeviceConfiguration.cs" />
+    <Compile Include="Configuration\DNP3DeviceProfileJan2010ConfigModel\LinkConfiguration.cs" />
+    <Compile Include="Configuration\DNP3DeviceProfileJan2010ConfigModel\NetworkConfiguration.cs" />
+    <Compile Include="Configuration\UniversalNetworkConfiguration.cs" />
+    <Compile Include="Configuration\UniversalConfiguration.cs" />
     <Compile Include="Device.cs" />
     <Compile Include="Enums\DevicesConfigEnums.cs" />
     <Compile Include="Enums\LinkConfigEnums.cs" />
     <Compile Include="Enums\NetworkConfigEnums.cs" />
     <Compile Include="ISetProperties.cs" />
     <Compile Include="Parsers\DNP3DeviceProfileJan2010Parser.cs" />
-    <Compile Include="Parsers\Parser.cs" />
+    <Compile Include="Parsers\UniversalConfigurationParser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

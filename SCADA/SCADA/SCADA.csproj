@@ -85,6 +85,7 @@
     <Compile Include="CommunicationAndControlling\PCCommunicationEngine.cs" />
     <Compile Include="RealtimeDatabase\Catalogs\Unit.cs" />
     <Compile Include="RealtimeDatabase\Model\Analog.cs" />
+    <Compile Include="RealtimeDatabase\Model\DNP3Device.cs" />
     <Compile Include="RealtimeDatabase\Model\RTU.cs" />
     <Compile Include="ConfigurationParser\CommunicationModelParser.cs" />
     <Compile Include="ConfigurationParser\ScadaModelParser.cs" />
@@ -128,6 +129,10 @@
     <ProjectReference Include="..\..\TransactionManagerContract\TMContracts.csproj">
       <Project>{72a5dd5a-5613-49cb-8351-3ce33a86fc01}</Project>
       <Name>TMContracts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DNP3ConfigParser\DNP3ConfigParser.csproj">
+      <Project>{2D480CA6-F26C-43C9-A6D4-2C5DEB77EBD8}</Project>
+      <Name>DNP3ConfigParser</Name>
     </ProjectReference>
     <ProjectReference Include="..\ModbusTCPDriver\ModbusTCPDriver.csproj">
       <Project>{6bd692a7-28ac-432b-a316-deb277ede45a}</Project>

@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DNP3ConfigParser.Configurations
+namespace DNP3ConfigParser.Configurations.DNP3DeviceProfileJan2010ConfigModel
 {
-    public class NetworkConfiguration
+    public class LinkConfiguration
     {
     }
 }

@@ -6,6 +6,12 @@ using System.Threading.Tasks;
 
 namespace DNP3ConfigParser.Enums.DeviceConfig
 {
+    public enum DeviceFunction
+    {
+        MASTER = 0, 
+        OUTSTATION
+    }
+
     public enum DNPLevels
     {
         NONE = 0,
