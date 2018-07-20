@@ -41,9 +41,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Configuration\DNP3DeviceProfileJan2010ConfigModel\CompleteConfiguration.cs" />
+    <Compile Include="Configuration\DNP3DeviceProfileJan2010ConfigModel\DataPointsListConfiguration.cs" />
     <Compile Include="Configuration\DNP3DeviceProfileJan2010ConfigModel\DeviceConfiguration.cs" />
     <Compile Include="Configuration\DNP3DeviceProfileJan2010ConfigModel\LinkConfiguration.cs" />
     <Compile Include="Configuration\DNP3DeviceProfileJan2010ConfigModel\NetworkConfiguration.cs" />
+    <Compile Include="Configuration\DNP3DeviceProfileJan2010ConfigModel\Points\AnalogInputPoint.cs" />
     <Compile Include="Configuration\UniversalNetworkConfiguration.cs" />
     <Compile Include="Configuration\UniversalConfiguration.cs" />
     <Compile Include="Device.cs" />

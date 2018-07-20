@@ -13,11 +13,13 @@ namespace DNP3ConfigParser.Configuration.DNP3DeviceProfileJan2010ConfigModel
     {
         public DeviceConfiguration DeviceConfiguration { get; set; }
         public NetworkConfiguration NetworkConfiguration { get; set; }
+        public DataPointsListConfiguration DataPointsListConfiguration { get; set; }
 
         public CompleteConfiguration()
         {
             DeviceConfiguration = new DeviceConfiguration();
             NetworkConfiguration = new NetworkConfiguration();
+            DataPointsListConfiguration = new DataPointsListConfiguration();
         }
     }
 }

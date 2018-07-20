@@ -1,5 +1,6 @@
 ﻿using DNP3ConfigParser.Configuration;
 using DNP3ConfigParser.Configuration.DNP3DeviceProfileJan2010ConfigModel;
+using DNP3ConfigParser.Configuration.DNP3DeviceProfileJan2010ConfigModel.Points;
 using DNP3ConfigParser.Configurations;
 using DNP3ConfigParser.Enums.DeviceConfig;
 using DNP3ConfigParser.Enums.NetworkConfig;
@@ -27,6 +28,7 @@ namespace DNP3ConfigParser.Parsers
             ParseDeviceConfiguration();
             ParseSerialConfiguration();
             ParseNetworkConfiguration();
+            ParseDataPointsListConfiguration();
         }
 
         private void ParseDeviceConfiguration()
@@ -237,6 +239,75 @@ namespace DNP3ConfigParser.Parsers
                         if ((temp2 = temp1.Element(defaultNamespace + "fixedAt20000")) != null)
                         {
                             //Configuration.NetworkConfiguration.TCPListenPortCapabilities.Add(TCPListenPortNumber.FIXED_AT_20000);
+                        }
+                    }
+                }
+            }
+        }
+
+        private void ParseDataPointsListConfiguration()
+        {
+            XElement root = configFile.Root;
+            XNamespace defaultNamespace = root.GetDefaultNamespace();
+
+            IEnumerable<XElement> elements = root.Descendants(defaultNamespace + "dataPointsList");
+
+            if (elements.Count() > 0)
+            {
+                XElement element = elements.ElementAt(0).Element(defaultNamespace + "analogInputPoints");
+
+                if (element != null)
+                {
+                    XElement temp1;
+                    if ((temp1 = element.Element(defaultNamespace + "dataPoints")) != null)
+                    {
+                        foreach (XElement temp2 in temp1.Elements(defaultNamespace + "analogInput"))
+                        {
+                            AnalogInputPoint analogInputPoint = new AnalogInputPoint();
+
+                            XElement temp3;
+                            if ((temp3 = temp2.Element(defaultNamespace + "index")) != null)
+                            {
+                                analogInputPoint.Index = int.Parse(temp3.Value);
+                            }
+                            if ((temp3 = temp2.Element(defaultNamespace + "name")) != null)
+                            {
+                                analogInputPoint.Name = temp3.Value;
+                            }
+                            if ((temp3 = temp2.Element(defaultNamespace + "changeEventClass")) != null)
+                            {
+                                analogInputPoint.ChangeEventClass = int.Parse(temp3.Value);
+                            }
+                            if ((temp3 = temp2.Element(defaultNamespace + "minIntegerTransmittedValue")) != null)
+                            {
+                                analogInputPoint.MinIntegerTransmittedValue = int.Parse(temp3.Value);
+                            }
+                            if ((temp3 = temp2.Element(defaultNamespace + "maxIntegerTransmittedValue")) != null)
+                            {
+                                analogInputPoint.MaxIntegerTransmittedValue = int.Parse(temp3.Value);
+                            }
+                            if ((temp3 = temp2.Element(defaultNamespace + "scaleFactor")) != null)
+                            {
+                                analogInputPoint.ScaleFactor = int.Parse(temp3.Value);
+                            }
+                            if ((temp3 = temp2.Element(defaultNamespace + "scaleOffset")) != null)
+                            {
+                                analogInputPoint.ScaleOffset = double.Parse(temp3.Value);
+                            }
+                            if ((temp3 = temp2.Element(defaultNamespace + "units")) != null)
+                            {
+                                analogInputPoint.Units = temp3.Value;
+                            }
+                            if ((temp3 = temp2.Element(defaultNamespace + "resolution")) != null)
+                            {
+                                analogInputPoint.Resolution = int.Parse(temp3.Value);
+                            }
+                            if ((temp3 = temp2.Element(defaultNamespace + "description")) != null)
+                            {
+                                analogInputPoint.Description = temp3.Value;
+                            }
+
+                            Configuration.DataPointsListConfiguration.AnalogInputPoints.Add(analogInputPoint);
                         }
                     }
                 }

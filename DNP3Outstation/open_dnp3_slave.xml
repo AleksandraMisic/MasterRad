@@ -2288,10 +2288,10 @@ DNP3DeviceProfileJan2010.xsd">
                 <value>1</value>
               </changeEventClass>
               <minIntegerTransmittedValue>
-                <value>1</value>
+                <value>0</value>
               </minIntegerTransmittedValue>
               <maxIntegerTransmittedValue>
-                <value>1</value>
+                <value>1000000</value>
               </maxIntegerTransmittedValue>
               <scaleFactor>
                 <value>1</value>
@@ -2300,13 +2300,13 @@ DNP3DeviceProfileJan2010.xsd">
                 <value>1</value>
               </scaleOffset>
               <units>
-                <value>1</value>
+                <value>Wh</value>
               </units>
               <resolution>
                 <value>1</value>
               </resolution>
               <description>
-                <value>1</value>
+                <value>Energy Consumption</value>
               </description>
             </analogInput>
           </dataPoints>
@@ -2323,9 +2323,6 @@ DNP3DeviceProfileJan2010.xsd">
           </configuration>
           <!--Data Points-->
           <dataPoints>
-            <analogInput>
-              <index>0</index>
-            </analogInput>
           </dataPoints>
         </analogOutputPoints>
         <!--5.7) Sequential File Transfer Support-->
