@@ -14,7 +14,7 @@ namespace DNP3TCPDriver.DataLinkLayer
     public class DNP3DataLinkHandler : IIndustryProtocolHandler, IDataLinkHandler
     {
         [DllImport("CRCCalculator.dll", EntryPoint = "CalculateCRC", CallingConvention = CallingConvention.Cdecl)]
-        public static extern void CalculateCRC(byte[] data, byte[] crc);
+        public static extern void CalculateCRC(int length, byte[] data, byte[] crc);
 
         public DataLinkFrame DataLinkFrame { get; set; }
 
@@ -113,7 +113,7 @@ namespace DNP3TCPDriver.DataLinkLayer
 
             try
             {
-                CalculateCRC(data, crc);
+                CalculateCRC(data.Count(), data, crc);
             }
             catch (Exception e) { }
 

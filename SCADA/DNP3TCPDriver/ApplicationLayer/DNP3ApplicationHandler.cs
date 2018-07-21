@@ -56,25 +56,25 @@ namespace DNP3TCPDriver.ApplicationLayer
             objectHeader.QualifierField[4] = false;
 
             objectHeader.QualifierField[3] = false;     // Range specifier code
-            objectHeader.QualifierField[2] = false;
-            objectHeader.QualifierField[1] = false;
-            objectHeader.QualifierField[0] = true;
+            objectHeader.QualifierField[2] = true;
+            objectHeader.QualifierField[1] = true;
+            objectHeader.QualifierField[0] = false;
 
-            int startIndex = indices[0], stopIndex = indices[0];
+            //int startIndex = indices[0], stopIndex = indices[0];
 
-            foreach (int index in indices)
-            {
-                if (index == -1)
-                {
-                    break;
-                }
+            //foreach (int index in indices)
+            //{
+            //    if (index == -1)
+            //    {
+            //        break;
+            //    }
 
-                stopIndex = index;
-            }
+            //    stopIndex = index;
+            //}
 
-            objectHeader.RangeField = new Byte[2];
-            objectHeader.RangeField[0] = BitConverter.GetBytes(startIndex)[0];
-            objectHeader.RangeField[1] = BitConverter.GetBytes(stopIndex)[0];
+            //objectHeader.RangeField = new Byte[2];
+            //objectHeader.RangeField[0] = BitConverter.GetBytes(startIndex)[0];
+            //objectHeader.RangeField[1] = BitConverter.GetBytes(stopIndex)[0];
 
             Request.ObjectHeaders.Add(objectHeader);
 

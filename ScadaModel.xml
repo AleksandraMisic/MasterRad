@@ -157,7 +157,7 @@
     <Analog>
       <Name>MEAS_A_10</Name>
       <NumOfRegisters>1</NumOfRegisters>
-      <AcqValue>80</AcqValue>
+      <AcqValue>370</AcqValue>
       <CommValue>370</CommValue>
       <MaxValue>500</MaxValue>
       <MinValue>50</MinValue>
@@ -179,7 +179,7 @@
     <Analog>
       <Name>MEAS_A_12</Name>
       <NumOfRegisters>1</NumOfRegisters>
-      <AcqValue>80</AcqValue>
+      <AcqValue>370</AcqValue>
       <CommValue>370</CommValue>
       <MaxValue>500</MaxValue>
       <MinValue>50</MinValue>
@@ -190,7 +190,7 @@
     <Analog>
       <Name>MEAS_A_13</Name>
       <NumOfRegisters>1</NumOfRegisters>
-      <AcqValue>80</AcqValue>
+      <AcqValue>250</AcqValue>
       <CommValue>250</CommValue>
       <MaxValue>500</MaxValue>
       <MinValue>50</MinValue>
@@ -201,7 +201,7 @@
     <Analog>
       <Name>MEAS_A_14</Name>
       <NumOfRegisters>1</NumOfRegisters>
-      <AcqValue>80</AcqValue>
+      <AcqValue>370</AcqValue>
       <CommValue>370</CommValue>
       <MaxValue>500</MaxValue>
       <MinValue>50</MinValue>
@@ -212,7 +212,7 @@
     <Analog>
       <Name>MEAS_A_15</Name>
       <NumOfRegisters>1</NumOfRegisters>
-      <AcqValue>80</AcqValue>
+      <AcqValue>250</AcqValue>
       <CommValue>250</CommValue>
       <MaxValue>500</MaxValue>
       <MinValue>50</MinValue>
@@ -223,7 +223,7 @@
     <Analog>
       <Name>MEAS_A_16</Name>
       <NumOfRegisters>1</NumOfRegisters>
-      <AcqValue>80</AcqValue>
+      <AcqValue>370</AcqValue>
       <CommValue>370</CommValue>
       <MaxValue>500</MaxValue>
       <MinValue>50</MinValue>
@@ -234,7 +234,7 @@
     <Analog>
       <Name>MEAS_A_17</Name>
       <NumOfRegisters>1</NumOfRegisters>
-      <AcqValue>80</AcqValue>
+      <AcqValue>250</AcqValue>
       <CommValue>250</CommValue>
       <MaxValue>500</MaxValue>
       <MinValue>50</MinValue>
@@ -267,7 +267,7 @@
     <Analog>
       <Name>MEAS_A_2</Name>
       <NumOfRegisters>1</NumOfRegisters>
-      <AcqValue>370</AcqValue>
+      <AcqValue>80</AcqValue>
       <CommValue>370</CommValue>
       <MaxValue>500</MaxValue>
       <MinValue>50</MinValue>
@@ -278,7 +278,7 @@
     <Analog>
       <Name>MEAS_A_20</Name>
       <NumOfRegisters>1</NumOfRegisters>
-      <AcqValue>370</AcqValue>
+      <AcqValue>80</AcqValue>
       <CommValue>370</CommValue>
       <MaxValue>500</MaxValue>
       <MinValue>50</MinValue>
@@ -289,7 +289,7 @@
     <Analog>
       <Name>MEAS_A_21</Name>
       <NumOfRegisters>1</NumOfRegisters>
-      <AcqValue>250</AcqValue>
+      <AcqValue>80</AcqValue>
       <CommValue>250</CommValue>
       <MaxValue>500</MaxValue>
       <MinValue>50</MinValue>
@@ -311,7 +311,7 @@
     <Analog>
       <Name>MEAS_A_23</Name>
       <NumOfRegisters>1</NumOfRegisters>
-      <AcqValue>250</AcqValue>
+      <AcqValue>80</AcqValue>
       <CommValue>250</CommValue>
       <MaxValue>500</MaxValue>
       <MinValue>50</MinValue>
@@ -322,7 +322,7 @@
     <Analog>
       <Name>MEAS_A_24</Name>
       <NumOfRegisters>1</NumOfRegisters>
-      <AcqValue>250</AcqValue>
+      <AcqValue>80</AcqValue>
       <CommValue>250</CommValue>
       <MaxValue>500</MaxValue>
       <MinValue>50</MinValue>
@@ -333,7 +333,7 @@
     <Analog>
       <Name>MEAS_A_25</Name>
       <NumOfRegisters>1</NumOfRegisters>
-      <AcqValue>250</AcqValue>
+      <AcqValue>80</AcqValue>
       <CommValue>250</CommValue>
       <MaxValue>500</MaxValue>
       <MinValue>50</MinValue>

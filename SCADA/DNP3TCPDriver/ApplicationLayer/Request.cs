@@ -23,7 +23,7 @@ namespace DNP3TCPDriver.ApplicationLayer
 
             foreach (ObjectHeader objectHeader in ObjectHeaders)
             {
-                totalSize += 3 + objectHeader.RangeField.Count();
+                totalSize += 3 /*+ objectHeader.RangeField.Count()*/;
             }
 
             Byte[] array = new Byte[totalSize];
@@ -37,22 +37,22 @@ namespace DNP3TCPDriver.ApplicationLayer
                 array[i++] = objectHeader.Variation;
                 objectHeader.QualifierField.CopyTo(array, i++);
 
-                if (objectHeader.RangeField.Count() == 1)
-                {
-                    array[i++] = objectHeader.RangeField[0];
-                }
-                else if (objectHeader.RangeField.Count() == 2)
-                {
-                    array[i++] = objectHeader.RangeField[0];
-                    array[i++] = objectHeader.RangeField[1];
-                }
-                else if (objectHeader.RangeField.Count() == 4)
-                {
-                    array[i++] = objectHeader.RangeField[0];
-                    array[i++] = objectHeader.RangeField[1];
-                    array[i++] = objectHeader.RangeField[2];
-                    array[i++] = objectHeader.RangeField[3];
-                }
+                //if (objectHeader.RangeField.Count() == 1)
+                //{
+                //    array[i++] = objectHeader.RangeField[0];
+                //}
+                //else if (objectHeader.RangeField.Count() == 2)
+                //{
+                //    array[i++] = objectHeader.RangeField[0];
+                //    array[i++] = objectHeader.RangeField[1];
+                //}
+                //else if (objectHeader.RangeField.Count() == 4)
+                //{
+                //    array[i++] = objectHeader.RangeField[0];
+                //    array[i++] = objectHeader.RangeField[1];
+                //    array[i++] = objectHeader.RangeField[2];
+                //    array[i++] = objectHeader.RangeField[3];
+                //}
             }
 
             return array;
