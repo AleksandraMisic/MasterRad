@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DNP3TCPDriver.ApplicationLayer
 {
-    public enum FunctionCodes : Byte
+    public enum ApplicationFunctionCodes : Byte
     {
         //Request codes
         CONFIRM             = 0x00,

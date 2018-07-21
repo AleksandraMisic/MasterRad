@@ -40,14 +40,31 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ApplicationLayer\FunctionCodes.cs" />
+    <Compile Include="DataLinkLayer\DataLinkFrame.cs" />
+    <Compile Include="DataLinkLayer\DataLinkFunctionCodes.cs" />
+    <Compile Include="DataLinkLayer\DataLinkHeader.cs" />
+    <Compile Include="DataLinkLayer\DNP3DataLinkHandler.cs" />
+    <Compile Include="DataLinkLayer\IDataLinkHandler.cs" />
+    <Compile Include="DNP3Handler.cs" />
+    <Compile Include="ApplicationLayer\ApplicationFunctionCodes.cs" />
+    <Compile Include="ApplicationLayer\IDNP3ApplicationHandler.cs" />
     <Compile Include="ApplicationLayer\ObjectHeader.cs" />
     <Compile Include="ApplicationLayer\Request.cs" />
     <Compile Include="ApplicationLayer\RequestHeader.cs" />
     <Compile Include="ApplicationLayer\Response.cs" />
     <Compile Include="ApplicationLayer\ResponseHeader.cs" />
-    <Compile Include="DNP3Handler.cs" />
+    <Compile Include="ApplicationLayer\DNP3ApplicationHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TransportFunction\DNP3TransportFunctionHandler.cs" />
+    <Compile Include="TransportFunction\ITransportFunctionHandler.cs" />
+    <Compile Include="TransportFunction\TransportHeader.cs" />
+    <Compile Include="TransportFunction\TransportSegment.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\PCCommon\PCCommon.csproj">
+      <Project>{5BC05BE9-6F8A-428D-83E7-C406D6736401}</Project>
+      <Name>PCCommon</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

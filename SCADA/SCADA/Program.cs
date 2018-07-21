@@ -33,7 +33,8 @@ namespace SCADA
             var path = Directory.GetCurrentDirectory() + "..\\..\\..\\DNP3ConfigFiles\\";
 
             Dictionary<string, UniversalNetworkConfiguration> universalConfigurations = new Dictionary<string, UniversalNetworkConfiguration>();
-            
+            Dictionary<string, DataPointsListConfiguration> dataPointsConfigurations = new Dictionary<string, DataPointsListConfiguration>();
+
             foreach (string directory in Directory.GetDirectories(path))
             {
                 XDocument document = XDocument.Load(directory + "\\open_dnp3_slave.xml");
@@ -48,6 +49,7 @@ namespace SCADA
                         parser.Configuration.NetworkConfiguration.Version = ns.NamespaceName;
 
                         universalConfigurations.Add(parser.Configuration.DeviceConfiguration.DeviceName, parser.Configuration.NetworkConfiguration);
+                        dataPointsConfigurations.Add(parser.Configuration.DeviceConfiguration.DeviceName, parser.Configuration.DataPointsListConfiguration);
                         break;
                 }
             }
@@ -69,6 +71,8 @@ namespace SCADA
             }
 
             CommandingAcquisitionEngine AcqEngine = new CommandingAcquisitionEngine();
+            AcqEngine.ConfigureEngine(dataPointsConfigurations);
+
             if (AcqEngine.ConfigureEngine(acqComConfigPath))
             {
                 AcqEngine.InitializeSimulator();

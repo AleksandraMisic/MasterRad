@@ -8,8 +8,6 @@ namespace ModbusTCPDriver
     /// </summary>
     public class ModbusHandler : IIndustryProtocolHandler
     {
-        public IndustryProtocols ProtocolType { get; set; }
-
         public ModbusApplicationHeader Header { get; set; }
         public Request Request { get; set; }
         public Response Response { get; set; }

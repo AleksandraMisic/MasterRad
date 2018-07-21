@@ -134,6 +134,10 @@
       <Project>{2D480CA6-F26C-43C9-A6D4-2C5DEB77EBD8}</Project>
       <Name>DNP3ConfigParser</Name>
     </ProjectReference>
+    <ProjectReference Include="..\DNP3TCPDriver\DNP3Driver.csproj">
+      <Project>{A9DABC4C-2E57-49BE-83F3-E82A62107244}</Project>
+      <Name>DNP3Driver</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ModbusTCPDriver\ModbusTCPDriver.csproj">
       <Project>{6bd692a7-28ac-432b-a316-deb277ede45a}</Project>
       <Name>ModbusTCPDriver</Name>

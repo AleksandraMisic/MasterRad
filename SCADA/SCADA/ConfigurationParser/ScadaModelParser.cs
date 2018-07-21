@@ -34,11 +34,11 @@ namespace SCADA.ConfigurationParser
             string configurationName = deserializationSource;
             string source = Path.Combine(basePath, configurationName);
 
-            if (Database.Instance.RTUs.Count != 0)
-                Database.Instance.RTUs.Clear();
+            //if (Database.Instance.RTUs.Count != 0)
+            //    Database.Instance.RTUs.Clear();
 
-            if (Database.Instance.ProcessVariablesName.Count != 0)
-                Database.Instance.ProcessVariablesName.Clear();
+            //if (Database.Instance.ProcessVariablesName.Count != 0)
+            //    Database.Instance.ProcessVariablesName.Clear();
 
             try
             {
@@ -245,7 +245,6 @@ namespace SCADA.ConfigurationParser
                                         return false;
                                     }
                                 }
-
                             }
                             else
                             {
@@ -253,7 +252,6 @@ namespace SCADA.ConfigurationParser
                                 Console.WriteLine(message);
                                 return false;
                             }
-
                         }
                         else
                         {

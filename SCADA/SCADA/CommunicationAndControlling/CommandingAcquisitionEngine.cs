@@ -13,6 +13,10 @@ using SCADA.ConfigurationParser;
 using System.Linq;
 using SCADA.CommunicationAndControlling.SecondaryDataProcessing;
 using DMSContract;
+using DNP3ConfigParser.Configuration.DNP3DeviceProfileJan2010ConfigModel;
+using DNP3ConfigParser.Configuration.DNP3DeviceProfileJan2010ConfigModel.Points;
+using SCADA.RealtimeDatabase.Catalogs;
+using DNP3TCPDriver;
 
 namespace SCADA.CommunicationAndControlling
 {
@@ -46,6 +50,35 @@ namespace SCADA.CommunicationAndControlling
         {
             ScadaModelParser parser = new ScadaModelParser();
             return parser.DeserializeScadaModel();
+        }
+
+        public void ConfigureEngine(Dictionary<string, DataPointsListConfiguration> configuration)
+        {
+            foreach (KeyValuePair<string, DataPointsListConfiguration> dataPointsConfig in configuration)
+            {
+                DNP3Device dNP3Device = new DNP3Device();
+                dNP3Device.Name = dataPointsConfig.Key;
+                dNP3Device.Protocol = IndustryProtocols.DNP3TCP;
+
+                dbContext.AddRTU(dNP3Device);
+
+                foreach (AnalogInputPoint analogInput in dataPointsConfig.Value.AnalogInputPoints)
+                {
+                    Analog analog = new Analog()
+                    {
+                        Name = analogInput.Name,
+                        Type = VariableTypes.ANALOG,
+                        RelativeAddress = (ushort)analogInput.Index,
+                        ProcContrName = dataPointsConfig.Key,
+                        MinValue = analogInput.MinIntegerTransmittedValue,
+                        MaxValue = analogInput.MaxIntegerTransmittedValue,
+                        UnitSymbol = (UnitSymbol)Enum.Parse(typeof(UnitSymbol), analogInput.Units, true),
+                        IsInit = true
+                    };
+
+                    dbContext.AddProcessVariable(analog);
+                }
+            }
         }
 
         /// <summary>
@@ -165,6 +198,11 @@ namespace SCADA.CommunicationAndControlling
                     RTU rtu;
                     if ((rtu = dbContext.GetRTUByName(pv.ProcContrName)) != null)
                     {
+                        if (rtu.Protocol == IndustryProtocols.DNP3TCP)
+                        {
+                            return;
+                        }
+
                         iorb.ReqAddress = (ushort)rtu.GetCommandAddress(pv);
                         bool shouldCommand = false;
 
@@ -276,8 +314,8 @@ namespace SCADA.CommunicationAndControlling
             {
                 acqTasks.Add(AsyncRtuAcquisition(rtuAcquisitonAction, TimeSpan.FromMilliseconds(3000), rtu.Key, token));
                 Console.WriteLine("task added");
-
             }
+
             Console.WriteLine("Task acquistion before return");
             foreach (Task t in acqTasks)
                 Console.WriteLine("Task {0} Status: {1}", t.Id, t.Status);
@@ -323,6 +361,11 @@ namespace SCADA.CommunicationAndControlling
                             Request = new ReadRequest()
                         };
                         break;
+
+                    case IndustryProtocols.DNP3TCP:
+
+                        IProtHandler = new DNP3Handler();
+                        break;
                 }
 
                 // to do:
@@ -341,8 +384,6 @@ namespace SCADA.CommunicationAndControlling
                 {
                     Console.WriteLine("acq analogs");
                     ProcessVariable firstPV = analogs.FirstOrDefault();
-                    iorbAnalogs.ReqAddress = (ushort)rtu.GetAcqAddress(firstPV);
-
 
                     if (IProtHandler != null)
                     {
@@ -350,9 +391,29 @@ namespace SCADA.CommunicationAndControlling
                         {
                             case IndustryProtocols.ModbusTCP:
 
+                                iorbAnalogs.ReqAddress = (ushort)rtu.GetAcqAddress(firstPV);
+
                                 ((ReadRequest)((ModbusHandler)IProtHandler).Request).FunCode = FunctionCodes.ReadInputRegisters;
                                 ((ReadRequest)((ModbusHandler)IProtHandler).Request).Quantity = (ushort)requestCount;
                                 ((ReadRequest)((ModbusHandler)IProtHandler).Request).StartAddr = iorbAnalogs.ReqAddress;
+                                break;
+
+                            case IndustryProtocols.DNP3TCP:
+
+                                int[] indices = new int[10];
+                                int i = 0;
+
+                                for (i = 0; i < 10; i++)
+                                {
+                                    indices[i] = -1;
+                                }
+
+                                i = 0;
+                                foreach (Analog analog in analogs)
+                                {
+                                    indices[i++] = analog.RelativeAddress;
+                                }
+                                ((DNP3Handler)IProtHandler).DNP3ApplicationHandler.ReadAllAnalogInputPoints(indices);
                                 break;
                         }
 

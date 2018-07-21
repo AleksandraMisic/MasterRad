@@ -11,14 +11,11 @@ namespace DNP3TCPDriver.ApplicationLayer
     {
         public BitArray ApplicationControl { get; set; }
 
-        public FunctionCodes FunctionCode { get; set; }
-
-        public BitArray InternalIndications { get; set; }
+        public ApplicationFunctionCodes FunctionCode { get; set; }
 
         public RequestHeader()
         {
             ApplicationControl = new BitArray(8);
-            InternalIndications = new BitArray(16);
         }
     }
 }

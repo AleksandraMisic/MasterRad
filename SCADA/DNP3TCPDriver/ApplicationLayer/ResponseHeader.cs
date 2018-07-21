@@ -11,7 +11,7 @@ namespace DNP3TCPDriver.ApplicationLayer
     {
         public BitArray ApplicationControl { get; set; }
 
-        public FunctionCodes FunctionCode { get; set; }
+        public ApplicationFunctionCodes FunctionCode { get; set; }
 
         public BitArray InternalIndications { get; set; }
 
