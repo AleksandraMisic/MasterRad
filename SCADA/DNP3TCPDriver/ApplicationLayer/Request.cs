@@ -19,11 +19,11 @@ namespace DNP3TCPDriver.ApplicationLayer
 
         public Byte[] GetRequestInBytes()
         {
-            int totalSize = 2 + 3;
+            int totalSize = 2;
 
             foreach (ObjectHeader objectHeader in ObjectHeaders)
             {
-                totalSize += objectHeader.RangeField.Count();
+                totalSize += 3 + objectHeader.RangeField.Count();
             }
 
             Byte[] array = new Byte[totalSize];

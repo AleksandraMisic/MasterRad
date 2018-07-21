@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Net;
 using System.Net.Sockets;
 
 namespace PCCommon.Communication
@@ -107,8 +108,18 @@ namespace PCCommon.Communication
 
         public TcpCommObj(CommunicationParameters commPar) : base()
         {
+            if (commPar.HostPort == 20000)
+            {
+                IPAddress ipAddress = IPAddress.Parse("192.168.0.102");
+                IPEndPoint ipLocalEndPoint = new IPEndPoint(ipAddress, 20000);
+                tcpClient = new TcpClient(ipLocalEndPoint);
+            }
+            else
+            {
+                tcpClient = new TcpClient();
+            }
+
             TrHandler = TransportHandler.TCP;
-            tcpClient = new TcpClient();
             communicationParams = commPar;
         }
 

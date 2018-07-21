@@ -144,6 +144,7 @@ namespace SCADA.CommunicationAndControlling
                 bool isSuccessful;
                 IORequestBlock forProcess = IORequests.DequeueRequest(out isSuccessful, timeout);
 
+                Console.WriteLine("RTU: {0}", forProcess.ProcessControllerName);
                 if (isSuccessful)
                 {
                     CommunicationObject commObj;
@@ -158,7 +159,6 @@ namespace SCADA.CommunicationAndControlling
                         {
                             
                         }
-
                     }
                 }
             }

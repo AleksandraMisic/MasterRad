@@ -11,13 +11,13 @@ namespace DNP3TCPDriver.ApplicationLayer
 {
     public class DNP3ApplicationHandler : IIndustryProtocolHandler, IDNP3ApplicationHandler
     {
-        ITransportFunctionHandler transportFunctionHandler;
+        public DNP3TransportFunctionHandler DNP3TransportFunctionHandler { get; set; }
 
         public Request Request { get; set; }
 
         public DNP3ApplicationHandler()
         {
-            transportFunctionHandler = new DNP3TransportFunctionHandler();
+            DNP3TransportFunctionHandler = new DNP3TransportFunctionHandler();
             Request = new Request();
         }
 
@@ -35,10 +35,10 @@ namespace DNP3TCPDriver.ApplicationLayer
         {
             RequestHeader requestHeader = new RequestHeader();
 
-            requestHeader.ApplicationControl[0] = true;
-            requestHeader.ApplicationControl[1] = true;
-            requestHeader.ApplicationControl[2] = false;
-            requestHeader.ApplicationControl[3] = false;
+            requestHeader.ApplicationControl[7] = true;     // FIR
+            requestHeader.ApplicationControl[6] = true;     // FIN
+            requestHeader.ApplicationControl[5] = false;    // CON
+            requestHeader.ApplicationControl[4] = false;    // UNS
 
             requestHeader.FunctionCode = ApplicationFunctionCodes.READ;
 
@@ -50,26 +50,26 @@ namespace DNP3TCPDriver.ApplicationLayer
                 Variation = 3
             };
 
-            objectHeader.QualifierField[0] = false;
-            objectHeader.QualifierField[1] = false;
-            objectHeader.QualifierField[2] = false;
-            objectHeader.QualifierField[3] = false;
-
-            objectHeader.QualifierField[4] = false;
+            objectHeader.QualifierField[7] = false;     // RES
+            objectHeader.QualifierField[6] = false;     // Object prefix code
             objectHeader.QualifierField[5] = false;
-            objectHeader.QualifierField[6] = false;
-            objectHeader.QualifierField[7] = true;
+            objectHeader.QualifierField[4] = false;
 
-            int startIndex = indices[0], stopIndex = 0;
+            objectHeader.QualifierField[3] = false;     // Range specifier code
+            objectHeader.QualifierField[2] = false;
+            objectHeader.QualifierField[1] = false;
+            objectHeader.QualifierField[0] = true;
+
+            int startIndex = indices[0], stopIndex = indices[0];
 
             foreach (int index in indices)
             {
-                startIndex = index;
-
                 if (index == -1)
                 {
                     break;
                 }
+
+                stopIndex = index;
             }
 
             objectHeader.RangeField = new Byte[2];
@@ -78,7 +78,7 @@ namespace DNP3TCPDriver.ApplicationLayer
 
             Request.ObjectHeaders.Add(objectHeader);
 
-            ((DNP3TransportFunctionHandler)transportFunctionHandler).MakeSegments(PackData());
+            DNP3TransportFunctionHandler.MakeSegments(PackData());
         }
     }
 }

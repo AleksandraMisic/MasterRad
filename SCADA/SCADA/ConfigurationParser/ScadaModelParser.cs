@@ -34,11 +34,11 @@ namespace SCADA.ConfigurationParser
             string configurationName = deserializationSource;
             string source = Path.Combine(basePath, configurationName);
 
-            //if (Database.Instance.RTUs.Count != 0)
-            //    Database.Instance.RTUs.Clear();
+            if (Database.Instance.RTUs.Count != 0)
+                Database.Instance.RTUs.Clear();
 
-            //if (Database.Instance.ProcessVariablesName.Count != 0)
-            //    Database.Instance.ProcessVariablesName.Clear();
+            if (Database.Instance.ProcessVariablesName.Count != 0)
+                Database.Instance.ProcessVariablesName.Clear();
 
             try
             {
@@ -401,89 +401,97 @@ namespace SCADA.ConfigurationParser
             var rtusSnapshot = dbContext.Database.RTUs.ToArray();
             foreach (var rtu in rtusSnapshot)
             {
-                XElement rtuEl = new XElement(
-                     "RTU",
-                     new XElement("Address", rtu.Value.Address),
-                     new XElement("Name", rtu.Value.Name),
-                     new XElement("FreeSpaceForDigitals", rtu.Value.FreeSpaceForDigitals),
-                     new XElement("FreeSpaceForAnalogs", rtu.Value.FreeSpaceForAnalogs),
-                     new XElement("Protocol", Enum.GetName(typeof(IndustryProtocols), rtu.Value.Protocol)),
-                     new XElement("DigOutStartAddr", rtu.Value.DigOutStartAddr),
-                     new XElement("DigInStartAddr", rtu.Value.DigInStartAddr),
-                     new XElement("AnaOutStartAddr", rtu.Value.AnaOutStartAddr),
-                     new XElement("AnaInStartAddr", rtu.Value.AnaInStartAddr),
-                     new XElement("CounterStartAddr", rtu.Value.CounterStartAddr),
-                     new XElement("NoDigOut", rtu.Value.NoDigOut),
-                     new XElement("NoDigIn", rtu.Value.NoDigIn),
-                     new XElement("NoAnaIn", rtu.Value.NoAnaIn),
-                     new XElement("NoAnaOut", rtu.Value.NoAnaOut),
-                     new XElement("NoCnt", rtu.Value.NoCnt),
-                     new XElement("AnaInRawMin", rtu.Value.AnaInRawMin),
-                     new XElement("AnaInRawMax", rtu.Value.AnaInRawMax),
-                     new XElement("AnaOutRawMin", rtu.Value.AnaOutRawMin),
-                     new XElement("AnaOutRawMax", rtu.Value.AnaOutRawMax)
-                     );
+                if (rtu.Value.Protocol == IndustryProtocols.ModbusTCP)
+                {
+                    XElement rtuEl = new XElement(
+                    "RTU",
+                    new XElement("Address", rtu.Value.Address),
+                    new XElement("Name", rtu.Value.Name),
+                    new XElement("FreeSpaceForDigitals", rtu.Value.FreeSpaceForDigitals),
+                    new XElement("FreeSpaceForAnalogs", rtu.Value.FreeSpaceForAnalogs),
+                    new XElement("Protocol", Enum.GetName(typeof(IndustryProtocols), rtu.Value.Protocol)),
+                    new XElement("DigOutStartAddr", rtu.Value.DigOutStartAddr),
+                    new XElement("DigInStartAddr", rtu.Value.DigInStartAddr),
+                    new XElement("AnaOutStartAddr", rtu.Value.AnaOutStartAddr),
+                    new XElement("AnaInStartAddr", rtu.Value.AnaInStartAddr),
+                    new XElement("CounterStartAddr", rtu.Value.CounterStartAddr),
+                    new XElement("NoDigOut", rtu.Value.NoDigOut),
+                    new XElement("NoDigIn", rtu.Value.NoDigIn),
+                    new XElement("NoAnaIn", rtu.Value.NoAnaIn),
+                    new XElement("NoAnaOut", rtu.Value.NoAnaOut),
+                    new XElement("NoCnt", rtu.Value.NoCnt),
+                    new XElement("AnaInRawMin", rtu.Value.AnaInRawMin),
+                    new XElement("AnaInRawMax", rtu.Value.AnaInRawMax),
+                    new XElement("AnaOutRawMin", rtu.Value.AnaOutRawMin),
+                    new XElement("AnaOutRawMax", rtu.Value.AnaOutRawMax)
+                    );
 
-                rtus.Add(rtuEl);
+                    rtus.Add(rtuEl);
+                }
             }
 
             var pvsSnapshot = dbContext.Database.ProcessVariablesName.ToArray().OrderBy(pv => pv.Value.RelativeAddress);
             foreach (var pv in pvsSnapshot)
             {
-                switch (pv.Value.Type)
+                var rtu = rtusSnapshot.Where(kp => kp.Key == pv.Value.ProcContrName).FirstOrDefault();
+
+                if (rtu.Value.Protocol == IndustryProtocols.ModbusTCP)
                 {
-                    case VariableTypes.DIGITAL:
+                    switch (pv.Value.Type)
+                    {
+                        case VariableTypes.DIGITAL:
 
-                        Digital dig = pv.Value as Digital;
+                            Digital dig = pv.Value as Digital;
 
-                        XElement validCommands = new XElement("ValidCommands");
-                        XElement validStates = new XElement("ValidStates");
+                            XElement validCommands = new XElement("ValidCommands");
+                            XElement validStates = new XElement("ValidStates");
 
-                        foreach (var state in dig.ValidStates)
-                        {
-                            validStates.Add(new XElement("State", Enum.GetName(typeof(States), state)));
-                        }
+                            foreach (var state in dig.ValidStates)
+                            {
+                                validStates.Add(new XElement("State", Enum.GetName(typeof(States), state)));
+                            }
 
-                        foreach (var command in dig.ValidCommands)
-                        {
-                            validCommands.Add(new XElement("Command", Enum.GetName(typeof(CommandTypes), command)));
-                        }
+                            foreach (var command in dig.ValidCommands)
+                            {
+                                validCommands.Add(new XElement("Command", Enum.GetName(typeof(CommandTypes), command)));
+                            }
 
-                        XElement digEl = new XElement(
-                            "Digital",
-                                new XElement("Name", dig.Name),
-                                new XElement("State", dig.State),
-                                new XElement("Command", dig.Command),
-                                new XElement("ProcContrName", dig.ProcContrName),
-                                new XElement("RelativeAddress", dig.RelativeAddress),
-                                new XElement("Class", Enum.GetName(typeof(DigitalDeviceClasses), dig.Class)),
-                                validCommands,
-                                validStates
-                            );
+                            XElement digEl = new XElement(
+                                "Digital",
+                                    new XElement("Name", dig.Name),
+                                    new XElement("State", dig.State),
+                                    new XElement("Command", dig.Command),
+                                    new XElement("ProcContrName", dig.ProcContrName),
+                                    new XElement("RelativeAddress", dig.RelativeAddress),
+                                    new XElement("Class", Enum.GetName(typeof(DigitalDeviceClasses), dig.Class)),
+                                    validCommands,
+                                    validStates
+                                );
 
-                        digitals.Add(digEl);
+                            digitals.Add(digEl);
 
-                        break;
+                            break;
 
-                    case VariableTypes.ANALOG:
-                        Analog analog = pv.Value as Analog;
+                        case VariableTypes.ANALOG:
+                            Analog analog = pv.Value as Analog;
 
-                        XElement anEl = new XElement(
-                            "Analog",
-                                new XElement("Name", analog.Name),
-                                new XElement("NumOfRegisters", analog.NumOfRegisters),
-                                new XElement("AcqValue", analog.AcqValue),
-                                new XElement("CommValue", analog.CommValue),
-                                new XElement("MaxValue", analog.MaxValue),
-                                new XElement("MinValue", analog.MinValue),
-                                new XElement("ProcContrName", analog.ProcContrName),
-                                new XElement("RelativeAddress", analog.RelativeAddress),
-                                new XElement("UnitSymbol", Enum.GetName(typeof(UnitSymbol), analog.UnitSymbol))
-                            );
+                            XElement anEl = new XElement(
+                                "Analog",
+                                    new XElement("Name", analog.Name),
+                                    new XElement("NumOfRegisters", analog.NumOfRegisters),
+                                    new XElement("AcqValue", analog.AcqValue),
+                                    new XElement("CommValue", analog.CommValue),
+                                    new XElement("MaxValue", analog.MaxValue),
+                                    new XElement("MinValue", analog.MinValue),
+                                    new XElement("ProcContrName", analog.ProcContrName),
+                                    new XElement("RelativeAddress", analog.RelativeAddress),
+                                    new XElement("UnitSymbol", Enum.GetName(typeof(UnitSymbol), analog.UnitSymbol))
+                                );
 
-                        analogs.Add(anEl);
+                            analogs.Add(anEl);
 
-                        break;
+                            break;
+                    }
                 }
             }
 

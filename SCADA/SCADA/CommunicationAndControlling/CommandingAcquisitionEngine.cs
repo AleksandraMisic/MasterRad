@@ -413,7 +413,14 @@ namespace SCADA.CommunicationAndControlling
                                 {
                                     indices[i++] = analog.RelativeAddress;
                                 }
+
                                 ((DNP3Handler)IProtHandler).DNP3ApplicationHandler.ReadAllAnalogInputPoints(indices);
+                                byte[] packet_bytes = {
+                                    0x05, 0x64, 0x0b, 0xc4, 0x03, 0x00, 0x04, 0x00,
+                                    0xef, 0x7a, 0xc1, 0xc1, 0x01, 0x3c, 0x02, 0x06,
+                                    0xb5, 0x76
+                                };
+                                ((DNP3Handler)IProtHandler).DNP3ApplicationHandler.DNP3TransportFunctionHandler.DNP3DataLinkHandler.PackedFrame = packet_bytes;
                                 break;
                         }
 

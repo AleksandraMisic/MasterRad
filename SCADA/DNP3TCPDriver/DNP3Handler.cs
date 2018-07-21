@@ -14,20 +14,14 @@ namespace DNP3TCPDriver
     {
         public DNP3ApplicationHandler DNP3ApplicationHandler { get; set; }
 
-        public DNP3TransportFunctionHandler DNP3TransportFunctionHandler { get; set; }
-
-        public DNP3DataLinkHandler DNP3DataLynkHandler { get; set; }
-
         public DNP3Handler()
         {
             DNP3ApplicationHandler = new DNP3ApplicationHandler();
-            DNP3TransportFunctionHandler = new DNP3TransportFunctionHandler();
-            DNP3DataLynkHandler = new DNP3DataLinkHandler();
         }
 
         public byte[] PackData()
         {
-            throw new NotImplementedException();
+            return DNP3ApplicationHandler.DNP3TransportFunctionHandler.DNP3DataLinkHandler.PackedFrame;
         }
 
         public void UnpackData(byte[] data, int length)

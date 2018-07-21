@@ -11,7 +11,7 @@ namespace DNP3TCPDriver.TransportFunction
 {
     public class DNP3TransportFunctionHandler : IIndustryProtocolHandler, ITransportFunctionHandler
     {
-        private IDataLinkHandler dataLinkHandler;
+        public DNP3DataLinkHandler DNP3DataLinkHandler { get; set; }
 
         private int segmentMaxSize = 249;
 
@@ -21,7 +21,9 @@ namespace DNP3TCPDriver.TransportFunction
 
         public DNP3TransportFunctionHandler()
         {
+            DNP3DataLinkHandler = new DNP3DataLinkHandler();
             TransportSegments = new List<TransportSegment>();
+            CurrentSegment = new TransportSegment();
         }
 
         public byte[] PackData()
@@ -41,8 +43,6 @@ namespace DNP3TCPDriver.TransportFunction
 
         public void MakeSegments(byte[] array)
         {
-            dataLinkHandler = new DNP3DataLinkHandler();
-
             if (array.Count() > segmentMaxSize)
             {
 
@@ -52,14 +52,14 @@ namespace DNP3TCPDriver.TransportFunction
                 TransportSegment transportSegment = new TransportSegment();
                 TransportHeader transportHeader = new TransportHeader();
 
-                transportHeader.Header[0] = true;
-                transportHeader.Header[1] = true;
-                transportHeader.Header[2] = false;
-                transportHeader.Header[3] = false;
+                transportHeader.Header[7] = true;       // FIN
+                transportHeader.Header[6] = true;       // FIR
+                transportHeader.Header[5] = false;      // Sequence
                 transportHeader.Header[4] = false;
-                transportHeader.Header[5] = false;
-                transportHeader.Header[6] = false;
-                transportHeader.Header[7] = false;
+                transportHeader.Header[3] = false;
+                transportHeader.Header[3] = false;
+                transportHeader.Header[2] = false;
+                transportHeader.Header[0] = false;
 
                 transportSegment.TransportHeader = transportHeader;
                 transportSegment.Data = array;
@@ -68,7 +68,7 @@ namespace DNP3TCPDriver.TransportFunction
 
                 CurrentSegment = transportSegment;
 
-                ((DNP3DataLinkHandler)dataLinkHandler).MakeFrame(PackData());
+                DNP3DataLinkHandler.MakeFrame(PackData());
             }
         }
     }

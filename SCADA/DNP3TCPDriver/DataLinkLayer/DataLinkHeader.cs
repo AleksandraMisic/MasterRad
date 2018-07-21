@@ -22,5 +22,21 @@ namespace DNP3TCPDriver.DataLinkLayer
             Destination = new byte[2];
             Source = new byte[2];
         }
+
+        public byte[] GetBytes()
+        {
+            byte[] array = new byte[2 + 1 + 1 + 2 + 2];
+
+            array[0] = Start[0];
+            array[1] = Start[1];
+            array[2] = Length;
+            Control.CopyTo(array, 3);
+            array[4] = Destination[0];
+            array[5] = Destination[1];
+            array[6] = Source[0];
+            array[7] = Source[1];
+
+            return array;
+        }
     }
 }

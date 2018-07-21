@@ -71,10 +71,11 @@ namespace SCADA
             }
 
             CommandingAcquisitionEngine AcqEngine = new CommandingAcquisitionEngine();
-            AcqEngine.ConfigureEngine(dataPointsConfigurations);
 
             if (AcqEngine.ConfigureEngine(acqComConfigPath))
             {
+                AcqEngine.ConfigureEngine(dataPointsConfigurations);
+
                 AcqEngine.InitializeSimulator();
                 cancellationToken = cancellationTokenSource.Token;
 
@@ -108,7 +109,6 @@ namespace SCADA
                     Console.ReadLine();
                     return;
                 }
-
             }
             else
             {
