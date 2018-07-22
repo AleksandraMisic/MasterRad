@@ -1,4 +1,4 @@
-﻿using DNP3ConfigParser.Configuration.DNP3DeviceProfileJan2010ConfigModel.Points;
+﻿using DNP3DataPointsModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;

@@ -13,10 +13,12 @@ namespace DNP3TCPDriver
     public class DNP3Handler : IIndustryProtocolHandler
     {
         public DNP3ApplicationHandler DNP3ApplicationHandler { get; set; }
+        public DNP3DataLinkHandler DNP3DataLinkHandler { get; set; }
 
         public DNP3Handler()
         {
             DNP3ApplicationHandler = new DNP3ApplicationHandler();
+            DNP3DataLinkHandler = new DNP3DataLinkHandler();
         }
 
         public byte[] PackData()

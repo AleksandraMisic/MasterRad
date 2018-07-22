@@ -1,9 +1,9 @@
 ﻿using DNP3ConfigParser.Configuration;
 using DNP3ConfigParser.Configuration.DNP3DeviceProfileJan2010ConfigModel;
-using DNP3ConfigParser.Configuration.DNP3DeviceProfileJan2010ConfigModel.Points;
 using DNP3ConfigParser.Configurations;
 using DNP3ConfigParser.Enums.DeviceConfig;
 using DNP3ConfigParser.Enums.NetworkConfig;
+using DNP3DataPointsModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;

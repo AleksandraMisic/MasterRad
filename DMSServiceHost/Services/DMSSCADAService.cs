@@ -189,7 +189,7 @@ namespace DMSService
             }
             else
             {
-                Console.WriteLine("ChangeOnScada()-> element with mrid={0} do not exist in OMS.", mrID);
+                Console.WriteLine("ChangeOnScada()-> element with mrid={0} does not exist in OMS.", mrID);
             }
         }
     }

@@ -30,7 +30,7 @@
 
         <Label Grid.Row="2" Grid.ColumnSpan="2">Measurement type:
         </Label>
-        <TextBlock Grid.Row="2" Grid.Column="2" Text="{Binding MeasurementType}" Padding="5, 2, 5, 0" Background="{DynamicResource DarkColor}" Foreground="LightGray" Margin="0, 2, 0, 2">
+        <TextBlock Grid.Row="2" Grid.Column="2" Text="Energy Consumption" Padding="5, 2, 5, 0" Background="{DynamicResource DarkColor}" Foreground="LightGray" Margin="0, 2, 0, 2">
         </TextBlock>
         <Label Grid.Row="3" Grid.ColumnSpan="2">Value:
         </Label>
@@ -38,7 +38,7 @@
         </TextBlock>
         <Label Grid.Row="4" Grid.ColumnSpan="2">Unit:
         </Label>
-        <TextBlock Grid.Row="4" Grid.Column="2" Text="{Binding UnitSymbol}" Padding="5, 2, 5, 0" Background="{DynamicResource DarkColor}" Foreground="LightGray" Margin="0, 2, 0, 2">
+        <TextBlock Grid.Row="4" Grid.Column="2" Text="kWh" Padding="5, 2, 5, 0" Background="{DynamicResource DarkColor}" Foreground="LightGray" Margin="0, 2, 0, 2">
         </TextBlock>
     </Grid>
 </UserControl>

@@ -14,9 +14,10 @@ using System.Linq;
 using SCADA.CommunicationAndControlling.SecondaryDataProcessing;
 using DMSContract;
 using DNP3ConfigParser.Configuration.DNP3DeviceProfileJan2010ConfigModel;
-using DNP3ConfigParser.Configuration.DNP3DeviceProfileJan2010ConfigModel.Points;
 using SCADA.RealtimeDatabase.Catalogs;
 using DNP3TCPDriver;
+using DNP3DataPointsModel;
+using DNP3Driver.ApplicationLayer;
 
 namespace SCADA.CommunicationAndControlling
 {
@@ -414,7 +415,7 @@ namespace SCADA.CommunicationAndControlling
                                     indices[i++] = analog.RelativeAddress;
                                 }
 
-                                ((DNP3Handler)IProtHandler).DNP3ApplicationHandler.ReadAllAnalogInputPoints(indices);
+                                ((DNP3Handler)IProtHandler).DNP3ApplicationHandler.ReadAllAnalogInputPointsRequest(indices);
                                 break;
                         }
 
@@ -545,7 +546,7 @@ namespace SCADA.CommunicationAndControlling
                                                                 isChange = true;
                                                                 target.State = target.ValidStates[isOpened ? 1 : 0];
                                                                 Console.WriteLine(" CHANGE! Digital variable {0}, state: {1}", target.Name, target.State);
-                                                                
+
                                                                 dMSProxy.ChangeOnSCADADigital(target.Name, target.State);
                                                             }
                                                         }
@@ -595,7 +596,7 @@ namespace SCADA.CommunicationAndControlling
                                                                 Console.WriteLine(" CHANGE! Analog variable {0}, AcqValue: {1}", target.Name, target.AcqValue);
 
                                                                 //to do: propagacija analogih promena(ako se secate Pavlica je prvo rekao da nam to ne treba da samo jednom zakucamo vrednost na pocetku) xD
-                                                                
+
                                                                 dMSProxy.ChangeOnSCADAAnalog(target.Name, target.AcqValue);
                                                             }
                                                         }
@@ -621,9 +622,53 @@ namespace SCADA.CommunicationAndControlling
                                     Console.WriteLine(e.Message);
                                 }
                                 break;
+
+                            case IndustryProtocols.DNP3TCP:
+
+                                byte len = answer.RcvBuff[2];
+
+                                byte actualLen = (byte)(2 + 1 + 5 + 2); // start + len + ctrl + dest + source + crc
+
+                                len -= 5; // minus header
+
+                                while (len > 0)
+                                {
+                                    if (len < 16)
+                                    {
+                                        // last chunk
+                                        actualLen += (byte)(len + 2);
+                                        break;
+                                    }
+
+                                    actualLen += (byte)(16 + 2);
+                                    len -= 16;
+                                }
+
+                                byte[] message = new byte[actualLen];
+
+                                for (int i = 0; i < actualLen; i++)
+                                {
+                                    message[i] = answer.RcvBuff[i];
+                                }
+
+                                DNP3Handler dNP3Handler = new DNP3Handler();
+                                dNP3Handler.DNP3DataLinkHandler.UnpackData(message, message.Count());
+                                
+
+                                var dnp3Object = dNP3Handler.DNP3DataLinkHandler.DNP3TransportFunctionHandler.DNP3ApplicationHandler.DNP3Objects[0];
+
+                                ProcessVariable processVariable;
+                                dbContext.GetProcessVariableByName("MEAS_A_9", out processVariable);
+
+                                if (((Analog)processVariable).AcqValue != dnp3Object.Values[0])
+                                {
+                                    ((Analog)processVariable).AcqValue = dnp3Object.Values[0];
+                                    dMSProxy.ChangeOnSCADAAnalog(processVariable.Name, ((Analog)processVariable).AcqValue);
+                                }
+
+                                break;
                         }
                     }
-
                 }
             }
 

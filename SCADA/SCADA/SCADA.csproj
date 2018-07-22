@@ -114,6 +114,10 @@
       <Project>{C48472D2-BEF9-425D-88B1-4F6B2D31FD8C}</Project>
       <Name>DMSContract</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\DNP3DataPointsModel\DNP3DataPointsModel.csproj">
+      <Project>{2A7AECFB-E992-478E-AE48-77929BF2A5E1}</Project>
+      <Name>DNP3DataPointsModel</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\OMSCommon\OMSCommon.csproj">
       <Project>{C4572A3C-F667-4434-97BC-825B1D3858E0}</Project>
       <Name>OMSCommon</Name>

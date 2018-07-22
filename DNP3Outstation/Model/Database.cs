@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DNP3DataPointsModel;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,15 +9,13 @@ namespace DNP3Outstation.Model
 {
     public class Database
     {
+        public static List<AnalogInputPoint> AnalogInputPoints { get; set; }
+        public static object DatabaseLock { get; set; }
+
         static Database()
         {
-
-        }
-
-        public static List<Device> Devices
-        {
-            get;
-            set;
+            AnalogInputPoints = new List<AnalogInputPoint>();
+            DatabaseLock = new object();
         }
     }
 }

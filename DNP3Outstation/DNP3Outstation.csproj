@@ -56,9 +56,13 @@
     </ApplicationDefinition>
     <Compile Include="Communication\CommunicationEngine.cs" />
     <Compile Include="Model\Database.cs" />
-    <Compile Include="Model\Device.cs" />
+    <Compile Include="ObjectProcessing\ObjectProcessor.cs" />
+    <Compile Include="ViewModel\DataPointsViewModel.cs" />
     <Compile Include="ViewModel\DeviceInfoViewModel.cs" />
     <Compile Include="ViewModel\MainshellViewModel.cs" />
+    <Compile Include="View\ShellFillers\DataPoints.xaml.cs">
+      <DependentUpon>DataPoints.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\ShellFillers\DeviceInfo.xaml.cs">
       <DependentUpon>DeviceInfo.xaml</DependentUpon>
     </Compile>
@@ -77,6 +81,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="View\ShellFillers\DataPoints.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\ShellFillers\DeviceInfo.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -130,9 +138,17 @@
       <Project>{339a9bf8-9468-4889-9f76-9c9deae5df49}</Project>
       <Name>UIShell</Name>
     </ProjectReference>
+    <ProjectReference Include="..\DNP3DataPointsModel\DNP3DataPointsModel.csproj">
+      <Project>{2A7AECFB-E992-478E-AE48-77929BF2A5E1}</Project>
+      <Name>DNP3DataPointsModel</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SCADA\DNP3ConfigParser\DNP3ConfigParser.csproj">
       <Project>{2D480CA6-F26C-43C9-A6D4-2C5DEB77EBD8}</Project>
       <Name>DNP3ConfigParser</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SCADA\DNP3TCPDriver\DNP3Driver.csproj">
+      <Project>{A9DABC4C-2E57-49BE-83F3-E82A62107244}</Project>
+      <Name>DNP3Driver</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

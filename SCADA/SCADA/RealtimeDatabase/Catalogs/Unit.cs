@@ -34,7 +34,12 @@ namespace SCADA.RealtimeDatabase.Catalogs
         /// </summary>
         VArh = 5,
 
-        V = 6
+        V = 6,
+
+        /// <summary>
+        ///  watt-hour, does useful work (paying for it)
+        /// </summary>
+        kWh = 7
     }
 
     // to do: use it in future implementations

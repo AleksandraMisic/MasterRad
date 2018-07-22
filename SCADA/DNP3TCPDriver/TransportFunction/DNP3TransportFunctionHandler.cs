@@ -1,4 +1,5 @@
-﻿using DNP3TCPDriver.DataLinkLayer;
+﻿using DNP3TCPDriver.ApplicationLayer;
+using DNP3TCPDriver.DataLinkLayer;
 using DNP3TCPDriver.DataLynkLayer;
 using PCCommon;
 using System;
@@ -12,6 +13,7 @@ namespace DNP3TCPDriver.TransportFunction
     public class DNP3TransportFunctionHandler : IIndustryProtocolHandler, ITransportFunctionHandler
     {
         public DNP3DataLinkHandler DNP3DataLinkHandler { get; set; }
+        public DNP3ApplicationHandler DNP3ApplicationHandler { get; set; }
 
         private int segmentMaxSize = 249;
 
@@ -21,7 +23,8 @@ namespace DNP3TCPDriver.TransportFunction
 
         public DNP3TransportFunctionHandler()
         {
-            DNP3DataLinkHandler = new DNP3DataLinkHandler();
+            //DNP3DataLinkHandler = new DNP3DataLinkHandler();
+            //DNP3ApplicationHandler = new DNP3ApplicationHandler();
             TransportSegments = new List<TransportSegment>();
             CurrentSegment = new TransportSegment();
         }
@@ -38,10 +41,18 @@ namespace DNP3TCPDriver.TransportFunction
 
         public void UnpackData(byte[] data, int length)
         {
-            throw new NotImplementedException();
+            byte[] appData = new byte[length - 1];
+
+            for (int i = 0; i < length - 1; i++)
+            {
+                appData[i] = data[i+1];
+            }
+
+            DNP3ApplicationHandler = new DNP3ApplicationHandler();
+            DNP3ApplicationHandler.UnpackData(appData, length - 1);
         }
 
-        public void MakeSegments(byte[] array)
+        public void MakeSegments(byte[] array, bool isRequest)
         {
             if (array.Count() > segmentMaxSize)
             {
@@ -68,7 +79,8 @@ namespace DNP3TCPDriver.TransportFunction
 
                 CurrentSegment = transportSegment;
 
-                DNP3DataLinkHandler.MakeFrame(PackData());
+                DNP3DataLinkHandler = new DNP3DataLinkHandler();
+                DNP3DataLinkHandler.MakeFrame(PackData(), isRequest);
             }
         }
     }

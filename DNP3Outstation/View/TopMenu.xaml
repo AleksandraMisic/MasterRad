@@ -9,7 +9,9 @@
         <Menu Background="{StaticResource DarkestColor}" Foreground="White">
             <MenuItem Header="View" Margin="0, 2, 0, 2" Template="{StaticResource MenuItemHeaderTemplate}" Foreground="White">
                 <MenuItem Header="Device Info" Foreground="White"
-                         Command="{Binding OpenDeviceInfoCommand}" CommandParameter="Connection Info"/>
+                         Command="{Binding OpenDeviceInfoCommand}" CommandParameter="Device Info"/>
+                <MenuItem Header="Data Points" Foreground="White"
+                         Command="{Binding OpenDataPointsCommand}" CommandParameter="Data Points"/>
             </MenuItem>
         </Menu>
     </StackPanel>

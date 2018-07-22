@@ -1,0 +1,50 @@
+﻿<UserControl x:Class="DNP3Outstation.View.ShellFillers.DataPoints"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:DNP3Outstation.View.ShellFillers"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid Background="{StaticResource ResourceKey=MediumColor}">
+        <Grid Margin="7, 7, 7, 7">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Expander IsExpanded="True" Header="Analog Inputs" Style="{StaticResource ExpanderStyle}" Grid.Row="0" Background="{StaticResource MediumColor}">
+                <DataGrid Name="AnalogInputs" Grid.Row="0" ItemsSource="{Binding IncidentReports}" Margin="10, 01, 10, 10" Style="{StaticResource ResourceKey=DataGridStyle}" RowStyle="{StaticResource ResourceKey=DataGridRow}" ColumnHeaderStyle="{StaticResource ResourceKey=DataGridColumnHeader}" CellStyle="{StaticResource ResourceKey=DataGridCell}" AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False" CanUserDeleteRows="False" CanUserReorderColumns="False" CanUserResizeRows="False">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Name" Binding="{Binding Name}"/>
+                        <DataGridTextColumn Header="Current Value" Binding="{Binding Value}"/>
+                        <DataGridTextColumn Header="Units" Binding="{Binding Units}"/>
+                        <DataGridTextColumn Header="Description" Binding="{Binding Description}"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Expander>
+            <Expander Name="AnalogOutputs" Header="Analog Outputs" Style="{StaticResource ExpanderStyle}" Grid.Row="1">
+            </Expander>
+            <Expander Name="BCDPoints" Header="Binary Coded Decimal Points" Style="{StaticResource ExpanderStyle}" Grid.Row="2">
+            </Expander>
+            <Expander Name="BinaryOutputs" Header="Binary Outputs" Style="{StaticResource ExpanderStyle}" Grid.Row="3">
+            </Expander>
+            <Expander Name="CounterPoints" Header="Counter Points" Style="{StaticResource ExpanderStyle}" Grid.Row="4">
+            </Expander>
+            <Expander Name="DoubleBitBinaryInputs" Header="Double Bit Binary Inputs" Style="{StaticResource ExpanderStyle}" Grid.Row="5">
+            </Expander>
+            <Expander Name="OctetStringPoints" Header="Octet String Points" Style="{StaticResource ExpanderStyle}" Grid.Row="6">
+            </Expander>
+            <Expander Name="SingleBitBinaryInputs" Header="Single Bit Binary Inputs" Style="{StaticResource ExpanderStyle}" Grid.Row="7">
+            </Expander>
+            <Expander Name="VirtualTerminals" Header="Virtual Terminals" Style="{StaticResource ExpanderStyle}" Grid.Row="8">
+            </Expander>
+        </Grid>
+    </Grid>
+</UserControl>
