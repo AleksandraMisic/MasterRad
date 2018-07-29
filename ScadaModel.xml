@@ -79,7 +79,7 @@
     </Digital>
     <Digital>
       <Name>MEAS_D_4</Name>
-      <State>CLOSED</State>
+      <State>OPEN</State>
       <Command>CLOSE</Command>
       <ProcContrName>RTU-1</ProcContrName>
       <RelativeAddress>2</RelativeAddress>
@@ -451,17 +451,6 @@
       <RelativeAddress>27</RelativeAddress>
       <UnitSymbol>VA</UnitSymbol>
     </Analog>
-    <!-- <Analog> -->
-      <!-- <Name>MEAS_A_9</Name> -->
-      <!-- <NumOfRegisters>1</NumOfRegisters> -->
-      <!-- <AcqValue>250</AcqValue> -->
-      <!-- <CommValue>250</CommValue> -->
-      <!-- <MaxValue>500</MaxValue> -->
-      <!-- <MinValue>50</MinValue> -->
-      <!-- <ProcContrName>RTU-1</ProcContrName> -->
-      <!-- <RelativeAddress>28</RelativeAddress> -->
-      <!-- <UnitSymbol>VA</UnitSymbol> -->
-    <!-- </Analog> -->
   </Analogs>
   <Counters />
 </ScadaModel>

@@ -7,18 +7,18 @@ using System.Threading.Tasks;
 
 namespace DNP3TCPDriver.ApplicationLayer
 {
-    public class ResponseHeader
+    public class ResponseHeader : Header
     {
-        public BitArray ApplicationControl { get; set; }
-
-        public ApplicationFunctionCodes FunctionCode { get; set; }
-
         public BitArray InternalIndications { get; set; }
 
         public ResponseHeader()
         {
-            ApplicationControl = new BitArray(8);
             InternalIndications = new BitArray(16);
+        }
+
+        public override byte[] ToBytes()
+        {
+            throw new NotImplementedException();
         }
     }
 }

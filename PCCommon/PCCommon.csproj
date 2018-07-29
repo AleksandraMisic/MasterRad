@@ -47,6 +47,7 @@
     <Compile Include="IndustryProtocols.cs" />
     <Compile Include="IORequestBlock.cs" />
     <Compile Include="IORequestsQueue.cs" />
+    <Compile Include="IProtocolLayer.cs" />
     <Compile Include="PCCommunicationManager.cs" />
     <Compile Include="ProcessController.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

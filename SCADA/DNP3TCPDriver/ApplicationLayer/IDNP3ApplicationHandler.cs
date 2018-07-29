@@ -8,8 +8,8 @@ namespace DNP3TCPDriver.ApplicationLayer
 {
     public interface IDNP3ApplicationHandler
     {
-        void ReadAllAnalogInputPointsRequest(int[] indices);
+        void ReadAllAnalogInputPointsRequest();
 
-        void ReadAllAnalogInputPointsResponse();
+        void ReadAllAnalogInputPointsResponse(byte[] indices);
     }
 }

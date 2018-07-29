@@ -402,20 +402,20 @@ namespace SCADA.CommunicationAndControlling
                             case IndustryProtocols.DNP3TCP:
 
                                 int[] indices = new int[10];
-                                int i = 0;
+                                //int i = 0;
 
-                                for (i = 0; i < 10; i++)
-                                {
-                                    indices[i] = -1;
-                                }
+                                //for (i = 0; i < 10; i++)
+                                //{
+                                //    indices[i] = -1;
+                                //}
 
-                                i = 0;
-                                foreach (Analog analog in analogs)
-                                {
-                                    indices[i++] = analog.RelativeAddress;
-                                }
+                                //i = 0;
+                                //foreach (Analog analog in analogs)
+                                //{
+                                //    indices[i++] = analog.RelativeAddress;
+                                //}
 
-                                ((DNP3Handler)IProtHandler).DNP3ApplicationHandler.ReadAllAnalogInputPointsRequest(indices);
+                                ((DNP3Handler)IProtHandler).DNP3ApplicationHandler.ReadAllAnalogInputPointsRequest();
                                 break;
                         }
 
@@ -652,7 +652,7 @@ namespace SCADA.CommunicationAndControlling
                                 }
 
                                 DNP3Handler dNP3Handler = new DNP3Handler();
-                                dNP3Handler.DNP3DataLinkHandler.UnpackData(message, message.Count());
+                                //dNP3Handler.DNP3DataLinkHandler.UnpackData(message, message.Count());
                                 
 
                                 var dnp3Object = dNP3Handler.DNP3DataLinkHandler.DNP3TransportFunctionHandler.DNP3ApplicationHandler.DNP3Objects[0];

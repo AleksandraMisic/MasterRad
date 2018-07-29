@@ -7,15 +7,15 @@ using System.Threading.Tasks;
 
 namespace DNP3TCPDriver.ApplicationLayer
 {
-    public class RequestHeader
+    public class RequestHeader : Header, IByteable
     {
-        public BitArray ApplicationControl { get; set; }
-
-        public ApplicationFunctionCodes FunctionCode { get; set; }
-
-        public RequestHeader()
+        public override byte[] ToBytes()
         {
-            ApplicationControl = new BitArray(8);
+            byte[] header = new byte[2];
+            ApplicationControl.CopyTo(header, 0);
+            header[1] = (byte)FunctionCode;
+
+            return header;
         }
     }
 }

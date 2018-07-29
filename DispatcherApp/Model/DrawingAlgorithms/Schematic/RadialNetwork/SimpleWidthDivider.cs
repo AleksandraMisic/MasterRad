@@ -59,6 +59,7 @@ namespace DispatcherApp.Model.DrawingAlgorithms.Schematic.RadialNetwork
             }
 
             Branch branch = elementList[0] as Branch;
+            PlaceBranch(new Point(this.canvasWidth/2, 0), 0, 0, 1, this.canvasWidth, branch);
 
             if (branch != null)
             {
@@ -142,7 +143,7 @@ namespace DispatcherApp.Model.DrawingAlgorithms.Schematic.RadialNetwork
 
             if (branch is Source)
             {
-                PlaceSource();
+                PlaceSource(branch as Source, offset, y - 1, cellWidth);
             }
             else if (branch is Switch)
             {
@@ -205,6 +206,10 @@ namespace DispatcherApp.Model.DrawingAlgorithms.Schematic.RadialNetwork
                 }
                 else if (branch is Source)
                 {
+                    point1.Y += 3;
+                    point2.X = point1.X;
+                    point3.X = point1.X;
+
                     if (branchProperties != null)
                     {
                         regularLineControl.Polyline1.DataContext = branchProperties as SourceProperties;
@@ -221,9 +226,40 @@ namespace DispatcherApp.Model.DrawingAlgorithms.Schematic.RadialNetwork
             }
         }
 
-        private void PlaceSource()
+        private void PlaceSource(Source source, double offset, int y, double cellWidth)
         {
+            SourceUserControl sourceControl = new SourceUserControl();
 
+            double var = 80 * cellWidth / 100;
+
+            if (var > startHeight)
+            {
+                currentHeight = startHeight;
+            }
+            else
+            {
+                currentHeight = var;
+            }
+
+            if (properties.TryGetValue(source.ElementGID, out ElementProperties elementProperties))
+            {
+                SourceProperties sourceProperties = elementProperties as SourceProperties;
+
+                sourceControl.DataContext = sourceProperties;
+            }
+
+            sourceControl.Button.Width = currentHeight;
+            sourceControl.Button.Height = currentHeight;
+
+            Canvas.SetLeft(sourceControl, offset + cellWidth / 2 - currentHeight / 2);
+            Canvas.SetTop(sourceControl, y * cellHeight - cellHeight / 5 + currentHeight);
+            Panel.SetZIndex(sourceControl, 5);
+
+            sourceControl.Button.Command = NetworkViewViewModel.OpenPropertiesCommand;
+            sourceControl.Button.CommandParameter = source.ElementGID;
+            sourceControl.ToolTip = source.MRID;
+
+            result.Add(sourceControl);
         }
 
         private void PlaceConsumer(Consumer consumer, double offset, int y, double cellWidth)

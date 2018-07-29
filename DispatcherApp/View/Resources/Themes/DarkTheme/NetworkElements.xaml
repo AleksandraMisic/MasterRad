@@ -159,6 +159,30 @@
         </Setter>
     </Style>
 
+    <Style x:Key="SourceControl">
+        <Style.Resources>
+            <converters:BoolToVisibility x:Key="BoolToVisibility"/>
+        </Style.Resources>
+        <Setter Property="Button.Template">
+            <Setter.Value>
+                <ControlTemplate>
+                    <Polygon Name="Border" Fill="Orange" HorizontalAlignment="Center" VerticalAlignment="Center" Points="0, 0 5, 10 10, 0 ">
+                    </Polygon>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="Button.IsMouseOver" Value="True">
+                            <Setter Property="Button.Background" Value="MediumOrchid" TargetName="Border">
+                            </Setter>
+                        </Trigger>
+                        <Trigger Property="Button.IsPressed" Value="True">
+                            <Setter Property="Button.Background" Value="DarkOrange" TargetName="Border">
+                            </Setter>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <Style x:Key="ACLineControl">
         <Setter Property="Button.Template">
             <Setter.Value>

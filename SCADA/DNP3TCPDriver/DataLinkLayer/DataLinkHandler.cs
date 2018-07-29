@@ -1,5 +1,4 @@
-﻿using DNP3TCPDriver.DataLynkLayer;
-using DNP3TCPDriver.TransportFunction;
+﻿using DNP3TCPDriver.TransportFunction;
 using PCCommon;
 using System;
 using System.Collections;
@@ -12,36 +11,33 @@ using System.Threading.Tasks;
 
 namespace DNP3TCPDriver.DataLinkLayer
 {
-    public class DNP3DataLinkHandler : IIndustryProtocolHandler, IDataLinkHandler
+    public class DataLinkHandler : IProtocolLayer
     {
         [DllImport("CRCCalculator.dll", EntryPoint = "CalculateCRC", CallingConvention = CallingConvention.Cdecl)]
         public static extern void CalculateCRC(int length, byte[] data, byte[] crc);
 
-        public DNP3TransportFunctionHandler DNP3TransportFunctionHandler;
+        public TransportFunctionHandler DNP3TransportFunctionHandler;
+        public bool Initiation { get; set; }
+        public List<byte[]> PackedFrames { get; set; }
 
-        public DataLinkFrame DataLinkFrame { get; set; }
+        private int frameMaxSize = 282;
 
-        public byte[] PackedFrame { get; set; }
-
-        public DNP3DataLinkHandler()
+        public DataLinkHandler(bool initiation)
         {
-            //DNP3TransportFunctionHandler = new DNP3TransportFunctionHandler();
-            DataLinkFrame = new DataLinkFrame();
+            Initiation = initiation;
+            PackedFrames = new List<byte[]>();
         }
 
-        public byte[] PackData()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void UnpackData(byte[] data, int length)
+        public void PackUp(byte[] data)
         {
             if (data[0] != 0x05 || data[1] != 0x64)
             {
                 return;
             }
 
-            int actualTransportLen = 0;
+            int length = data.Count();
+
+            int actualTransportLength = 0;
 
             byte[] temp = new byte[length];
 
@@ -55,7 +51,7 @@ namespace DNP3TCPDriver.DataLinkLayer
                 if (length < 18)
                 {
                     // last chunk
-                    actualTransportLen += (byte)(length - 2);
+                    actualTransportLength += (byte)(length - 2);
 
                     int k = 0;
                     for (k = 0; k < length - 2; k++)
@@ -76,22 +72,22 @@ namespace DNP3TCPDriver.DataLinkLayer
                 i += 16;
                 j += 18;
 
-                actualTransportLen += (byte)(16);
+                actualTransportLength += (byte)(16);
                 length -= 18;
             }
 
-            byte[] transportMessage = new byte[actualTransportLen];
+            byte[] transportMessage = new byte[actualTransportLength];
 
-            for (i = 0; i < actualTransportLen; i++)
+            for (i = 0; i < actualTransportLength; i++)
             {
                 transportMessage[i] = temp[i];
             }
 
-            DNP3TransportFunctionHandler = new DNP3TransportFunctionHandler();
-            DNP3TransportFunctionHandler.UnpackData(transportMessage, actualTransportLen);
+            DNP3TransportFunctionHandler = new TransportFunctionHandler(true);
+            DNP3TransportFunctionHandler.PackUp(transportMessage);
         }
 
-        public void MakeFrame(byte[] data, bool isRequest)
+        public void PackDown(byte[] data)
         {
             DataLinkHeader dataLinkHeader = new DataLinkHeader();
 
@@ -100,16 +96,17 @@ namespace DNP3TCPDriver.DataLinkLayer
 
             dataLinkHeader.Length = BitConverter.GetBytes(5 + data.Count())[0];
 
-            if (isRequest)
+            if (Initiation)
             {
-                dataLinkHeader.Control[7] = true;       // DIR
-                dataLinkHeader.Control[6] = true;       // PRM
+                dataLinkHeader.Control[7] = true;       // DIR (Master/Outstation)
+                dataLinkHeader.Control[6] = true;       // PRM (Initiated/Completed)
             }
             else
             {
                 dataLinkHeader.Control[7] = false;       // DIR
                 dataLinkHeader.Control[6] = false;       // PRM
             }
+
             dataLinkHeader.Control[5] = false;      // FCB
             dataLinkHeader.Control[4] = false;      // FCV
 
@@ -126,47 +123,62 @@ namespace DNP3TCPDriver.DataLinkLayer
             dataLinkHeader.Source[0] = 2;
             dataLinkHeader.Source[1] = 2;
 
-            DataLinkFrame.DataLynkHeader = dataLinkHeader;
+            byte[] header = dataLinkHeader.ToBytes();
+            byte[] tempFrame = new byte[frameMaxSize]; // HARD CODE!!!!!!!!!!!!!!!!
 
-            byte[] array = new byte[dataLinkHeader.GetBytes().Count() + 2 + data.Count() + 2];
-            byte[] header = new byte[dataLinkHeader.GetBytes().Count()];
-
-            dataLinkHeader.GetBytes().CopyTo(array, 0);
-            dataLinkHeader.GetBytes().CopyTo(header, 0);
+            header.CopyTo(tempFrame, 0);
 
             byte[] crc = CallCalclulateCRC(header);
-            
-            array[8] = crc[0];   // Header CRC
-            array[9] = crc[1];
+
+            tempFrame[8] = crc[0];   // Header CRC
+            tempFrame[9] = crc[1];
 
             int dataCount = data.Count();
             int dataIndex = 0;
-            int arrayIndex = 10;
+            int frameIndex = 10;
 
             while (dataCount > 0)
             {
-                byte[] temp = new byte[16];
+                byte[] temp = null;
 
                 if (dataCount < 16)
                 {
-                    byte[] lastTemp = new byte[dataCount];
-                    data.CopyTo(lastTemp, dataIndex);
-                    lastTemp.CopyTo(array, arrayIndex);
+                    temp = new byte[dataCount];
+                    data.CopyTo(temp, dataIndex);
+                    temp.CopyTo(tempFrame, frameIndex);
 
-                    byte[] crc1 = CallCalclulateCRC(lastTemp);
+                    byte[] crc1 = CallCalclulateCRC(temp);
 
-                    arrayIndex += dataCount;
-                    array[arrayIndex++] = crc1[0];
-                    array[arrayIndex++] = crc1[1];
+                    frameIndex += dataCount;
+                    tempFrame[frameIndex++] = crc1[0];
+                    tempFrame[frameIndex++] = crc1[1];
 
                     break;
                 }
+
+                temp = new byte[16];
+
+                data.CopyTo(temp, dataIndex);
+                temp.CopyTo(tempFrame, frameIndex);
+
+                byte[] crc2 = CallCalclulateCRC(temp);
+
+                frameIndex += 16;
+                tempFrame[frameIndex++] = crc2[0];
+                tempFrame[frameIndex++] = crc2[1];
 
                 dataIndex += 16;
                 dataCount -= 16;
             }
 
-            PackedFrame = array;
+            byte[] frame = new byte[--frameIndex];
+
+            for (int i = 0; i < frameIndex; i++ )
+            {
+                frame[i] = tempFrame[i];
+            }
+
+            PackedFrames.Add(tempFrame);
         }
 
         private byte[] CallCalclulateCRC(byte[] data)
@@ -179,7 +191,10 @@ namespace DNP3TCPDriver.DataLinkLayer
             {
                 CalculateCRC(data.Count(), data, crc);
             }
-            catch (Exception e) { }
+            catch (Exception e)
+            {
+                
+            }
 
             return crc;
         }

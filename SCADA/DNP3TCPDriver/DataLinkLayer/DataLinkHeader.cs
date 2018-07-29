@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace DNP3TCPDriver.DataLinkLayer
 {
-    public class DataLinkHeader
+    public class DataLinkHeader : IByteable
     {
         public Byte[] Start { get; set; }
         public Byte Length { get; set; }
@@ -23,7 +23,7 @@ namespace DNP3TCPDriver.DataLinkLayer
             Source = new byte[2];
         }
 
-        public byte[] GetBytes()
+        public byte[] ToBytes()
         {
             byte[] array = new byte[2 + 1 + 1 + 2 + 2];
 

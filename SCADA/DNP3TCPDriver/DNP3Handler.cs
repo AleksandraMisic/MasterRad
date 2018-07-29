@@ -12,18 +12,19 @@ namespace DNP3TCPDriver
 {
     public class DNP3Handler : IIndustryProtocolHandler
     {
-        public DNP3ApplicationHandler DNP3ApplicationHandler { get; set; }
-        public DNP3DataLinkHandler DNP3DataLinkHandler { get; set; }
+        public ApplicationHandler DNP3ApplicationHandler { get; set; }
+        public DataLinkHandler DNP3DataLinkHandler { get; set; }
 
         public DNP3Handler()
         {
-            DNP3ApplicationHandler = new DNP3ApplicationHandler();
-            DNP3DataLinkHandler = new DNP3DataLinkHandler();
+            DNP3ApplicationHandler = new ApplicationHandler();
+            DNP3DataLinkHandler = new DataLinkHandler(false);
         }
 
         public byte[] PackData()
         {
-            return DNP3ApplicationHandler.DNP3TransportFunctionHandler.DNP3DataLinkHandler.PackedFrame;
+            //return DNP3ApplicationHandler.DNP3TransportFunctionHandler.DNP3DataLinkHandler.PackedFrame;
+            return new byte[1];
         }
 
         public void UnpackData(byte[] data, int length)

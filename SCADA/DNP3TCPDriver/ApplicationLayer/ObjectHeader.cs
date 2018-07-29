@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace DNP3TCPDriver.ApplicationLayer
 {
-    public class ObjectHeader
+    public class ObjectHeader : IByteable
     {
         public Byte Group { get; set; }
         public Byte Variation { get; set; }
@@ -17,6 +17,11 @@ namespace DNP3TCPDriver.ApplicationLayer
         public ObjectHeader()
         {
             QualifierField = new BitArray(8);
+        }
+
+        public byte[] ToBytes()
+        {
+            throw new NotImplementedException();
         }
     }
 }

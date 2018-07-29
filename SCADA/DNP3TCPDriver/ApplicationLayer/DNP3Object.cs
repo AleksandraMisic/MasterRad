@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DNP3TCPDriver;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace DNP3Driver.ApplicationLayer
 {
-    public class DNP3Object
+    public class DNP3Object : IByteable
     {
         public byte Group { get; set; }
         public byte Variation { get; set; }
@@ -21,6 +22,11 @@ namespace DNP3Driver.ApplicationLayer
         public DNP3Object()
         {
             Values = new List<int>();
+        }
+
+        public byte[] ToBytes()
+        {
+            throw new NotImplementedException();
         }
     }
 }

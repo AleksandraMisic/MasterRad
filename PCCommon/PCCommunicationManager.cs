@@ -111,7 +111,7 @@ namespace PCCommon.Communication
             if (commPar.HostPort == 20000)
             {
                 IPAddress ipAddress = IPAddress.Parse("127.0.0.1");
-                IPEndPoint ipLocalEndPoint = new IPEndPoint(ipAddress, 21000);
+                IPEndPoint ipLocalEndPoint = new IPEndPoint(ipAddress, 20001);
                 tcpClient = new TcpClient(ipLocalEndPoint);
             }
             else

@@ -12,9 +12,9 @@ namespace DNP3TCPDriver.TransportFunction
 
         public Byte[] Data { get; set; }
 
-        public TransportSegment()
+        public TransportSegment(TransportHeader transportHeader)
         {
-            TransportHeader = new TransportHeader();
+            TransportHeader = transportHeader;
         }
     }
 }

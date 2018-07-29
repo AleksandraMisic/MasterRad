@@ -9,6 +9,7 @@ using System.Linq;
 using System.ServiceModel;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
@@ -25,6 +26,8 @@ namespace DispatcherApp.ViewModel.ShellFillerModelViews
         private static bool isOpen;
         private static ShellPosition position;
         private ObservableCollection<Button> sources;
+
+        FrameworkElement frameworkElement = new FrameworkElement();
 
         RelayCommand openNetworkViewCommand;
 
@@ -134,6 +137,7 @@ namespace DispatcherApp.ViewModel.ShellFillerModelViews
                     LocalCache.Sources.Add(source.MRID, source);
 
                     Button but = new Button() { Content = source.MRID, DataContext = this, Command = OpenNetworkViewCommand, CommandParameter = source.MRID };
+                    but.Style = ((Style)frameworkElement.FindResource("ButtonStyle"));
                     this.Sources.Add(but);
                 }
             }

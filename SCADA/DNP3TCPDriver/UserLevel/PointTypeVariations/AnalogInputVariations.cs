@@ -4,9 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DNP3TCPDriver.DataLynkLayer
+namespace DNP3TCPDriver.UserLevel.PointTypeVariations
 {
-    public interface IDataLinkHandler
+    public enum AnalogInputVariations : PointVariations
     {
+
     }
 }

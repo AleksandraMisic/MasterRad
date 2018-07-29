@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DNP3Driver.ApplicationLayer;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,53 +7,49 @@ using System.Threading.Tasks;
 
 namespace DNP3TCPDriver.ApplicationLayer
 {
-    public class Request
+    public class Request : IByteable
     {
         public RequestHeader RequestHeader { get; set; }
-        public List<ObjectHeader> ObjectHeaders { get; set; }
+        public Dictionary<ObjectHeader, List<DNP3Object>> Objects { get; set; }
 
         public Request()
         {
             RequestHeader = new RequestHeader();
-            ObjectHeaders = new List<ObjectHeader>();
+            Objects = new Dictionary<ObjectHeader, List<DNP3Object>>();
         }
 
-        public Byte[] GetRequestInBytes()
+        public byte[] ToBytes()
         {
-            int totalSize = 2;
+            int totalSize = RequestHeader.ToBytes().Count();
 
-            foreach (ObjectHeader objectHeader in ObjectHeaders)
+            foreach (ObjectHeader objectHeader in Objects.Keys)
             {
-                totalSize += 3 /*+ objectHeader.RangeField.Count()*/;
+                totalSize += objectHeader.ToBytes().Count();
+
+                foreach (DNP3Object dnp3Object in Objects[objectHeader])
+                {
+                    totalSize += dnp3Object.ToBytes().Count();
+                }
             }
 
-            Byte[] array = new Byte[totalSize];
-            RequestHeader.ApplicationControl.CopyTo(array, 0);
-            array[1] = (Byte)RequestHeader.FunctionCode;
+            byte[] array = new byte[totalSize];
+            RequestHeader.ToBytes().CopyTo(array, 0);
 
             int i = 2;
-            foreach (ObjectHeader objectHeader in ObjectHeaders)
+            foreach (ObjectHeader objectHeader in Objects.Keys)
             {
-                array[i++] = objectHeader.Group;
-                array[i++] = objectHeader.Variation;
-                objectHeader.QualifierField.CopyTo(array, i++);
+                byte[] temp = objectHeader.ToBytes();
+                temp.CopyTo(array, i);
 
-                //if (objectHeader.RangeField.Count() == 1)
-                //{
-                //    array[i++] = objectHeader.RangeField[0];
-                //}
-                //else if (objectHeader.RangeField.Count() == 2)
-                //{
-                //    array[i++] = objectHeader.RangeField[0];
-                //    array[i++] = objectHeader.RangeField[1];
-                //}
-                //else if (objectHeader.RangeField.Count() == 4)
-                //{
-                //    array[i++] = objectHeader.RangeField[0];
-                //    array[i++] = objectHeader.RangeField[1];
-                //    array[i++] = objectHeader.RangeField[2];
-                //    array[i++] = objectHeader.RangeField[3];
-                //}
+                i += temp.Count();
+
+                foreach (DNP3Object dnp3Object in Objects[objectHeader])
+                {
+                    temp = dnp3Object.ToBytes();
+                    temp.CopyTo(array, i);
+
+                    i += temp.Count();
+                }
             }
 
             return array;

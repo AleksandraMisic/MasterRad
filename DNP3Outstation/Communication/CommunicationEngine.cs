@@ -75,17 +75,17 @@ namespace DNP3Outstation.Communication
                     message[i] = bytes[i];
                 }
 
-                DNP3Handler.DNP3DataLinkHandler.UnpackData(message, actualLen);
+                //DNP3Handler.DNP3DataLinkHandler.UnpackData(message, actualLen);
 
                 DissectRequest();
 
-                DNP3Handler.DNP3DataLinkHandler.DNP3TransportFunctionHandler.DNP3ApplicationHandler.ReadAllAnalogInputPointsResponse();
+                //DNP3Handler.DNP3DataLinkHandler.DNP3TransportFunctionHandler.DNP3ApplicationHandler.ReadAllAnalogInputPointsResponse();
                 
                 int offset = 0;
 
                 try
                 {
-                    stream.Write(DNP3Handler.DNP3DataLinkHandler.DNP3TransportFunctionHandler.DNP3ApplicationHandler.DNP3TransportFunctionHandler.DNP3DataLinkHandler.PackedFrame, offset, DNP3Handler.DNP3DataLinkHandler.DNP3TransportFunctionHandler.DNP3ApplicationHandler.DNP3TransportFunctionHandler.DNP3DataLinkHandler.PackedFrame.Count());
+                    //stream.Write(DNP3Handler.DNP3DataLinkHandler.DNP3TransportFunctionHandler.DNP3ApplicationHandler.DNP3TransportFunctionHandler.DNP3DataLinkHandler.PackedFrame, offset, DNP3Handler.DNP3DataLinkHandler.DNP3TransportFunctionHandler.DNP3ApplicationHandler.DNP3TransportFunctionHandler.DNP3DataLinkHandler.PackedFrame.Count());
                 }
                 catch (Exception e) { }
             }

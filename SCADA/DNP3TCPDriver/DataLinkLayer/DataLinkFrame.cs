@@ -11,9 +11,9 @@ namespace DNP3TCPDriver.DataLinkLayer
         public DataLinkHeader DataLynkHeader { get; set; }
         public Byte[] Data{ get; set; }
 
-        public DataLinkFrame()
+        public DataLinkFrame(DataLinkHeader dataLinkHeader)
         {
-            DataLynkHeader = new DataLinkHeader();
+            DataLynkHeader = dataLinkHeader ?? throw new ArgumentNullException();
         }
     }
 }
