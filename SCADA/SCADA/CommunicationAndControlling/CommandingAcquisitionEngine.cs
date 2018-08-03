@@ -18,6 +18,7 @@ using SCADA.RealtimeDatabase.Catalogs;
 using DNP3TCPDriver;
 using DNP3DataPointsModel;
 using DNP3Driver.ApplicationLayer;
+using SCADA.CommunicationAndControlling.DNP3UserLayer;
 
 namespace SCADA.CommunicationAndControlling
 {
@@ -319,7 +320,9 @@ namespace SCADA.CommunicationAndControlling
 
             Console.WriteLine("Task acquistion before return");
             foreach (Task t in acqTasks)
+            {
                 Console.WriteLine("Task {0} Status: {1}", t.Id, t.Status);
+            }
 
             try
             {
@@ -415,7 +418,8 @@ namespace SCADA.CommunicationAndControlling
                                 //    indices[i++] = analog.RelativeAddress;
                                 //}
 
-                                ((DNP3Handler)IProtHandler).DNP3ApplicationHandler.ReadAllAnalogInputPointsRequest();
+                                DNP3UserLayerHandler userLayer = new DNP3UserLayerHandler(IProtHandler as DNP3Handler, dbContext);
+                                userLayer.ReadAllAnalogInputPointsRequest(rtu.Name);
                                 break;
                         }
 

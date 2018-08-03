@@ -11,22 +11,14 @@ using System.Threading.Tasks;
 
 namespace DNP3TCPDriver.DataLinkLayer
 {
-    public class DataLinkHandler : IProtocolLayer
+    public class DataLinkHandler
     {
         [DllImport("CRCCalculator.dll", EntryPoint = "CalculateCRC", CallingConvention = CallingConvention.Cdecl)]
         public static extern void CalculateCRC(int length, byte[] data, byte[] crc);
 
         public TransportFunctionHandler DNP3TransportFunctionHandler;
-        public bool Initiation { get; set; }
-        public List<byte[]> PackedFrames { get; set; }
 
         private int frameMaxSize = 282;
-
-        public DataLinkHandler(bool initiation)
-        {
-            Initiation = initiation;
-            PackedFrames = new List<byte[]>();
-        }
 
         public void PackUp(byte[] data)
         {
@@ -83,12 +75,14 @@ namespace DNP3TCPDriver.DataLinkLayer
                 transportMessage[i] = temp[i];
             }
 
-            DNP3TransportFunctionHandler = new TransportFunctionHandler(true);
+            DNP3TransportFunctionHandler = new TransportFunctionHandler();
             DNP3TransportFunctionHandler.PackUp(transportMessage);
         }
 
-        public void PackDown(byte[] data)
+        public List<byte[]> PackDown(byte[] data, bool direction, bool primary, DataLinkFunctionCodes functionCode)
         {
+            List<byte[]> frames = new List<byte[]>();
+
             DataLinkHeader dataLinkHeader = new DataLinkHeader();
 
             dataLinkHeader.Start[0] = 0x05;
@@ -96,21 +90,13 @@ namespace DNP3TCPDriver.DataLinkLayer
 
             dataLinkHeader.Length = BitConverter.GetBytes(5 + data.Count())[0];
 
-            if (Initiation)
-            {
-                dataLinkHeader.Control[7] = true;       // DIR (Master/Outstation)
-                dataLinkHeader.Control[6] = true;       // PRM (Initiated/Completed)
-            }
-            else
-            {
-                dataLinkHeader.Control[7] = false;       // DIR
-                dataLinkHeader.Control[6] = false;       // PRM
-            }
+            dataLinkHeader.Control[7] = direction;       // DIR (Master/Outstation)
+            dataLinkHeader.Control[6] = primary;       // PRM (Initiated/Completed)
 
             dataLinkHeader.Control[5] = false;      // FCB
             dataLinkHeader.Control[4] = false;      // FCV
 
-            BitArray bitArray = new BitArray(new Byte[] { (byte)DataLinkFunctionCodes.UNCONFIRMED_USER_DATA });
+            BitArray bitArray = new BitArray(new Byte[] { (byte)functionCode });
 
             dataLinkHeader.Control[3] = bitArray[3];    // Function code
             dataLinkHeader.Control[2] = bitArray[2];
@@ -173,12 +159,14 @@ namespace DNP3TCPDriver.DataLinkLayer
 
             byte[] frame = new byte[--frameIndex];
 
-            for (int i = 0; i < frameIndex; i++ )
+            for (int i = 0; i < frameIndex; i++)
             {
                 frame[i] = tempFrame[i];
             }
 
-            PackedFrames.Add(tempFrame);
+            frames.Add(tempFrame);
+
+            return frames;
         }
 
         private byte[] CallCalclulateCRC(byte[] data)

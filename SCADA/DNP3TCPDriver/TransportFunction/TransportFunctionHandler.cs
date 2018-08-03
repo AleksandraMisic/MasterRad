@@ -10,33 +10,22 @@ using System.Threading.Tasks;
 
 namespace DNP3TCPDriver.TransportFunction
 {
-    public class TransportFunctionHandler : IProtocolLayer
+    public class TransportFunctionHandler
     {
         public DataLinkHandler DNP3DataLinkHandler { get; set; }
         public ApplicationHandler DNP3ApplicationHandler { get; set; }
 
         private int segmentMaxSize = 249;
 
-        private List<byte[]> AppSegments;
-        private Queue<byte[]> DataLinkSegments;
-
-        private bool IsRequest;
-
         private bool Fir = false;
         private bool Fin = false;
 
         private byte sequence = 0;
 
-        public TransportFunctionHandler(bool isRequest)
-        {
-            AppSegments = new List<byte[]>();
-            DataLinkSegments = new Queue<byte[]>();
-
-            IsRequest = isRequest;
-        }
-
         public void PackUp(byte[] data)
         {
+            List<byte[]> appSegments = new List<byte[]>();
+
             BitArray header = new BitArray(new byte[] { data[0] });
             BitArray tempHeader = new BitArray(header);
 
@@ -52,7 +41,6 @@ namespace DNP3TCPDriver.TransportFunction
             {
                 Fir = true;
                 sequence = newSeq;
-                AppSegments.Clear();
             }
             else if (!Fir)
             {
@@ -76,14 +64,14 @@ namespace DNP3TCPDriver.TransportFunction
                 appData[i] = data[i + 1];
             }
 
-            AppSegments.Add(appData);
+            appSegments.Add(appData);
 
             if (Fin)
             {
                 Fir = false;
 
                 int totalLength = 0;
-                foreach (byte[] segment in AppSegments)
+                foreach (byte[] segment in appSegments)
                 {
                     totalLength += segment.Count();
                 }
@@ -91,7 +79,7 @@ namespace DNP3TCPDriver.TransportFunction
                 byte[] finalAppData = new byte[totalLength];
 
                 int index = 0;
-                foreach (byte[] segment in AppSegments)
+                foreach (byte[] segment in appSegments)
                 {
                     segment.CopyTo(finalAppData, index);
                     index += segment.Count();
@@ -102,8 +90,10 @@ namespace DNP3TCPDriver.TransportFunction
             }
         }
 
-        public void PackDown(byte[] data)
+        public List<byte[]> PackDown(byte[] data, bool isRequest, bool isMaster)
         {
+            List<byte[]> segments = new List<byte[]>();
+
             bool fir = true;
             byte sequence = 0;
 
@@ -180,8 +170,11 @@ namespace DNP3TCPDriver.TransportFunction
 
                 byte[] finalDataLinkSegment = new byte[totalLength];
 
-                DataLinkSegments.Enqueue(finalDataLinkSegment);
+                segments.Add(finalDataLinkSegment);
             }
+
+            DNP3DataLinkHandler = new DataLinkHandler();
+            return DNP3DataLinkHandler.PackDown(segments[0], isRequest, isMaster, DataLinkFunctionCodes.UNCONFIRMED_USER_DATA);
         }
     }
 }

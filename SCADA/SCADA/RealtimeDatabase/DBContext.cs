@@ -74,6 +74,17 @@ namespace SCADA.RealtimeDatabase
         }
 
         /// <summary>
+        /// Return Process Variable if exists; 
+        /// otherwise pv=null
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public List<ProcessVariable> GetProcessVariableByTypeAndRTU(VariableTypes type, string rtuName)
+        {
+            return Database.Instance.ProcessVariablesName.Values.Where(p => p.Type == type && p.ProcContrName == rtuName).ToList();
+        }
+
+        /// <summary>
         /// Returns a snapshot of process variables values.
         /// </summary>
         /// <returns></returns>

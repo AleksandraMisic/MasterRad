@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace DNP3TCPDriver.ApplicationLayer
 {
-    public class ApplicationHandler : IDNP3ApplicationHandler, IProtocolLayer
+    public class ApplicationHandler
     {
         public TransportFunctionHandler DNP3TransportFunctionHandler { get; set; }
 
@@ -29,115 +29,6 @@ namespace DNP3TCPDriver.ApplicationLayer
         {
             Request = new Request();
             Response = new Response();
-        }
-        
-        public void ReadAllAnalogInputPointsRequest()
-        {
-            RequestHeader requestHeader = new RequestHeader();
-
-            requestHeader.ApplicationControl[7] = true;     // FIR
-            requestHeader.ApplicationControl[6] = true;     // FIN
-            requestHeader.ApplicationControl[5] = false;    // CON
-            requestHeader.ApplicationControl[4] = false;    // UNS
-
-            requestHeader.FunctionCode = ApplicationFunctionCodes.READ;
-
-            Request.RequestHeader = requestHeader;
-
-            ObjectHeader objectHeader = new ObjectHeader()
-            {
-                Group = 30,
-                Variation = 3
-            };
-
-            objectHeader.QualifierField[7] = false;     // RES
-            objectHeader.QualifierField[6] = false;     // Object prefix code
-            objectHeader.QualifierField[5] = false;
-            objectHeader.QualifierField[4] = false;
-
-            objectHeader.QualifierField[3] = false;     // Range specifier code
-            objectHeader.QualifierField[2] = true;
-            objectHeader.QualifierField[1] = true;
-            objectHeader.QualifierField[0] = false;
-
-            Request.Objects.Add(objectHeader, new List<DNP3Object>());
-            
-            DNP3TransportFunctionHandler = new TransportFunctionHandler(true);
-            DNP3TransportFunctionHandler.PackDown(Request.ToBytes());
-        }
-
-        public void ReadAllAnalogInputPointsResponse(byte[] indices)
-        {
-            ResponseHeader responseHeader = new ResponseHeader();
-
-            responseHeader.ApplicationControl[7] = true;     // FIR // set later
-            responseHeader.ApplicationControl[6] = true;     // FIN // set later    
-            responseHeader.ApplicationControl[5] = false;    // CON
-            responseHeader.ApplicationControl[4] = false;    // UNS
-
-            responseHeader.FunctionCode = ApplicationFunctionCodes.RESPONSE;
-
-            responseHeader.InternalIndications[0] = false;
-            responseHeader.InternalIndications[1] = false;
-            responseHeader.InternalIndications[2] = false;
-            responseHeader.InternalIndications[3] = false;
-            responseHeader.InternalIndications[4] = false;
-            responseHeader.InternalIndications[5] = false;
-            responseHeader.InternalIndications[6] = false;
-            responseHeader.InternalIndications[7] = false;
-            responseHeader.InternalIndications[8] = false;
-            responseHeader.InternalIndications[9] = false;
-            responseHeader.InternalIndications[10] = false;
-            responseHeader.InternalIndications[11] = false;
-            responseHeader.InternalIndications[12] = false;
-            responseHeader.InternalIndications[13] = false;
-            responseHeader.InternalIndications[14] = false;
-            responseHeader.InternalIndications[15] = false;
-
-            Response.ResponseHeader = responseHeader;
-
-            foreach (DNP3Object dnp3Object in DNP3Objects)
-            {
-                ObjectHeader objectHeader = new ObjectHeader();
-                objectHeader.Group = dnp3Object.Group;
-                objectHeader.Variation = dnp3Object.Variation;
-
-                objectHeader.QualifierField[7] = false;     // RES
-                objectHeader.QualifierField[6] = false;     // Object prefix code
-                objectHeader.QualifierField[5] = false;
-                objectHeader.QualifierField[4] = false;
-
-                objectHeader.QualifierField[3] = false;     // Range specifier code
-                objectHeader.QualifierField[2] = false;
-                objectHeader.QualifierField[1] = false;
-                objectHeader.QualifierField[0] = false;
-
-                //int startIndex = indices[0], stopIndex = indices[0];
-
-                //foreach (int index in indices)
-                //{
-                //    if (index == -1)
-                //    {
-                //        break;
-                //    }
-
-                //    stopIndex = index;
-                //}
-
-                objectHeader.RangeField = new Byte[2];
-                objectHeader.RangeField[0] = 0;
-                objectHeader.RangeField[1] = 0;
-
-                Response.ObjectHeaders.Add(objectHeader);
-
-                foreach (int value in dnp3Object.Values)
-                {
-                    Response.ObjectValues.Add(value);
-                }
-            }
-            
-            DNP3TransportFunctionHandler = new TransportFunctionHandler(false);
-            //DNP3TransportFunctionHandler.MakeSegments(PackData(), false);
         }
 
         public void PackUp(byte[] data)
@@ -182,7 +73,7 @@ namespace DNP3TCPDriver.ApplicationLayer
                 objectHeader.QualifierField.CopyTo(tempQualifier, 0);
                 byte qualifierByte = tempQualifier[0];
 
-                byte[]  rangeField = null;
+                byte[] rangeField = null;
                 int count = 0;
 
                 switch (qualifierByte)
@@ -244,7 +135,7 @@ namespace DNP3TCPDriver.ApplicationLayer
                         }
                         for (int i = 0; i < 2; i++)
                         {
-                            tempStop[i] = objectHeader.RangeField[i+2];
+                            tempStop[i] = objectHeader.RangeField[i + 2];
                         }
 
                         short[] start = new short[1];
@@ -369,7 +260,7 @@ namespace DNP3TCPDriver.ApplicationLayer
                         length -= count;
 
                         userLevelObject.ObjectCount = objectHeader.RangeField[0];
-                        
+
                         if (functionCode == ApplicationFunctionCodes.RESPONSE ||
                             functionCode == ApplicationFunctionCodes.WRITE)
                         {
@@ -421,7 +312,7 @@ namespace DNP3TCPDriver.ApplicationLayer
                         objectHeader.RangeField.CopyTo(tempCount, 0);
 
                         userLevelObject.ObjectCount = tempCount[0];
-                        
+
                         if (functionCode == ApplicationFunctionCodes.RESPONSE ||
                             functionCode == ApplicationFunctionCodes.WRITE)
                         {
@@ -473,14 +364,22 @@ namespace DNP3TCPDriver.ApplicationLayer
             }
         }
 
-        public void PackDown(byte[] data)
+        public List<byte[]> PackDown(List<UserLevelObject> userLevelObjects, ApplicationFunctionCodes functionCode, bool isRequest, bool isMaster)
         {
+            if (userLevelObjects.Count == 0)
+            {
+                return null;
+            }
+
+            List<byte[]> fragments = new List<byte[]>();
             byte[] tempFragment = new byte[maxFragmentSize];
+            byte[] finalFragment = null;
             int index = 0;
+            bool fragmentInProgress = true;
 
             Header header = null;
 
-            if (ObjectsDownProcess.Keys.ElementAt(0) == ApplicationFunctionCodes.RESPONSE)
+            if (functionCode == ApplicationFunctionCodes.RESPONSE)
             {
                 header = new ResponseHeader();
 
@@ -506,8 +405,8 @@ namespace DNP3TCPDriver.ApplicationLayer
                 header = new RequestHeader();
             }
 
-            header.ApplicationControl[7] = true;     // FIR
-            header.ApplicationControl[6] = true;     // FIN
+            header.ApplicationControl[7] = false;     // FIR
+            header.ApplicationControl[6] = false;    // FIN
             header.ApplicationControl[5] = false;    // CON
             header.ApplicationControl[4] = false;    // UNS
 
@@ -515,9 +414,9 @@ namespace DNP3TCPDriver.ApplicationLayer
             tempHeader.CopyTo(tempFragment, index);
             index += tempHeader.Count();
 
-            ApplicationFunctionCodes functionCode =  header.FunctionCode = ObjectsDownProcess.Keys.ElementAt(0);
+            byte[] tempObjHeader = null;
 
-            foreach (UserLevelObject userLevelObject in ObjectsDownProcess[0])
+            foreach (UserLevelObject userLevelObject in userLevelObjects)
             {
                 ObjectHeader objectHeader = new ObjectHeader();
 
@@ -542,7 +441,7 @@ namespace DNP3TCPDriver.ApplicationLayer
                     objectHeader.QualifierField[5] = false;
                     objectHeader.QualifierField[4] = true;
                 }
-                else if(userLevelObject.ObjectSizePresent)
+                else if (userLevelObject.ObjectSizePresent)
                 {
                     // TO DO
                 }
@@ -570,9 +469,23 @@ namespace DNP3TCPDriver.ApplicationLayer
                     }
                 }
 
-                byte[] tempObjHeader = objectHeader.ToBytes();
-                tempObjHeader.CopyTo(tempFragment, index);
-                index += tempObjHeader.Count();
+                tempObjHeader = objectHeader.ToBytes();
+
+                if (index + tempObjHeader.Count() > maxFragmentSize)
+                {
+                    finalFragment = new byte[index];
+                    for (int i = 0; i < index; i++)
+                    {
+                        finalFragment[i] = tempFragment[i];
+                    }
+
+                    fragments.Add(finalFragment);
+                    
+                    index = objectHeader.ToBytes().Count();
+                }
+
+                int startIndex, stopIndex;
+                startIndex = stopIndex = userLevelObject.StartIndex;
 
                 byte[] tempQualifier = new byte[1];
                 objectHeader.QualifierField.CopyTo(tempQualifier, 0);
@@ -581,59 +494,64 @@ namespace DNP3TCPDriver.ApplicationLayer
                 switch (qualifierByte)
                 {
                     case 0x00:
-
-                        if (functionCode == ApplicationFunctionCodes.RESPONSE ||
-                            functionCode == ApplicationFunctionCodes.WRITE)
-                        {
-                            foreach (byte[] value in userLevelObject.Values)
-                            {
-                                value.CopyTo(tempFragment, index);
-                                index += value.Count();
-                            }
-                        }
-
-                        break;
-
                     case 0x01:
-                        if (functionCode == ApplicationFunctionCodes.RESPONSE ||
-                            functionCode == ApplicationFunctionCodes.WRITE)
+
+                        foreach (byte[] value in userLevelObject.Values)
                         {
-                            foreach (byte[] value in userLevelObject.Values)
+                            if ((index + value.Count()) <= maxFragmentSize)
                             {
                                 value.CopyTo(tempFragment, index);
                                 index += value.Count();
+                                ++stopIndex;
+
+                                fragmentInProgress = true;
+                            }
+                            else
+                            {
+                                objectHeader.RangeField[0] = (byte)startIndex;
+                                objectHeader.RangeField[1] = (byte)stopIndex;
+
+                                tempObjHeader = objectHeader.ToBytes();
+                                tempObjHeader.CopyTo(tempFragment, 0);
+
+                                finalFragment = new byte[index];
+                                for (int i = 0; i < index; i++)
+                                {
+                                    finalFragment[i] = tempFragment[i];
+                                }
+
+                                fragments.Add(finalFragment);
+
+                                tempHeader = header.ToBytes();
+                                tempHeader.CopyTo(tempFragment, index);
+                                index = tempHeader.Count();
+
+                                index += objectHeader.ToBytes().Count();
+
+                                value.CopyTo(tempFragment, index);
+                                index += value.Count();
+                                startIndex = ++stopIndex;
+
+                                fragmentInProgress = false;
                             }
                         }
 
-                        break;
+                        if (fragmentInProgress)
+                        {
+                            objectHeader.RangeField[0] = (byte)startIndex;
+                            objectHeader.RangeField[1] = (byte)stopIndex;
 
-                    case 0x06:
+                            tempObjHeader = objectHeader.ToBytes();
+                            tempObjHeader.CopyTo(tempFragment, 0);
+                        }
+
                         break;
 
                     case 0x07:
-                        if (functionCode == ApplicationFunctionCodes.RESPONSE ||
-                            functionCode == ApplicationFunctionCodes.WRITE)
-                        {
-                            foreach (byte[] value in userLevelObject.Values)
-                            {
-                                value.CopyTo(tempFragment, index);
-                                index += value.Count();
-                            }
-                        }
-
+                    case 0x08:
                         break;
 
-                    case 0x08:
-                        if (functionCode == ApplicationFunctionCodes.RESPONSE ||
-                            functionCode == ApplicationFunctionCodes.WRITE)
-                        {
-                            foreach (byte[] value in userLevelObject.Values)
-                            {
-                                value.CopyTo(tempFragment, index);
-                                index += value.Count();
-                            }
-                        }
-
+                    case 0x06:
                         break;
 
                     case 0x17:
@@ -688,16 +606,40 @@ namespace DNP3TCPDriver.ApplicationLayer
 
                         break;
                 }
-
-                byte[] finalFragment = new byte[index];
-                for (int i = 0; i < index; i++)
-                {
-                    finalFragment[i] = tempFragment[i];
-                }
-
-                DNP3TransportFunctionHandler = new TransportFunctionHandler(true);
-                DNP3TransportFunctionHandler.PackDown(finalFragment);
             }
+
+            finalFragment = new byte[index];
+            for (int i = 0; i < index; i++)
+            {
+                finalFragment[i] = tempFragment[i];
+            }
+
+            fragments.Add(finalFragment);
+            byte[] tempControl = new byte[1];
+
+            BitArray appControl = new BitArray(new byte[1] { fragments.First()[0] });
+            appControl[7] = true;
+            appControl.CopyTo(tempControl, 0);
+            fragments.First()[0] = tempControl[0];
+
+            appControl = new BitArray(new byte[1] { fragments.Last()[0] });
+            appControl[6] = true;
+            fragments.Last()[0] = tempControl[0];
+
+            List<byte[]> returnValue = new List<byte[]>();
+            DNP3TransportFunctionHandler = new TransportFunctionHandler();
+
+            foreach (byte[] fragment in fragments)
+            {
+                List<byte[]> segments = DNP3TransportFunctionHandler.PackDown(fragment, isRequest, isMaster);
+
+                foreach (byte[] segment in segments)
+                {
+                    returnValue.Add(segment);
+                }
+            }
+
+            return returnValue;
         }
     }
 }

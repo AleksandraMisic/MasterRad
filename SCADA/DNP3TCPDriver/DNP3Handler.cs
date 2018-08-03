@@ -18,7 +18,7 @@ namespace DNP3TCPDriver
         public DNP3Handler()
         {
             DNP3ApplicationHandler = new ApplicationHandler();
-            DNP3DataLinkHandler = new DataLinkHandler(false);
+            DNP3DataLinkHandler = new DataLinkHandler();
         }
 
         public byte[] PackData()

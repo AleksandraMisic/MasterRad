@@ -60,6 +60,7 @@
     <Compile Include="TransportFunction\TransportFunctionHandler.cs" />
     <Compile Include="TransportFunction\TransportHeader.cs" />
     <Compile Include="TransportFunction\TransportSegment.cs" />
+    <Compile Include="UserLevel\IDNP3UserLayer.cs" />
     <Compile Include="UserLevel\ObjectTypes.cs" />
     <Compile Include="UserLevel\PointType.cs" />
     <Compile Include="UserLevel\Variations.cs" />
