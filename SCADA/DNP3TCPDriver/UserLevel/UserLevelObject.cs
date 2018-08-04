@@ -24,5 +24,11 @@ namespace DNP3TCPDriver.UserLevel
         public bool ObjectSizePresent { get; set; }
         public bool RangePresent { get; set; }
         public bool ObjectCountPresent { get; set; }
+
+        public UserLevelObject()
+        {
+            Values = new List<byte[]>();
+            Indices = new List<int>();
+        }
     }
 }

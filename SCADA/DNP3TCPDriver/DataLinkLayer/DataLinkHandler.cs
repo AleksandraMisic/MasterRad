@@ -79,10 +79,8 @@ namespace DNP3TCPDriver.DataLinkLayer
             DNP3TransportFunctionHandler.PackUp(transportMessage);
         }
 
-        public List<byte[]> PackDown(byte[] data, bool direction, bool primary, DataLinkFunctionCodes functionCode)
+        public byte[] PackDown(byte[] data, bool direction, bool primary, DataLinkFunctionCodes functionCode)
         {
-            List<byte[]> frames = new List<byte[]>();
-
             DataLinkHeader dataLinkHeader = new DataLinkHeader();
 
             dataLinkHeader.Start[0] = 0x05;
@@ -157,16 +155,14 @@ namespace DNP3TCPDriver.DataLinkLayer
                 dataCount -= 16;
             }
 
-            byte[] frame = new byte[--frameIndex];
+            byte[] frame = new byte[frameIndex];
 
             for (int i = 0; i < frameIndex; i++)
             {
                 frame[i] = tempFrame[i];
             }
 
-            frames.Add(tempFrame);
-
-            return frames;
+            return frame;
         }
 
         private byte[] CallCalclulateCRC(byte[] data)

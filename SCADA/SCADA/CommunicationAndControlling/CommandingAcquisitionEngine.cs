@@ -400,33 +400,35 @@ namespace SCADA.CommunicationAndControlling
                                 ((ReadRequest)((ModbusHandler)IProtHandler).Request).FunCode = FunctionCodes.ReadInputRegisters;
                                 ((ReadRequest)((ModbusHandler)IProtHandler).Request).Quantity = (ushort)requestCount;
                                 ((ReadRequest)((ModbusHandler)IProtHandler).Request).StartAddr = iorbAnalogs.ReqAddress;
+
+                                iorbAnalogs.Flags = requestCount;
+                                iorbAnalogs.SendBuff = IProtHandler.PackData();
+                                iorbAnalogs.SendMsgLength = iorbAnalogs.SendBuff.Length;
+                                IORequests.EnqueueRequest(iorbAnalogs);
+
                                 break;
 
                             case IndustryProtocols.DNP3TCP:
 
-                                int[] indices = new int[10];
-                                //int i = 0;
-
-                                //for (i = 0; i < 10; i++)
-                                //{
-                                //    indices[i] = -1;
-                                //}
-
-                                //i = 0;
-                                //foreach (Analog analog in analogs)
-                                //{
-                                //    indices[i++] = analog.RelativeAddress;
-                                //}
-
                                 DNP3UserLayerHandler userLayer = new DNP3UserLayerHandler(IProtHandler as DNP3Handler, dbContext);
-                                userLayer.ReadAllAnalogInputPointsRequest(rtu.Name);
+                                List<byte[]> segments =  userLayer.ReadAllAnalogInputPointsRequest(rtu.Name);
+
+                                foreach (byte[] segment in segments)
+                                {
+                                    IORequestBlock iORequestBlock = new IORequestBlock()
+                                    {
+                                        RequestType = iorbAnalogs.RequestType,
+                                        ProcessControllerName = iorbAnalogs.ProcessControllerName,
+                                        Flags = requestCount, 
+                                        SendBuff = segment,
+                                        SendMsgLength = segment.Count()
+                                    };
+
+                                    IORequests.EnqueueRequest(iORequestBlock);
+                                }
+
                                 break;
                         }
-
-                        iorbAnalogs.Flags = requestCount;
-                        iorbAnalogs.SendBuff = IProtHandler.PackData();
-                        iorbAnalogs.SendMsgLength = iorbAnalogs.SendBuff.Length;
-                        IORequests.EnqueueRequest(iorbAnalogs);
                     }
                 }
 

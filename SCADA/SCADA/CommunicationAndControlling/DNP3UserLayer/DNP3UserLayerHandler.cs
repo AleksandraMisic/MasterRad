@@ -34,18 +34,27 @@ namespace SCADA.CommunicationAndControlling.DNP3UserLayer
         public List<byte[]> ReadAllAnalogInputPointsRequest(string rtuName)
         {
             List<UserLevelObject> userLevelObjects = new List<UserLevelObject>();
+            UserLevelObject userLevelObject = new UserLevelObject()
+            {
+                PointType = PointType.ANALOG_INPUT,
+                Variation = Variations.BIT_32_NO_FLAG,
+                RangeFieldPresent = true,
+                RangePresent = true,
+            };
 
+            int i = 0;
             foreach (Analog analog in database.GetProcessVariableByTypeAndRTU(VariableTypes.ANALOG, rtuName))
             {
-                UserLevelObject userLevelObject = new UserLevelObject()
-                {
-                    PointType = PointType.ANALOG_INPUT,
-                    Variation = Variations.BIT_32_NO_FLAG
-                };
+                userLevelObject.StopIndex = analog.RelativeAddress;
 
-                userLevelObjects.Add(userLevelObject);
+                if (i++ == 0)
+                {
+                    userLevelObject.StartIndex = analog.RelativeAddress;
+                }
             }
-            
+
+            userLevelObjects.Add(userLevelObject);
+
             return dNP3Handler.DNP3ApplicationHandler.PackDown(userLevelObjects, ApplicationFunctionCodes.READ, true, true);
         }
     }

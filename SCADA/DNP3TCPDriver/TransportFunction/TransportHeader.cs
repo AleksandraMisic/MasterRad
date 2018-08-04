@@ -18,7 +18,9 @@ namespace DNP3TCPDriver.TransportFunction
 
         public byte[] ToBytes()
         {
-            throw new NotImplementedException();
+            byte[] temp = new byte[1];
+            Header.CopyTo(temp, 0);
+            return temp;
         }
     }
 }

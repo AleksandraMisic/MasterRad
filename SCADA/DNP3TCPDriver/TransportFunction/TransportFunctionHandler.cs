@@ -170,11 +170,28 @@ namespace DNP3TCPDriver.TransportFunction
 
                 byte[] finalDataLinkSegment = new byte[totalLength];
 
+                for (int i = 0; i < totalLength; i++)
+                {
+                    finalDataLinkSegment[i] = temp[i];
+                }
+
                 segments.Add(finalDataLinkSegment);
             }
 
+            List<byte[]> returnValue = new List<byte[]>();
             DNP3DataLinkHandler = new DataLinkHandler();
-            return DNP3DataLinkHandler.PackDown(segments[0], isRequest, isMaster, DataLinkFunctionCodes.UNCONFIRMED_USER_DATA);
+
+            foreach (byte[] segment in segments)
+            {
+                List<byte[]> tempSegments =new List<byte[]>() { DNP3DataLinkHandler.PackDown(segment, isRequest, isMaster, DataLinkFunctionCodes.UNCONFIRMED_USER_DATA) };
+
+                foreach (byte[] tempSegment in tempSegments)
+                {
+                    returnValue.Add(tempSegment);
+                }
+            }
+
+            return returnValue;
         }
     }
 }

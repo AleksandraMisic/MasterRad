@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace DNP3TCPDriver.ApplicationLayer
 {
-    public abstract class Header: IByteable
+    public abstract class Header : IByteable
     {
         public BitArray ApplicationControl { get; set; }
 

@@ -21,7 +21,33 @@ namespace DNP3TCPDriver.ApplicationLayer
 
         public byte[] ToBytes()
         {
-            throw new NotImplementedException();
+            int maxLength = 3 + 8;
+            byte[] temp = new byte[maxLength];
+
+            int index = 0;
+            temp[index++] = Group;
+            temp[index++] = Variation;
+
+            byte[] tempQualifier = new byte[1];
+            QualifierField.CopyTo(tempQualifier, 0);
+
+            temp[index++] = tempQualifier[0];
+
+            if (RangeField != null)
+            {
+                for (int i = 0; i < RangeField.Count(); i++)
+                {
+                    temp[index++] = RangeField[i];
+                }
+            }
+
+            byte[] final = new byte[index];
+            for (int i = 0; i < index; i++)
+            {
+                final[i] = temp[i];
+            }
+
+            return final;
         }
     }
 }
