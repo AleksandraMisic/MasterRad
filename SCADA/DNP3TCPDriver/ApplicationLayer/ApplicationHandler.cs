@@ -17,36 +17,75 @@ namespace DNP3TCPDriver.ApplicationLayer
 
         public List<DNP3Object> DNP3Objects = new List<DNP3Object>();
 
-        Dictionary<ApplicationFunctionCodes, List<UserLevelObject>> ObjectsUpProcess { get; set; }
-        Dictionary<ApplicationFunctionCodes, List<UserLevelObject>> ObjectsDownProcess { get; set; }
+        private List<UserLevelObject> ObjectsUpProcess { get; set; }
 
-        public Request Request { get; set; }
-        public Response Response { get; set; }
+        private bool Fir;
+        private bool Fin;
+
+        private int sequence = 0;
 
         private int maxFragmentSize = 2048;
 
         public ApplicationHandler()
         {
-            Request = new Request();
-            Response = new Response();
+            ObjectsUpProcess = new List<UserLevelObject>();
         }
 
-        public void PackUp(byte[] data)
+        public List<UserLevelObject> PackUp(byte[] data)
         {
             int length = data.Length;
 
+            BitArray applicationCtrl = new BitArray(new byte[] { data[0] });
+            BitArray tempApplicationCtrl = new BitArray(applicationCtrl);
+
+            tempApplicationCtrl[7] = false;
+            tempApplicationCtrl[6] = false;
+            tempApplicationCtrl[5] = false;
+            tempApplicationCtrl[4] = false;
+
+            byte[] tempSeq = new byte[1];
+            tempApplicationCtrl.CopyTo(tempSeq, 0);
+
+            byte newSeq = tempSeq[0];
+
+            if (applicationCtrl[7] == true)
+            {
+                Fir = true;
+                sequence = newSeq;
+                ObjectsUpProcess.Clear();
+            }
+            else if (!Fir)
+            {
+                return null;
+            }
+            else if (newSeq != sequence + 1)
+            {
+                return null;
+            }
+
+            sequence++;
+            Fin = applicationCtrl[6];
+
             ApplicationFunctionCodes functionCode = (ApplicationFunctionCodes)data[1];
-            ObjectsUpProcess = new Dictionary<ApplicationFunctionCodes, List<UserLevelObject>>();
-            ObjectsUpProcess.Add(functionCode, new List<UserLevelObject>());
 
-            length -= 2;
-
-            int index = 2;
+            int index = 0;
+            if (functionCode == ApplicationFunctionCodes.RESPONSE)
+            {
+                length -= 4;
+                index = 4;
+            }
+            else
+            {
+                length -= 2;
+                index = 2;
+            }
+            
             while (length > 0)
             {
                 length -= 3;
 
                 UserLevelObject userLevelObject = new UserLevelObject();
+                userLevelObject.FunctionCode = functionCode;
 
                 ObjectHeader objectHeader = new ObjectHeader();
                 objectHeader.Group = data[index++];
@@ -73,7 +112,6 @@ namespace DNP3TCPDriver.ApplicationLayer
                 objectHeader.QualifierField.CopyTo(tempQualifier, 0);
                 byte qualifierByte = tempQualifier[0];
 
-                byte[] rangeField = null;
                 int count = 0;
 
                 switch (qualifierByte)
@@ -85,6 +123,7 @@ namespace DNP3TCPDriver.ApplicationLayer
                         userLevelObject.ObjectCountPresent = false;
 
                         count = 2;
+                        objectHeader.RangeField = new byte[count];
                         for (int i = 0; i < count; i++)
                         {
                             objectHeader.RangeField[i] = data[index++];
@@ -99,7 +138,7 @@ namespace DNP3TCPDriver.ApplicationLayer
                             functionCode == ApplicationFunctionCodes.WRITE)
                         {
                             byte[] value = new byte[valueSize];
-                            for (int i = userLevelObject.StartIndex; i < userLevelObject.StopIndex; i++)
+                            for (int i = userLevelObject.StartIndex; i <= userLevelObject.StopIndex; i++)
                             {
                                 for (int j = 0; j < valueSize; j++)
                                 {
@@ -120,6 +159,7 @@ namespace DNP3TCPDriver.ApplicationLayer
                         userLevelObject.ObjectCountPresent = false;
 
                         count = 4;
+                        objectHeader.RangeField = new byte[count];
                         for (int i = 0; i < count; i++)
                         {
                             objectHeader.RangeField[i] = data[index++];
@@ -179,6 +219,7 @@ namespace DNP3TCPDriver.ApplicationLayer
                         userLevelObject.ObjectCountPresent = true;
 
                         count = 1;
+                        objectHeader.RangeField = new byte[count];
                         for (int i = 0; i < count; i++)
                         {
                             objectHeader.RangeField[i] = data[index++];
@@ -214,6 +255,7 @@ namespace DNP3TCPDriver.ApplicationLayer
                         userLevelObject.ObjectCountPresent = true;
 
                         count = 2;
+                        objectHeader.RangeField = new byte[count];
                         for (int i = 0; i < count; i++)
                         {
                             objectHeader.RangeField[i] = data[index++];
@@ -252,6 +294,7 @@ namespace DNP3TCPDriver.ApplicationLayer
                         userLevelObject.ObjectCountPresent = true;
 
                         count = 1;
+                        objectHeader.RangeField = new byte[count];
                         for (int i = 0; i < count; i++)
                         {
                             objectHeader.RangeField[i] = data[index++];
@@ -301,6 +344,7 @@ namespace DNP3TCPDriver.ApplicationLayer
                         userLevelObject.ObjectCountPresent = true;
 
                         count = 2;
+                        objectHeader.RangeField = new byte[count];
                         for (int i = 0; i < count; i++)
                         {
                             objectHeader.RangeField[i] = data[index++];
@@ -352,6 +396,7 @@ namespace DNP3TCPDriver.ApplicationLayer
                         userLevelObject.ObjectCountPresent = false;
 
                         count = 1;
+                        objectHeader.RangeField = new byte[count];
                         for (int i = 0; i < count; i++)
                         {
                             objectHeader.RangeField[i] = data[index++];
@@ -360,8 +405,19 @@ namespace DNP3TCPDriver.ApplicationLayer
                         break;
                 }
 
-                ObjectsUpProcess[functionCode].Add(userLevelObject);
+                ObjectsUpProcess.Add(userLevelObject);
             }
+
+            if (Fin)
+            {
+                Fir = false;
+                Fin = false;
+
+                List<UserLevelObject> returnVal = new List<UserLevelObject>(ObjectsUpProcess);
+                ObjectsUpProcess.Clear();
+                return returnVal;
+            }
+            else return null;
         }
 
         public List<byte[]> PackDown(List<UserLevelObject> userLevelObjects, ApplicationFunctionCodes functionCode, bool isRequest, bool isMaster)

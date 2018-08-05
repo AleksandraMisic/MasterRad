@@ -12,9 +12,12 @@ namespace SCADA.RealtimeDatabase
     {
         public Database Database { get; set; }
 
+        public object LockObject;
+
         public DBContext()
         {
             Database = Database.Instance;
+            LockObject = new object();
         }
       
         public static event EventHandler OnAnalogAdded;

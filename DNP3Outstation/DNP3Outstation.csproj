@@ -55,8 +55,8 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Communication\CommunicationEngine.cs" />
+    <Compile Include="DNP3UserLayerHandler.cs" />
     <Compile Include="Model\Database.cs" />
-    <Compile Include="ObjectProcessing\ObjectProcessor.cs" />
     <Compile Include="ViewModel\DataPointsViewModel.cs" />
     <Compile Include="ViewModel\DeviceInfoViewModel.cs" />
     <Compile Include="ViewModel\MainshellViewModel.cs" />

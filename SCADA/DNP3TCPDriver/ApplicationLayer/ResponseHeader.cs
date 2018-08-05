@@ -18,7 +18,12 @@ namespace DNP3TCPDriver.ApplicationLayer
 
         public override byte[] ToBytes()
         {
-            throw new NotImplementedException();
+            byte[] header = new byte[4];
+            ApplicationControl.CopyTo(header, 0);
+            header[1] = (byte)FunctionCode;
+            InternalIndications.CopyTo(header, 2);
+
+            return header;
         }
     }
 }

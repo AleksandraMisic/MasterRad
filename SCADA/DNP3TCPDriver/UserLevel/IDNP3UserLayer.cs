@@ -9,5 +9,7 @@ namespace DNP3TCPDriver.UserLevel
     public interface IDNP3UserLayer
     {
         List<byte[]> ReadAllAnalogInputPointsRequest(string rtuName);
+
+        List<byte[]> ReadAllAnalogInputPointsResponse(List<UserLevelObject> userLevelObjects);
     }
 }

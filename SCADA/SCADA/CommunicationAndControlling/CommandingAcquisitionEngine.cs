@@ -19,6 +19,8 @@ using DNP3TCPDriver;
 using DNP3DataPointsModel;
 using DNP3Driver.ApplicationLayer;
 using SCADA.CommunicationAndControlling.DNP3UserLayer;
+using DNP3TCPDriver.DataLinkLayer;
+using DNP3TCPDriver.UserLevel;
 
 namespace SCADA.CommunicationAndControlling
 {
@@ -508,6 +510,8 @@ namespace SCADA.CommunicationAndControlling
         /// </summary>
         public void ProcessPCAnwers(TimeSpan timeout, CancellationToken token)
         {
+            DataLinkHandler dataLinkHandler = new DataLinkHandler();
+
             while (!token.IsCancellationRequested)
             {
                 bool isSuccessful;
@@ -656,20 +660,27 @@ namespace SCADA.CommunicationAndControlling
                                 {
                                     message[i] = answer.RcvBuff[i];
                                 }
-
-                                DNP3Handler dNP3Handler = new DNP3Handler();
-                                //dNP3Handler.DNP3DataLinkHandler.UnpackData(message, message.Count());
                                 
+                                List<UserLevelObject> userLevelObjects = dataLinkHandler.PackUp(message);
 
-                                var dnp3Object = dNP3Handler.DNP3DataLinkHandler.DNP3TransportFunctionHandler.DNP3ApplicationHandler.DNP3Objects[0];
-
-                                ProcessVariable processVariable;
-                                dbContext.GetProcessVariableByName("MEAS_A_9", out processVariable);
-
-                                if (((Analog)processVariable).AcqValue != dnp3Object.Values[0])
+                                if (userLevelObjects == null)
                                 {
-                                    ((Analog)processVariable).AcqValue = dnp3Object.Values[0];
-                                    dMSProxy.ChangeOnSCADAAnalog(processVariable.Name, ((Analog)processVariable).AcqValue);
+                                    continue;
+                                }
+
+                                DNP3UserLayerHandler dNP3UserLayerHandler = new DNP3UserLayerHandler(new DNP3Handler(), dbContext);
+                                List<Tuple<string, float>> tuples = dNP3UserLayerHandler.ReadAllAnalogInputPointsReadResponse(userLevelObjects, rtu.Name);
+
+                                foreach (Tuple<string, float> tuple in tuples)
+                                {
+                                    try
+                                    {
+                                        dMSProxy.ChangeOnSCADAAnalog(tuple.Item1, tuple.Item2);
+                                    }
+                                    catch
+                                    {
+                                        dMSProxy = new DMSSCADAProxy();
+                                    }
                                 }
 
                                 break;

@@ -1,4 +1,5 @@
 ﻿using DNP3TCPDriver.TransportFunction;
+using DNP3TCPDriver.UserLevel;
 using PCCommon;
 using System;
 using System.Collections;
@@ -20,11 +21,11 @@ namespace DNP3TCPDriver.DataLinkLayer
 
         private int frameMaxSize = 282;
 
-        public void PackUp(byte[] data)
+        public List<UserLevelObject> PackUp(byte[] data)
         {
             if (data[0] != 0x05 || data[1] != 0x64)
             {
-                return;
+                return null;
             }
 
             int length = data.Count();
@@ -76,7 +77,7 @@ namespace DNP3TCPDriver.DataLinkLayer
             }
 
             DNP3TransportFunctionHandler = new TransportFunctionHandler();
-            DNP3TransportFunctionHandler.PackUp(transportMessage);
+            return DNP3TransportFunctionHandler.PackUp(transportMessage);
         }
 
         public byte[] PackDown(byte[] data, bool direction, bool primary, DataLinkFunctionCodes functionCode)

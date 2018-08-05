@@ -57,5 +57,51 @@ namespace SCADA.CommunicationAndControlling.DNP3UserLayer
 
             return dNP3Handler.DNP3ApplicationHandler.PackDown(userLevelObjects, ApplicationFunctionCodes.READ, true, true);
         }
+
+        public List<Tuple<string, float>> ReadAllAnalogInputPointsReadResponse(List<UserLevelObject> userLevelObjects, string rtuName)
+        {
+            List<Tuple<string, float>> retVal = new List<Tuple<string, float>>();
+
+            foreach (UserLevelObject userLevelObject in userLevelObjects)
+            {
+                if (userLevelObject.FunctionCode == ApplicationFunctionCodes.RESPONSE)
+                {
+                    switch (userLevelObject.PointType)
+                    {
+                        case PointType.ANALOG_INPUT:
+
+                            if (userLevelObject.IndicesPresent == false)
+                            {
+                                if (userLevelObject.RangeFieldPresent == true)
+                                {
+                                    if (userLevelObject.RangePresent == true)
+                                    {
+                                        lock (database.LockObject)
+                                        {
+                                            foreach (Analog analog in database.GetProcessVariableByTypeAndRTU(VariableTypes.ANALOG, rtuName))
+                                            {
+                                                if (analog.RelativeAddress <= userLevelObject.StartIndex && analog.RelativeAddress >= userLevelObject.StopIndex)
+                                                {
+                                                    analog.AcqValue = BitConverter.ToInt32(userLevelObject.Values[analog.RelativeAddress], 0);
+                                                    retVal.Add(new Tuple<string, float>(analog.Name, analog.AcqValue));
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                               
+                            }
+                            break;
+                    }
+                }
+            }
+
+            return retVal;
+        }
+
+        public List<byte[]> ReadAllAnalogInputPointsResponse(List<UserLevelObject> userLevelObjects)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

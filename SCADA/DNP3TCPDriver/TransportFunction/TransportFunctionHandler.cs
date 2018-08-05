@@ -1,5 +1,6 @@
 ﻿using DNP3TCPDriver.ApplicationLayer;
 using DNP3TCPDriver.DataLinkLayer;
+using DNP3TCPDriver.UserLevel;
 using PCCommon;
 using System;
 using System.Collections;
@@ -20,40 +21,46 @@ namespace DNP3TCPDriver.TransportFunction
         private bool Fir = false;
         private bool Fin = false;
 
+        private List<byte[]> appSegments;
+
         private byte sequence = 0;
 
-        public void PackUp(byte[] data)
+        public TransportFunctionHandler()
         {
-            List<byte[]> appSegments = new List<byte[]>();
+            appSegments = new List<byte[]>();
+        }
 
+        public List<UserLevelObject> PackUp(byte[] data)
+        {
             BitArray header = new BitArray(new byte[] { data[0] });
             BitArray tempHeader = new BitArray(header);
 
-            tempHeader[0] = false;
-            tempHeader[1] = false;
+            tempHeader[7] = false;
+            tempHeader[6] = false;
 
             byte[] tempSeq = new byte[1];
             tempHeader.CopyTo(tempSeq, 0);
 
             byte newSeq = tempSeq[0];
 
-            if (header[0] == true)
+            if (header[6] == true)
             {
                 Fir = true;
                 sequence = newSeq;
+                appSegments.Clear();
             }
             else if (!Fir)
             {
-                return;
+                return null;
             }
-            else if(newSeq != sequence)
+            else if(newSeq != sequence + 1)
             {
-                return;
+                return null;
             }
 
             sequence++;
 
-            Fin = header[1];
+            Fin = header[7];
 
             int length = data.Count() - 1;
 
@@ -69,6 +76,7 @@ namespace DNP3TCPDriver.TransportFunction
             if (Fin)
             {
                 Fir = false;
+                Fin = false;
 
                 int totalLength = 0;
                 foreach (byte[] segment in appSegments)
@@ -85,9 +93,12 @@ namespace DNP3TCPDriver.TransportFunction
                     index += segment.Count();
                 }
 
+                appSegments.Clear();
+
                 DNP3ApplicationHandler = new ApplicationHandler();
-                DNP3ApplicationHandler.PackUp(finalAppData);
+                return DNP3ApplicationHandler.PackUp(finalAppData);
             }
+            else return null;
         }
 
         public List<byte[]> PackDown(byte[] data, bool isRequest, bool isMaster)

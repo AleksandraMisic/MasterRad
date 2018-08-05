@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DNP3TCPDriver.ApplicationLayer;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,6 +11,8 @@ namespace DNP3TCPDriver.UserLevel
     {
         public Variations Variation { get; set; }
         public PointType PointType { get; set; }
+
+        public ApplicationFunctionCodes FunctionCode { get; set; }
 
         public List<int> Indices { get; set; }
         public List<byte[]> Values { get; set; }

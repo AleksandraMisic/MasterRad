@@ -1,6 +1,8 @@
 ﻿using DNP3Driver.ApplicationLayer;
-using DNP3Outstation.ObjectProcessing;
+using DNP3Outstation.DNP3UserLayer;
 using DNP3TCPDriver;
+using DNP3TCPDriver.DataLinkLayer;
+using DNP3TCPDriver.UserLevel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -40,6 +42,8 @@ namespace DNP3Outstation.Communication
 
         void ProcessRequest(TcpClient client)
         {
+            DataLinkHandler dataLinkHandler = new DataLinkHandler();
+
             Byte[] bytes = new Byte[1000];
             
             NetworkStream stream = client.GetStream();
@@ -74,29 +78,28 @@ namespace DNP3Outstation.Communication
                 {
                     message[i] = bytes[i];
                 }
-
-                //DNP3Handler.DNP3DataLinkHandler.UnpackData(message, actualLen);
-
-                DissectRequest();
-
-                //DNP3Handler.DNP3DataLinkHandler.DNP3TransportFunctionHandler.DNP3ApplicationHandler.ReadAllAnalogInputPointsResponse();
                 
+                List<UserLevelObject> userLevelObjects = dataLinkHandler.PackUp(message);
+
+                if (userLevelObjects == null)
+                {
+                    continue;
+                }
+
+                DNP3Handler dNP3Handler = new DNP3Handler();
+                DNP3UserLayerHandler userLayer = new DNP3UserLayerHandler(dNP3Handler);
+                List<byte[]> segments = userLayer.ReadAllAnalogInputPointsResponse(userLevelObjects);
+
                 int offset = 0;
 
-                try
+                foreach (byte[] segment in segments)
                 {
-                    //stream.Write(DNP3Handler.DNP3DataLinkHandler.DNP3TransportFunctionHandler.DNP3ApplicationHandler.DNP3TransportFunctionHandler.DNP3DataLinkHandler.PackedFrame, offset, DNP3Handler.DNP3DataLinkHandler.DNP3TransportFunctionHandler.DNP3ApplicationHandler.DNP3TransportFunctionHandler.DNP3DataLinkHandler.PackedFrame.Count());
+                    try
+                    {
+                        stream.Write(segment, offset, segment.Count());
+                    }
+                    catch (Exception e) { }
                 }
-                catch (Exception e) { }
-            }
-        }
-
-        void DissectRequest()
-        {
-            foreach (DNP3Object dnp3Object in DNP3Handler.DNP3DataLinkHandler.DNP3TransportFunctionHandler.DNP3ApplicationHandler.DNP3Objects)
-            {
-                ObjectProcessor objectProcessor = new ObjectProcessor(dnp3Object);
-                objectProcessor.ProcessObject();
             }
         }
     }
