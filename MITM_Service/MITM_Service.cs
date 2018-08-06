@@ -17,24 +17,55 @@ namespace MITM_Service
         [DllImport("ARPSpoof.dll", EntryPoint = "ARPSpoof", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ARPSpoof(ref ARPSpoofParticipantsInfo participants);
 
+        [DllImport("ARPSpoof.dll", EntryPoint = "RetreivePackets", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void RetreivePackets(ref PacketStruct[] packetStructs);
+
         [DllImport("ARPSpoof.dll", EntryPoint = "Terminate", CallingConvention = CallingConvention.Cdecl)]
         public static extern void Terminate();
 
         private List<byte> hostsIPends;
         private int sniffForHostsInterval = 7;
+        private bool terminate = false;
+
+        private Queue<PacketStruct> packetStructs;
 
         public MITM_Service()
         {
             hostsIPends = new List<byte>();
+            packetStructs = new Queue<PacketStruct>();
         }
 
         public void ARPSpoof(ARPSpoofParticipantsInfo participants)
         {
+            terminate = false;
             Task.Factory.StartNew(() => ARPSpoof(ref participants));
+            Task.Factory.StartNew(() => PacketsProducer());
+        }
+
+        public void PacketsProducer()
+        {
+            int maxPacketNum = 20;
+            PacketStruct[] retreivedStructs = new PacketStruct[maxPacketNum];
+
+            while(!terminate)
+            {
+                RetreivePackets(ref retreivedStructs);
+
+                foreach (PacketStruct packetStruct in retreivedStructs)
+                {
+                    if (packetStruct.source_addr[0] == 0)
+                    {
+                        continue;
+                    }
+
+                    packetStructs.Enqueue(packetStruct);
+                }
+            }
         }
 
         public void TerminateActiveAttack()
         {
+            terminate = true;
             Terminate();
         }
 
