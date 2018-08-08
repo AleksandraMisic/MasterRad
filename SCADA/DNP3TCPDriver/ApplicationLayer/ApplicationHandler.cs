@@ -22,7 +22,7 @@ namespace DNP3TCPDriver.ApplicationLayer
         private bool Fir;
         private bool Fin;
 
-        private static int sequence = 0;
+        private static int sequence = -1;
 
         public static object lockObject;
 
@@ -59,16 +59,34 @@ namespace DNP3TCPDriver.ApplicationLayer
             if (applicationCtrl[7] == true)
             {
                 Fir = true;
-                sequence = newSeq;
+                if (sequence == -1)
+                {
+                    sequence = newSeq;
+                }
+                else if (functionCode != ApplicationFunctionCodes.RESPONSE)
+                {
+                    if (newSeq != sequence + 1)
+                    {
+                        // log error
+                    }
+
+                    lock (lockObject)
+                    {
+                        sequence = newSeq;
+                    }
+                }
+
                 ObjectsUpProcess.Clear();
             }
             else if (!Fir)
             {
-                return null;
+                // LOG ERROR
+                //return null;
             }
             else if (functionCode != ApplicationFunctionCodes.RESPONSE && newSeq != sequence + 1)
             {
-                return null;
+                // LOG ERROR
+                //return null;
             }
 
             sequence++;
@@ -464,15 +482,24 @@ namespace DNP3TCPDriver.ApplicationLayer
 
                 lock (lockObject)
                 {
+                    if (sequence == -1)
+                    {
+                        sequence = 0;
+                    }
                     header.ApplicationControl = new BitArray(new byte[1] { BitConverter.GetBytes(sequence)[0] });
                 }
             }
             else
             {
                 header = new RequestHeader();
+
                 lock (lockObject)
                 {
-                    header.ApplicationControl = new BitArray(new byte[1] { BitConverter.GetBytes(++sequence)[0] });
+                    if (++sequence >= 15)
+                    {
+                        sequence = 0;
+                    }
+                    header.ApplicationControl = new BitArray(new byte[1] { BitConverter.GetBytes(sequence)[0] });
                 }
             }
 
