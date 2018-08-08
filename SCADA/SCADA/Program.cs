@@ -87,7 +87,7 @@ namespace SCADA
                    TaskCreationOptions.LongRunning);
 
                 TimeSpan consumeAnswTime = TimeSpan.FromMilliseconds(10000);
-                answersConsumer = Task.Factory.StartNew(() => AcqEngine.ProcessPCAnwers(consumeReqTime, cancellationToken),
+                answersConsumer = Task.Factory.StartNew(() => ProcessAnswers(AcqEngine, consumeReqTime, cancellationToken),
                    TaskCreationOptions.LongRunning);
 
                 // give simulator some time, and when everything is ready start acquisition
@@ -127,6 +127,16 @@ namespace SCADA
             // wait tasks
             AcqEngine.Stop();
             PCCommEng.Stop();
+        }
+
+        private static void ProcessAnswers(CommandingAcquisitionEngine AcqEngine, TimeSpan timeout, CancellationToken cancellationToken)
+        {
+            AcqEngine.ProcessPCAnwers(timeout, cancellationToken);
+        }
+
+        private static void ProcessRequests(PCCommunicationEngine PCCommEng, TimeSpan timeout, CancellationToken cancellationToken)
+        {
+            PCCommEng.ProcessRequestsFromQueue(timeout, cancellationToken);
         }
     }
 }

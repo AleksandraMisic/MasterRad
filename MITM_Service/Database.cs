@@ -12,6 +12,8 @@ namespace MITM_Common
     {
         public static GlobalConnectionInfo GlobalConnectionInfo { get; set; }
 
+        public static ARPSpoofParticipantsInfo ARPSpoofParticipantsInfo { get; set; }
+
         public static Dictionary<int, AnalogInputPoint> AnalogInputPoints { get; set; }
 
         public static object lockObject;
@@ -20,6 +22,7 @@ namespace MITM_Common
         {
             GlobalConnectionInfo = new GlobalConnectionInfo();
             AnalogInputPoints = new Dictionary<int, AnalogInputPoint>();
+            ARPSpoofParticipantsInfo = new ARPSpoofParticipantsInfo();
             lockObject = new object();
         }
     }

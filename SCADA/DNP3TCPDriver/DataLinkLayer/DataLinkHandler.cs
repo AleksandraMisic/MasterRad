@@ -19,6 +19,9 @@ namespace DNP3TCPDriver.DataLinkLayer
 
         public TransportFunctionHandler DNP3TransportFunctionHandler;
 
+        public bool IsMaster { get; set; }
+        public bool IsPrm { get; set; }
+
         private int frameMaxSize = 282;
 
         public List<UserLevelObject> PackUp(byte[] data)
@@ -26,6 +29,25 @@ namespace DNP3TCPDriver.DataLinkLayer
             if (data[0] != 0x05 || data[1] != 0x64)
             {
                 return null;
+            }
+
+            BitArray ctrl = new BitArray(new byte[1] { data[3]});
+
+            if (ctrl[7])
+            {
+                IsMaster = true;
+            }
+            else
+            {
+                IsMaster = false;
+            }
+            if (ctrl[6])
+            {
+                IsPrm = true;
+            }
+            else
+            {
+                IsPrm = false;
             }
 
             int length = data.Count();

@@ -22,9 +22,16 @@ namespace DNP3TCPDriver.ApplicationLayer
         private bool Fir;
         private bool Fin;
 
-        private int sequence = 0;
+        private static int sequence = 0;
+
+        public static object lockObject;
 
         private int maxFragmentSize = 2048;
+
+        static ApplicationHandler()
+        {
+            lockObject = new object();
+        }
 
         public ApplicationHandler()
         {
@@ -46,6 +53,7 @@ namespace DNP3TCPDriver.ApplicationLayer
             byte[] tempSeq = new byte[1];
             tempApplicationCtrl.CopyTo(tempSeq, 0);
 
+            ApplicationFunctionCodes functionCode = (ApplicationFunctionCodes)data[1];
             byte newSeq = tempSeq[0];
 
             if (applicationCtrl[7] == true)
@@ -58,15 +66,13 @@ namespace DNP3TCPDriver.ApplicationLayer
             {
                 return null;
             }
-            else if (newSeq != sequence + 1)
+            else if (functionCode != ApplicationFunctionCodes.RESPONSE && newSeq != sequence + 1)
             {
                 return null;
             }
 
             sequence++;
             Fin = applicationCtrl[6];
-
-            ApplicationFunctionCodes functionCode = (ApplicationFunctionCodes)data[1];
 
             int index = 0;
             if (functionCode == ApplicationFunctionCodes.RESPONSE)
@@ -455,10 +461,19 @@ namespace DNP3TCPDriver.ApplicationLayer
                 ((ResponseHeader)header).InternalIndications[13] = false;
                 ((ResponseHeader)header).InternalIndications[14] = false;
                 ((ResponseHeader)header).InternalIndications[15] = false;
+
+                lock (lockObject)
+                {
+                    header.ApplicationControl = new BitArray(new byte[1] { BitConverter.GetBytes(sequence)[0] });
+                }
             }
             else
             {
                 header = new RequestHeader();
+                lock (lockObject)
+                {
+                    header.ApplicationControl = new BitArray(new byte[1] { BitConverter.GetBytes(++sequence)[0] });
+                }
             }
 
             header.ApplicationControl[7] = false;    // FIR
@@ -563,7 +578,14 @@ namespace DNP3TCPDriver.ApplicationLayer
                             {
                                 value.CopyTo(tempFragment, index);
                                 index += value.Count();
-                                stopIndex = userLevelObject.Indices[counter];
+
+                                if(userLevelObject.Values.Count() != 1)                           {
+                                    stopIndex = userLevelObject.Indices[counter];
+                                }
+                                else
+                                {
+                                    stopIndex = startIndex;
+                                }
 
                                 fragmentInProgress = true;
                             }

@@ -259,8 +259,8 @@ namespace MITM_UI.ViewModel
                 }
                 else
                 {
-                    analogInputPoint.Value = newAnalogInputPoint.Value;
-                    analogInputPoint.RawValue = newAnalogInputPoint.RawValue;
+                    ((DNP3ExtensionViewModel)singleShellFillerViewModel).AnalogInputPoints.Where(a => a.Index == newAnalogInputPoint.Index).FirstOrDefault().Value = newAnalogInputPoint.Value;
+                    ((DNP3ExtensionViewModel)singleShellFillerViewModel).AnalogInputPoints.Where(a => a.Index == newAnalogInputPoint.Index).FirstOrDefault().RawValue = newAnalogInputPoint.RawValue;
                 }
             }
         }

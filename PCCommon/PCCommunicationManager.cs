@@ -108,16 +108,16 @@ namespace PCCommon.Communication
 
         public TcpCommObj(CommunicationParameters commPar) : base()
         {
-            if (commPar.HostPort == 20000)
-            {
-                IPAddress ipAddress = IPAddress.Parse("192.168.0.103");
-                IPEndPoint ipLocalEndPoint = new IPEndPoint(ipAddress, 20000);
-                tcpClient = new TcpClient(ipLocalEndPoint);
-            }
-            else
-            {
+            //if (commPar.HostPort == 20000)
+            //{
+            //    IPAddress ipAddress = IPAddress.Parse("192.168.0.103");
+            //    IPEndPoint ipLocalEndPoint = new IPEndPoint(ipAddress, 20000);
+            //    tcpClient = new TcpClient(ipLocalEndPoint);
+            //}
+            //else
+            //{
                 tcpClient = new TcpClient();
-            }
+            //}
 
             TrHandler = TransportHandler.TCP;
             communicationParams = commPar;

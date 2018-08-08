@@ -50,6 +50,7 @@
     <Compile Include="MITM_Service\IMITM_Contract.cs" />
     <Compile Include="MITM_Service\MITMServiceProxy.cs" />
     <Compile Include="MITM_Service\PacketStruct.cs" />
+    <Compile Include="MITM_Service\SendPacketStruct.cs" />
     <Compile Include="NetTcpBindingCreator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PubSub\IPublisher.cs" />

