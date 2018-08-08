@@ -494,7 +494,7 @@ namespace DNP3TCPDriver.ApplicationLayer
 
                 lock (lockObject)
                 {
-                    if (++sequence >= 15)
+                    if (++sequence > 15)
                     {
                         sequence = 0;
                     }
