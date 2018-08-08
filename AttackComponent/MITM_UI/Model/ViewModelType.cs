@@ -8,6 +8,7 @@ namespace MITM_UI.Model
 {
     public enum ViewModelType
     {
-        CONNECTION_INFO
+        CONNECTION_INFO,
+        DNP3_EXTENSION
     }
 }

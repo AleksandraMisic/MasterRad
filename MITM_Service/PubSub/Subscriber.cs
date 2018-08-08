@@ -1,4 +1,5 @@
-﻿using MITM_Common;
+﻿using DNP3DataPointsModel;
+using MITM_Common;
 using MITM_Common.MITM_Service;
 using MITM_Common.PubSub;
 using System;
@@ -11,12 +12,14 @@ using System.Threading.Tasks;
 namespace PubSub
 {
     public delegate void PublishConnectionInfoEvent(GlobalConnectionInfo connectionInfoStruct);
+    public delegate void PublishAnalogInputChangeEvent(AnalogInputPoint analogInputPoint);
 
     public class Subscriber : IPublisher
     { 
         ISubscriber proxy = null;
 
         public event PublishConnectionInfoEvent publishConnectionInfoEvent;
+        public event PublishAnalogInputChangeEvent publishAnalogInputChangeEvent;
 
         public Subscriber()
         {
@@ -65,6 +68,11 @@ namespace PubSub
             {
                 throw e;
             }
+        }
+
+        public void AnalogInputChange(AnalogInputPoint analogInputPoint)
+        {
+            publishAnalogInputChangeEvent?.Invoke(analogInputPoint);
         }
     }
 }

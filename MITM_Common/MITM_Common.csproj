@@ -56,5 +56,11 @@
     <Compile Include="PubSub\ISubscriber.cs" />
     <Compile Include="PubSub\PubSubDatabase.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DNP3DataPointsModel\DNP3DataPointsModel.csproj">
+      <Project>{2A7AECFB-E992-478E-AE48-77929BF2A5E1}</Project>
+      <Name>DNP3DataPointsModel</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -1,4 +1,5 @@
-﻿using MITM_Common;
+﻿using DNP3DataPointsModel;
+using MITM_Common;
 using MITM_Common.MITM_Service;
 using MITM_Common.PubSub;
 using System;
@@ -17,6 +18,15 @@ namespace PubSub
         public Publisher()
         {
             CreateProxy();
+        }
+
+        public void AnalogInputChange(AnalogInputPoint analogInputPoint)
+        {
+            try
+            {
+                proxy.AnalogInputChange(analogInputPoint);
+            }
+            catch { }
         }
 
         public void ReturnConnectionInfo(GlobalConnectionInfo connectionInfo)

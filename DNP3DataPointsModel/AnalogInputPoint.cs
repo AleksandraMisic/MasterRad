@@ -10,6 +10,7 @@ namespace DNP3DataPointsModel
     public class AnalogInputPoint : INotifyPropertyChanged
     {
         private int value;
+        private int rawValue;
 
         public int Index { get; set; }
         public int Value
@@ -24,6 +25,20 @@ namespace DNP3DataPointsModel
                 RaisePropertyChanged("Value");
             }
         }
+
+        public int RawValue
+        {
+            get
+            {
+                return rawValue;
+            }
+            set
+            {
+                this.rawValue = value;
+                RaisePropertyChanged("RawValue");
+            }
+        }
+
         public string Name { get; set; }
         public int ChangeEventClass { get; set; }
         public int MinIntegerTransmittedValue { get; set; }

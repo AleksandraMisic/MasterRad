@@ -1,4 +1,5 @@
-﻿using MITM_Common.MITM_Service;
+﻿using DNP3DataPointsModel;
+using MITM_Common.MITM_Service;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,5 +14,8 @@ namespace MITM_Common.PubSub
     {
         [OperationContract]
         void ReturnConnectionInfo(GlobalConnectionInfo connectionInfo);
+
+        [OperationContract]
+        void AnalogInputChange(AnalogInputPoint analogInputPoint);
     }
 }

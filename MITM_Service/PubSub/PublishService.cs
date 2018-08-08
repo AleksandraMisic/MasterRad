@@ -1,4 +1,5 @@
-﻿using MITM_Common.MITM_Service;
+﻿using DNP3DataPointsModel;
+using MITM_Common.MITM_Service;
 using MITM_Common.PubSub;
 using System;
 using System.Collections.Generic;
@@ -11,6 +12,17 @@ namespace PubSub
 {
     public class PublishService : IPublisher
     {
+        public void AnalogInputChange(AnalogInputPoint analogInputPoint)
+        {
+            foreach (IPublisher subscriber in PubSubDatabase.Subscribers)
+            {
+                PublishThreadData threadObj = new PublishThreadData(subscriber, analogInputPoint);
+
+                Thread thread = new Thread(() => threadObj.PublishAnalogInputChangeInfo(analogInputPoint));
+                thread.Start();
+            }
+        }
+
         public void ReturnConnectionInfo(GlobalConnectionInfo connectionInfo)
         {
             foreach (IPublisher subscriber in PubSubDatabase.Subscribers)
@@ -28,11 +40,18 @@ namespace PubSub
         private IPublisher subscriber;
 
         private GlobalConnectionInfo connectionInfo;
+        private AnalogInputPoint analogInputPoint;
         
         public PublishThreadData(IPublisher subscriber, GlobalConnectionInfo connectionInfo)
         {
             this.subscriber = subscriber;
             this.connectionInfo = connectionInfo;
+        }
+
+        public PublishThreadData(IPublisher subscriber, AnalogInputPoint analogInputPoint)
+        {
+            this.subscriber = subscriber;
+            this.analogInputPoint = analogInputPoint;
         }
 
         public IPublisher Subscriber
@@ -66,6 +85,18 @@ namespace PubSub
             try
             {
                 subscriber.ReturnConnectionInfo(connectionInfo);
+            }
+            catch (Exception e)
+            {
+                PubSubDatabase.RemoveSubsriber(subscriber);
+            }
+        }
+
+        public void PublishAnalogInputChangeInfo(AnalogInputPoint analogInputPoint)
+        {
+            try
+            {
+                subscriber.AnalogInputChange(analogInputPoint);
             }
             catch (Exception e)
             {

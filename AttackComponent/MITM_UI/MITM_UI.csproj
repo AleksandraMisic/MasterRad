@@ -68,6 +68,7 @@
     <Compile Include="Model\GlobalInfo\Database.cs" />
     <Compile Include="Model\GlobalInfo\GlobalActiveAttacks.cs" />
     <Compile Include="Model\ViewModelType.cs" />
+    <Compile Include="ViewModel\DNP3ExtensionViewModel.cs" />
     <Compile Include="ViewModel\MainShellViewModel.cs" />
     <Compile Include="ViewModel\ShellFillerViewModels\ActiveAttacksViewModel.cs" />
     <Compile Include="ViewModel\ShellFillerViewModels\ARPSpooferViewModel.cs" />
@@ -84,6 +85,9 @@
     </Compile>
     <Compile Include="View\CustomControls\ShellFillers\ConnectionInfo.xaml.cs">
       <DependentUpon>ConnectionInfo.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\CustomControls\ShellFillers\DNP3Extension.xaml.cs">
+      <DependentUpon>DNP3Extension.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\CustomControls\ShellFillers\PacketAnalyzer.xaml.cs">
       <DependentUpon>PacketAnalyzer.xaml</DependentUpon>
@@ -130,6 +134,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\CustomControls\ShellFillers\ConnectionInfo.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\CustomControls\ShellFillers\DNP3Extension.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -191,6 +199,10 @@
     <Resource Include="View\Resources\Images\connected.png" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\DNP3DataPointsModel\DNP3DataPointsModel.csproj">
+      <Project>{2A7AECFB-E992-478E-AE48-77929BF2A5E1}</Project>
+      <Name>DNP3DataPointsModel</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\MITM_Common\MITM_Common.csproj">
       <Project>{8f2c0828-c30d-414c-b7c7-8c14a9b9b5f9}</Project>
       <Name>MITM_Common</Name>

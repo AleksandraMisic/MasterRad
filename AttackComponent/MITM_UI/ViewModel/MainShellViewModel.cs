@@ -1,4 +1,5 @@
-﻿using MITM_Common.MITM_Service;
+﻿using DNP3DataPointsModel;
+using MITM_Common.MITM_Service;
 using MITM_Common.PubSub;
 using MITM_UI.Extensions.DNP3Extension;
 using MITM_UI.Extensions.DNP3Extension.Model;
@@ -47,6 +48,7 @@ namespace MITM_UI.ViewModel
             subscriber = new Subscriber();
             subscriber.Subscribe();
             subscriber.publishConnectionInfoEvent += ConnectionInfoChanged;
+            subscriber.publishAnalogInputChangeEvent += AnalogInputChanged;
         }
 
         #endregion
@@ -146,6 +148,32 @@ namespace MITM_UI.ViewModel
             PlaceOrFocusControlInShell(ShellPosition.LEFT, null, true, "Connection Info");
         }
 
+        private void ExecuteOpenDNP3ExtensionCommand(object parameter)
+        {
+            DNP3ExtensionViewModel devm = new DNP3ExtensionViewModel();
+            if (devm.IsOpen == false)
+            {
+                devm.IsOpen = true;
+
+                DNP3Extension connectionInfo = new DNP3Extension();
+
+                connectionInfo.DataContext = devm;
+
+                ShellFillerShell sfs = new ShellFillerShell() { DataContext = this };
+
+                sfs.MainScroll.Content = connectionInfo;
+                sfs.Header.Text = (string)parameter;
+
+                PlaceOrFocusControlInShell(DNP3ExtensionViewModel.Position, sfs, false, null);
+
+                Database.ViewModels.Add(ViewModelType.DNP3_EXTENSION, devm);
+
+                return;
+            }
+
+            PlaceOrFocusControlInShell(ShellPosition.LEFT, null, true, "DNP3 Extension");
+        }
+
         private void ExecuteOpenActiveAttacksCommand(object parameter)
         {
             ActiveAttacksViewModel aavm = new ActiveAttacksViewModel();
@@ -194,21 +222,44 @@ namespace MITM_UI.ViewModel
             PlaceOrFocusControlInShell(ShellPosition.LEFT, null, true, "Connection Info");
         }
 
-        private void ExecuteOpenDNP3ExtensionCommand(object parameter)
-        {
-            DNP3ExtensionMainWindow dNP3ExtensionMainWindow = new DNP3ExtensionMainWindow();
-            dNP3ExtensionMainWindow.Show();
-        }
-
         #endregion
 
         void ConnectionInfoChanged(GlobalConnectionInfo connectionInfo)
         {
-            Database.GlobalConnectionInfo = connectionInfo;
+            lock (Database.lockObject)
+            {
+                Database.GlobalConnectionInfo = connectionInfo;
+            }
 
             if (Database.ViewModels.TryGetValue(ViewModelType.CONNECTION_INFO, out SingleShellFillerViewModel singleShellFillerViewModel) && singleShellFillerViewModel.IsOpen)
             {
                 ((ConnectionInfoViewModel)singleShellFillerViewModel).ConnectionInfoChanged();
+            }
+        }
+
+        void AnalogInputChanged(AnalogInputPoint newAnalogInputPoint)
+        {
+            AnalogInputPoint analogInputPoint;
+
+            if (!Database.AnalogInputPoints.TryGetValue(newAnalogInputPoint.Index, out analogInputPoint))
+            {
+                Database.AnalogInputPoints.Add(newAnalogInputPoint.Index, newAnalogInputPoint);
+            }
+            else
+            {
+                Database.AnalogInputPoints.Values.Where(a => a.Index == newAnalogInputPoint.Index).FirstOrDefault().Value = newAnalogInputPoint.Value;
+            }
+
+            if (Database.ViewModels.TryGetValue(ViewModelType.DNP3_EXTENSION, out SingleShellFillerViewModel singleShellFillerViewModel) && singleShellFillerViewModel.IsOpen)
+            {
+                if((analogInputPoint = ((DNP3ExtensionViewModel)singleShellFillerViewModel).AnalogInputPoints.Where(a => a.Index == newAnalogInputPoint.Index).FirstOrDefault()) == null)
+                {
+                    ((DNP3ExtensionViewModel)singleShellFillerViewModel).AnalogInputPoints.Add(newAnalogInputPoint);
+                }
+                else
+                {
+                    analogInputPoint.Value = newAnalogInputPoint.Value;
+                }
             }
         }
     }
