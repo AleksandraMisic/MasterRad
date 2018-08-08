@@ -89,7 +89,6 @@ namespace DNP3TCPDriver.ApplicationLayer
                 //return null;
             }
 
-            sequence++;
             Fin = applicationCtrl[6];
 
             int index = 0;
