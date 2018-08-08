@@ -96,6 +96,7 @@
       <DependentUpon>TopMenu.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\Resources\Converters\BoolToContentConverter.cs" />
+    <Compile Include="View\Resources\Converters\BoolToContentForPointsConverter.cs" />
     <Compile Include="View\Resources\Converters\BoolToImagePathConverter.cs" />
     <Compile Include="View\Resources\Converters\BoolToStringConverter.cs" />
     <Compile Include="View\Resources\Converters\BoolToVisibility.cs" />

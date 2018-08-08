@@ -9,11 +9,17 @@ namespace DNP3DataPointsModel
 {
     public class AnalogInputPoint : INotifyPropertyChanged
     {
-        private int value;
+        private float value;
         private int rawValue;
 
+        public AnalogInputPoint()
+        {
+            ScaleFactor = 1;
+            ScaleOffset = 0;
+        }
+
         public int Index { get; set; }
-        public int Value
+        public float Value
         {
             get
             {
@@ -44,7 +50,7 @@ namespace DNP3DataPointsModel
         public int MinIntegerTransmittedValue { get; set; }
         public int MaxIntegerTransmittedValue { get; set; }
         public int ScaleFactor { get; set; }
-        public double ScaleOffset { get; set; }
+        public float ScaleOffset { get; set; }
         public string Units { get; set; }
         public int Resolution { get; set; }
         public string Description { get; set; }

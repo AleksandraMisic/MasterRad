@@ -4,8 +4,12 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:MITM_UI.View.CustomControls.ShellFillers"
+             xmlns:converters="clr-namespace:MITM_UI.View.Resources.Converters"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <converters:BoolToContentForPointsConverter x:Key="BoolToContentForPointsConverter"/>
+    </UserControl.Resources>
     <Grid Background="{StaticResource ResourceKey=MediumColor}">
         <Grid Margin="7, 7, 7, 7">
             <Grid.RowDefinitions>
@@ -22,10 +26,39 @@
             <Expander IsExpanded="True" Header="Analog Inputs" Style="{StaticResource ExpanderStyle}" Grid.Row="0" Background="{StaticResource MediumColor}">
                 <DataGrid Name="AnalogInputs" Grid.Row="0" ItemsSource="{Binding AnalogInputPoints}" Margin="10, 01, 10, 10" Style="{StaticResource ResourceKey=DataGridStyle}" RowStyle="{StaticResource ResourceKey=DataGridRow}" ColumnHeaderStyle="{StaticResource ResourceKey=DataGridColumnHeader}" CellStyle="{StaticResource ResourceKey=DataGridCell}" AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False" CanUserDeleteRows="False" CanUserReorderColumns="False" CanUserResizeRows="False">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="Name" Binding="{Binding Name}"/>
-                        <DataGridTextColumn Header="Current Value" Binding="{Binding Value}"/>
-                        <DataGridTextColumn Header="Units" Binding="{Binding Units}"/>
-                        <DataGridTextColumn Header="Description" Binding="{Binding Description}"/>
+                        <DataGridTextColumn Header="Name">
+                            <DataGridTextColumn.Binding>
+                                <MultiBinding Converter="{StaticResource BoolToContentForPointsConverter}">
+                                    <Binding Path="DataContext.IsConfigPresent" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=DataGrid}"/>
+                                    <Binding Path="DataContext.Name" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=DataGrid}"/>
+                                </MultiBinding>
+                            </DataGridTextColumn.Binding>
+                        </DataGridTextColumn>
+                        <DataGridTextColumn Header="Raw Value" Binding="{Binding RawValue}"/>
+                        <DataGridTextColumn Header="Current Value">
+                            <DataGridTextColumn.Binding>
+                                <MultiBinding Converter="{StaticResource BoolToContentForPointsConverter}">
+                                    <Binding Path="DataContext.IsConfigPresent" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=DataGrid}"/>
+                                    <Binding Path="DataContext.Value" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=DataGrid}"/>
+                                </MultiBinding>
+                            </DataGridTextColumn.Binding>
+                        </DataGridTextColumn>
+                        <DataGridTextColumn Header="Units">
+                            <DataGridTextColumn.Binding>
+                                <MultiBinding Converter="{StaticResource BoolToContentForPointsConverter}">
+                                    <Binding Path="DataContext.IsConfigPresent" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=DataGrid}"/>
+                                    <Binding Path="DataContext.Value" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=DataGrid}"/>
+                                </MultiBinding>
+                            </DataGridTextColumn.Binding>
+                        </DataGridTextColumn>
+                        <DataGridTextColumn Header="Description">
+                            <DataGridTextColumn.Binding>
+                                <MultiBinding Converter="{StaticResource BoolToContentForPointsConverter}">
+                                    <Binding Path="DataContext.IsConfigPresent" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=DataGrid}"/>
+                                    <Binding Path="DataContext.Description" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=DataGrid}"/>
+                                </MultiBinding>
+                            </DataGridTextColumn.Binding>
+                        </DataGridTextColumn>
                     </DataGrid.Columns>
                 </DataGrid>
             </Expander>

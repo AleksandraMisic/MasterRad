@@ -82,7 +82,8 @@ namespace SCADA.CommunicationAndControlling.DNP3UserLayer
                                             {
                                                 if (analog.RelativeAddress <= userLevelObject.StartIndex && analog.RelativeAddress >= userLevelObject.StopIndex)
                                                 {
-                                                    analog.AcqValue = BitConverter.ToInt32(userLevelObject.Values[analog.RelativeAddress], 0);
+                                                    analog.RawAcqValue = BitConverter.ToUInt16(userLevelObject.Values[analog.RelativeAddress], 0);
+                                                    analog.AcqValue = analog.RawAcqValue * analog.Scale + analog.Offset;
                                                     retVal.Add(new Tuple<string, float>(analog.Name, analog.AcqValue));
                                                 }
                                             }

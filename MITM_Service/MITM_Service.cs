@@ -158,7 +158,8 @@ namespace MITM_Service
 
                                     lock (Database.lockObject)
                                     {
-                                        analogInputPoint.Value = BitConverter.ToInt32(userObject.Values[i], 0);
+                                        analogInputPoint.RawValue = BitConverter.ToInt32(userObject.Values[i], 0);
+                                        analogInputPoint.Value = analogInputPoint.RawValue * analogInputPoint.ScaleFactor + analogInputPoint.ScaleOffset;
                                     }
 
                                     publisher.AnalogInputChange(analogInputPoint);

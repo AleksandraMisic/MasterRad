@@ -292,7 +292,7 @@ namespace DNP3ConfigParser.Parsers
                             }
                             if ((temp3 = temp2.Element(defaultNamespace + "scaleOffset")) != null)
                             {
-                                analogInputPoint.ScaleOffset = double.Parse(temp3.Value);
+                                analogInputPoint.ScaleOffset = float.Parse(temp3.Value);
                             }
                             if ((temp3 = temp2.Element(defaultNamespace + "units")) != null)
                             {

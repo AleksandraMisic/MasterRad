@@ -148,13 +148,16 @@ namespace DNP3Outstation.ViewModel
                 {
                     foreach (AnalogInputPoint analog in Database.AnalogInputPoints)
                     {
-                        if (analog.Value < maxValue)
+                        if (analog.RawValue < analog.MaxIntegerTransmittedValue)
                         {
-                            analog.Value += 2;
+                            analog.RawValue += 2;
+
+                            analog.Value = (int)analog.RawValue * analog.ScaleFactor + analog.ScaleOffset;
                             continue;
                         }
 
-                        analog.Value = 0;
+                        analog.RawValue = 0;
+                        analog.Value = (int)analog.RawValue * analog.ScaleFactor + analog.ScaleOffset;
                     }
                 }
 

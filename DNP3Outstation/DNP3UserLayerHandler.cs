@@ -52,7 +52,7 @@ namespace DNP3Outstation.DNP3UserLayer
                                             {
                                                 if (analog.Index <= userLevelObject.StartIndex && analog.Index >= userLevelObject.StopIndex)
                                                 {
-                                                    userLevelObject.Values.Add(BitConverter.GetBytes(analog.Value));
+                                                    userLevelObject.Values.Add(BitConverter.GetBytes(analog.RawValue));
                                                     userLevelObject.Indices.Add(analog.Index);
                                                 }
                                             }

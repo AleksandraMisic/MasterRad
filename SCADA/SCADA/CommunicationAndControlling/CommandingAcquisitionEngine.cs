@@ -77,7 +77,9 @@ namespace SCADA.CommunicationAndControlling
                         MinValue = analogInput.MinIntegerTransmittedValue,
                         MaxValue = analogInput.MaxIntegerTransmittedValue,
                         UnitSymbol = (UnitSymbol)Enum.Parse(typeof(UnitSymbol), analogInput.Units, true),
-                        IsInit = true
+                        IsInit = true,
+                        Scale = analogInput.ScaleFactor,
+                        Offset = analogInput.ScaleOffset
                     };
 
                     dbContext.AddProcessVariable(analog);

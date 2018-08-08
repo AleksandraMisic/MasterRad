@@ -2291,13 +2291,13 @@ DNP3DeviceProfileJan2010.xsd">
                 <value>0</value>
               </minIntegerTransmittedValue>
               <maxIntegerTransmittedValue>
-                <value>1000000</value>
+                <value>5000</value>
               </maxIntegerTransmittedValue>
               <scaleFactor>
-                <value>1</value>
+                <value>2</value>
               </scaleFactor>
               <scaleOffset>
-                <value>1</value>
+                <value>0</value>
               </scaleOffset>
               <units>
                 <value>kWh</value>

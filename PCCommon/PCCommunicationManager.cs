@@ -110,7 +110,7 @@ namespace PCCommon.Communication
         {
             if (commPar.HostPort == 20000)
             {
-                IPAddress ipAddress = IPAddress.Parse("192.168.0.101");
+                IPAddress ipAddress = IPAddress.Parse("192.168.0.103");
                 IPEndPoint ipLocalEndPoint = new IPEndPoint(ipAddress, 20000);
                 tcpClient = new TcpClient(ipLocalEndPoint);
             }

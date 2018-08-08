@@ -35,5 +35,9 @@ namespace SCADA.RealtimeDatabase.Model
         public ushort RawBandLow { get; set; } 
 
         public ushort RawBandHigh { get; set; }
+
+        public int Scale { get; set; }
+
+        public float Offset { get; set; }
     }
 }

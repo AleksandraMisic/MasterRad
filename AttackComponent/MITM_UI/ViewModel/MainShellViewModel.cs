@@ -247,6 +247,7 @@ namespace MITM_UI.ViewModel
             }
             else
             {
+                Database.AnalogInputPoints.Values.Where(a => a.Index == newAnalogInputPoint.Index).FirstOrDefault().RawValue = newAnalogInputPoint.RawValue;
                 Database.AnalogInputPoints.Values.Where(a => a.Index == newAnalogInputPoint.Index).FirstOrDefault().Value = newAnalogInputPoint.Value;
             }
 
@@ -259,6 +260,7 @@ namespace MITM_UI.ViewModel
                 else
                 {
                     analogInputPoint.Value = newAnalogInputPoint.Value;
+                    analogInputPoint.RawValue = newAnalogInputPoint.RawValue;
                 }
             }
         }

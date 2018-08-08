@@ -16,6 +16,7 @@ namespace MITM_UI.ViewModel
     {
         private static bool isOpen;
         private static ShellPosition position;
+        private bool isConfigPresent;
 
         public ObservableCollection<AnalogInputPoint> AnalogInputPoints { get; set; }
 
@@ -23,6 +24,19 @@ namespace MITM_UI.ViewModel
         {
             get { return position; }
             set { position = value; }
+        }
+
+        public bool IsConfigPresent
+        {
+            get
+            {
+                return isConfigPresent;
+            }
+            set
+            {
+                isConfigPresent = value;
+                RaisePropertyChanged("IsConfigPresent");
+            }
         }
 
         public DNP3ExtensionViewModel()

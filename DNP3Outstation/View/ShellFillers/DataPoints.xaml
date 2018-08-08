@@ -23,7 +23,8 @@
                 <DataGrid Name="AnalogInputs" Grid.Row="0" ItemsSource="{Binding AnalogInputPoints}" Margin="10, 01, 10, 10" Style="{StaticResource ResourceKey=DataGridStyle}" RowStyle="{StaticResource ResourceKey=DataGridRow}" ColumnHeaderStyle="{StaticResource ResourceKey=DataGridColumnHeader}" CellStyle="{StaticResource ResourceKey=DataGridCell}" AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False" CanUserDeleteRows="False" CanUserReorderColumns="False" CanUserResizeRows="False">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Name" Binding="{Binding Name}"/>
-                        <DataGridTextColumn Header="Current Value" Binding="{Binding Value}"/>
+                        <DataGridTextColumn Header="Raw Value" Binding="{Binding RawValue}"/>
+                        <DataGridTextColumn Header="Value" Binding="{Binding Value}"/>
                         <DataGridTextColumn Header="Units" Binding="{Binding Units}"/>
                         <DataGridTextColumn Header="Description" Binding="{Binding Description}"/>
                     </DataGrid.Columns>
