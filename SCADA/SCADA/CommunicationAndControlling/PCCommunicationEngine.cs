@@ -137,31 +137,34 @@ namespace SCADA.CommunicationAndControlling
         /// </summary>
         public void ProcessRequestsFromQueue(TimeSpan timeout, CancellationToken token)
         {
-
-            Console.WriteLine("Process Request form queue thread id={0}", Thread.CurrentThread.ManagedThreadId);
-            while (!token.IsCancellationRequested)
+            try
             {
-                bool isSuccessful;
-                IORequestBlock forProcess = IORequests.DequeueRequest(out isSuccessful, timeout);
-
-                Console.WriteLine("RTU: {0}", forProcess.ProcessControllerName);
-                if (isSuccessful)
+                Console.WriteLine("Process Request form queue thread id={0}", Thread.CurrentThread.ManagedThreadId);
+                while (!token.IsCancellationRequested)
                 {
-                    CommunicationObject commObj;
-                    if (CommunicationManager.CommunicationObjects.TryGetValue(forProcess.ProcessControllerName, out commObj))
+                    bool isSuccessful;
+                    IORequestBlock forProcess = IORequests.DequeueRequest(out isSuccessful, timeout);
+                    
+                    if (isSuccessful)
                     {
-                        // to do: napraviti taskove i asinhrono
-                        if (commObj.ProcessRequest(forProcess))
+                        CommunicationObject commObj;
+                        if (CommunicationManager.CommunicationObjects.TryGetValue(forProcess.ProcessControllerName, out commObj))
                         {
+                            // to do: napraviti taskove i asinhrono
+                            if (commObj.ProcessRequest(forProcess))
+                            {
 
-                        }
-                        else
-                        {
-                            
+                            }
+                            else
+                            {
+
+                            }
                         }
                     }
                 }
             }
+            catch (Exception e) { }
+            Console.WriteLine("Process requests Action Finished.");
         }
 
         // to do...cancelation token i communicaition manager da brise sve bla bla

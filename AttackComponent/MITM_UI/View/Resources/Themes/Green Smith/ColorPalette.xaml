@@ -20,7 +20,7 @@
     <SolidColorBrush x:Key="MediumDarkColor" Color="#4a4545">
     </SolidColorBrush>
 
-    <SolidColorBrush x:Key="MediumColor" Color="Gray">
+    <SolidColorBrush x:Key="MediumColor" Color="#a9a9a9">
     </SolidColorBrush>
 
     <SolidColorBrush x:Key="LightColor" Color="LightGray">

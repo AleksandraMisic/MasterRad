@@ -390,7 +390,7 @@ namespace SCADA.CommunicationAndControlling
                 int requestCount = analogs.ToList().Count();
                 if (requestCount != 0)
                 {
-                    Console.WriteLine("acq analogs");
+                    //Console.WriteLine("acq analogs");
                     ProcessVariable firstPV = analogs.FirstOrDefault();
 
                     if (IProtHandler != null)
@@ -416,6 +416,8 @@ namespace SCADA.CommunicationAndControlling
 
                                 DNP3UserLayerHandler userLayer = new DNP3UserLayerHandler(IProtHandler as DNP3Handler, dbContext);
                                 List<byte[]> segments =  userLayer.ReadAllAnalogInputPointsRequest(rtu.Name);
+
+                                Console.WriteLine("{0} ", segments[0][2]);
 
                                 foreach (byte[] segment in segments)
                                 {
@@ -447,7 +449,7 @@ namespace SCADA.CommunicationAndControlling
                 requestCount = digitals.ToList().Count();
                 if (requestCount != 0)
                 {
-                    Console.WriteLine("acq digitals");
+                    //Console.WriteLine("acq digitals");
                     ProcessVariable firstPV = digitals.FirstOrDefault();
                     iorbDigitals.ReqAddress = (ushort)rtu.GetAcqAddress(firstPV);
 
@@ -482,7 +484,7 @@ namespace SCADA.CommunicationAndControlling
                 requestCount = counters.ToList().Count();
                 if (requestCount != 0)
                 {
-                    Console.WriteLine("acq coutners");
+                    //Console.WriteLine("acq coutners");
                     ProcessVariable firstPV = counters.FirstOrDefault();
                     iorbCounters.ReqAddress = (ushort)rtu.GetAcqAddress(firstPV);
 
@@ -504,7 +506,7 @@ namespace SCADA.CommunicationAndControlling
                     }
                 }
             }
-            Console.WriteLine("RtuAcquistion Action Finished Thread id = {0} ", Thread.CurrentThread.ManagedThreadId);
+            //Console.WriteLine("RtuAcquistion Action Finished Thread id = {0} ", Thread.CurrentThread.ManagedThreadId);
         };
 
         /// <summary>

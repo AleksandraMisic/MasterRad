@@ -211,7 +211,6 @@ namespace MITM_Service
         {
             try
             {
-
                 foreach (UserLevelObject userObject in userLevelObjects)
                 {
                     if (userObject.FunctionCode == ApplicationFunctionCodes.RESPONSE)

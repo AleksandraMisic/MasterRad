@@ -20,10 +20,24 @@ namespace MITM_UI.ViewModel
 
         public ObservableCollection<AnalogInputPoint> AnalogInputPoints { get; set; }
 
+        private RelayCommand modifyCommand;
+
         public static ShellPosition Position
         {
             get { return position; }
             set { position = value; }
+        }
+
+        public RelayCommand ModifyCommand
+        {
+            get
+            {
+                return modifyCommand ?? new RelayCommand(
+                    (parameter) =>
+                    {
+                        ExecuteModifyCommand(parameter);
+                    });
+            }
         }
 
         public bool IsConfigPresent
@@ -59,6 +73,11 @@ namespace MITM_UI.ViewModel
         {
             get { return isOpen; }
             set { isOpen = value; }
+        }
+
+        private void ExecuteModifyCommand(object parameter)
+        {
+
         }
     }
 }

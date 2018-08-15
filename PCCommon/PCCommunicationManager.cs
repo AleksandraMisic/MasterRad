@@ -117,7 +117,7 @@ namespace PCCommon.Communication
             //else
             //{
                 tcpClient = new TcpClient();
-            //}
+           // }
 
             TrHandler = TransportHandler.TCP;
             communicationParams = commPar;

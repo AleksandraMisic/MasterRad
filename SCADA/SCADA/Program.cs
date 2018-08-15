@@ -83,7 +83,7 @@ namespace SCADA
                 // await yields control to the caller of the method thet performed await
 
                 TimeSpan consumeReqTime = TimeSpan.FromMilliseconds(10000); // it should be at least twice than acquisition timeout
-                requestsConsumer = Task.Factory.StartNew(() => PCCommEng.ProcessRequestsFromQueue(consumeReqTime, cancellationToken),
+                requestsConsumer = Task.Factory.StartNew(() => ProcessRequests(PCCommEng, consumeReqTime, cancellationToken),
                    TaskCreationOptions.LongRunning);
 
                 TimeSpan consumeAnswTime = TimeSpan.FromMilliseconds(10000);

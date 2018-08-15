@@ -1364,7 +1364,7 @@
                                         <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(Panel.Background).(SolidColorBrush.Color)"
                                                 Storyboard.TargetName="Border">
                                             <EasingColorKeyFrame KeyTime="0"
-                                         Value="DarkGray" />
+                                         Value="Gray" />
                                         </ColorAnimationUsingKeyFrames>
                                         <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(Border.BorderBrush).(SolidColorBrush.Color)"
                                                 Storyboard.TargetName="Border">

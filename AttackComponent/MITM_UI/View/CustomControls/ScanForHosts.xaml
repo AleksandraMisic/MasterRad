@@ -24,7 +24,7 @@
         <Grid Grid.Row="0">
             <TextBlock Text="Hosts on local network:" Foreground="Black" Margin="10, 10, 10, 10"/>
         </Grid>
-        <DataGrid Grid.Row="1" Background="{StaticResource DarkColor}" ItemsSource="{Binding HostsList}" Margin="10, 0, 10, 0" MinHeight="200" Style="{StaticResource DataGridStyle}" RowStyle="{StaticResource ResourceKey=DataGridRow}" ColumnHeaderStyle="{StaticResource ResourceKey=DataGridColumnHeader}" CellStyle="{StaticResource ResourceKey=DataGridCell}" Name="MainDataGrid" AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False" CanUserDeleteRows="False" CanUserReorderColumns="False" CanUserResizeRows="False">
+        <DataGrid Grid.Row="1" Background="{StaticResource MediumDarkColor}" ItemsSource="{Binding HostsList}" Margin="10, 0, 10, 0" MinHeight="200" Style="{StaticResource DataGridStyle}" RowStyle="{StaticResource ResourceKey=DataGridRow}" ColumnHeaderStyle="{StaticResource ResourceKey=DataGridColumnHeader}" CellStyle="{StaticResource ResourceKey=DataGridCell}" Name="MainDataGrid" AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False" CanUserDeleteRows="False" CanUserReorderColumns="False" CanUserResizeRows="False">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="IP Address" Binding="{Binding IPAddressString}" TextBlock.TextAlignment="Center"/>
                 <DataGridTextColumn Header="MAC Address" Binding="{Binding MACAddressString}" TextBlock.TextAlignment="Center"/>
