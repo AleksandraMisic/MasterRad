@@ -1,4 +1,6 @@
 ﻿using DNP3DataPointsModel;
+using DNP3TCPDriver.UserLevel;
+using MITM_Common;
 using MITM_Common.MITM_Service;
 using System;
 using System.Collections.Generic;
@@ -19,11 +21,14 @@ namespace MITM_UI.Model.GlobalInfo
 
         public static object lockObject;
 
+        public static Dictionary<Tuple<int, PointType>, FixedValue> FixedValues { get; set; }
+
         static Database()
         {
             GlobalConnectionInfo = new GlobalConnectionInfo();
             ViewModels = new Dictionary<ViewModelType, SingleShellFillerViewModel>();
             AnalogInputPoints = new Dictionary<int, AnalogInputPoint>();
+            FixedValues = new Dictionary<Tuple<int, PointType>, FixedValue>();
             lockObject = new object();
         }
     }

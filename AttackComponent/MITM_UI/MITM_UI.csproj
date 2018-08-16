@@ -97,6 +97,7 @@
     </Compile>
     <Compile Include="View\Resources\Converters\BoolToContentConverter.cs" />
     <Compile Include="View\Resources\Converters\BoolToContentForPointsConverter.cs" />
+    <Compile Include="View\Resources\Converters\BoolToContentForValueFix.cs" />
     <Compile Include="View\Resources\Converters\BoolToImagePathConverter.cs" />
     <Compile Include="View\Resources\Converters\BoolToStringConverter.cs" />
     <Compile Include="View\Resources\Converters\BoolToVisibility.cs" />
@@ -211,6 +212,10 @@
     <ProjectReference Include="..\..\MITM_Service\MITM_Service.csproj">
       <Project>{30C58186-A115-48E4-8316-5F88E72D7264}</Project>
       <Name>MITM_Service</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\SCADA\DNP3TCPDriver\DNP3Driver.csproj">
+      <Project>{A9DABC4C-2E57-49BE-83F3-E82A62107244}</Project>
+      <Name>DNP3Driver</Name>
     </ProjectReference>
     <ProjectReference Include="..\ARPSpoof\ARPSpoof.vcxproj">
       <Project>{f21a62ab-bb43-4263-9c34-644320d4da3f}</Project>

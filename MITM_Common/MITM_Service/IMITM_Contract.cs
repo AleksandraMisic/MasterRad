@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DNP3TCPDriver.UserLevel;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.ServiceModel;
@@ -18,5 +19,11 @@ namespace MITM_Common.MITM_Service
 
         [OperationContract]
         void TerminateActiveAttack();
+
+        [OperationContract]
+        void FixValue(PointType pointType, int index);
+
+        [OperationContract]
+        void ReleaseValue(PointType pointType, int index);
     }
 }

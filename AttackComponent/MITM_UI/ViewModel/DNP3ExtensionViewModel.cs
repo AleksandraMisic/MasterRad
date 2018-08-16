@@ -1,4 +1,6 @@
 ﻿using DNP3DataPointsModel;
+using DNP3TCPDriver.UserLevel;
+using MITM_Common;
 using MITM_UI.Model.GlobalInfo;
 using System;
 using System.Collections.Generic;
@@ -12,11 +14,13 @@ using UIShell.ViewModel;
 
 namespace MITM_UI.ViewModel
 {
-    class DNP3ExtensionViewModel : SingleShellFillerViewModel
+    public class DNP3ExtensionViewModel : SingleShellFillerViewModel
     {
         private static bool isOpen;
         private static ShellPosition position;
         private bool isConfigPresent;
+
+        MITMServiceProxy mITMServiceProxy = null;
 
         public ObservableCollection<AnalogInputPoint> AnalogInputPoints { get; set; }
 
@@ -57,6 +61,7 @@ namespace MITM_UI.ViewModel
         {
             Position = ShellPosition.CENTER;
             AnalogInputPoints = new ObservableCollection<AnalogInputPoint>();
+            mITMServiceProxy = new MITMServiceProxy(NetTcpBindingCreator.Create());
 
             foreach (AnalogInputPoint analog in Database.AnalogInputPoints.Values)
             {
@@ -77,7 +82,20 @@ namespace MITM_UI.ViewModel
 
         private void ExecuteModifyCommand(object parameter)
         {
+            AnalogInputPoint analogInputPoint = (AnalogInputPoint)(((object[])parameter)[1]);
 
+            if ((string)(((object[])parameter)[0]) == "Fix Value")
+            {
+                AnalogInputPoints.Where(a => a.Index == analogInputPoint.Index).FirstOrDefault().IsFixed = true;
+
+                mITMServiceProxy.FixValue(PointType.ANALOG_INPUT, analogInputPoint.Index);
+            }
+            else
+            {
+                AnalogInputPoints.Where(a => a.Index == analogInputPoint.Index).FirstOrDefault().IsFixed = false;
+
+                mITMServiceProxy.ReleaseValue(PointType.ANALOG_INPUT, analogInputPoint.Index);
+            }
         }
     }
 }

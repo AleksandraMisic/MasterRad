@@ -12,7 +12,12 @@ namespace MITM_Common.MITM_Service
     {
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
         public byte[] source_addr;
+
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 1000)]
         public byte[] packet;
+        
+        public int dataOffset;
+
+        public int dataLength;
     }
 }

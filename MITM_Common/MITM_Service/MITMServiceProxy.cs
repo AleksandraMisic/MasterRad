@@ -1,4 +1,5 @@
-﻿using MITM_Common;
+﻿using DNP3TCPDriver.UserLevel;
+using MITM_Common;
 using MITM_Common.MITM_Service;
 using System;
 using System.Collections.Generic;
@@ -29,6 +30,30 @@ namespace MITM_Common
             catch (Exception e)
             {
                 
+            }
+        }
+
+        public void FixValue(PointType pointType, int index)
+        {
+            try
+            {
+                factory.FixValue(pointType, index);
+            }
+            catch (Exception e)
+            {
+
+            }
+        }
+
+        public void ReleaseValue(PointType pointType, int index)
+        {
+            try
+            {
+                factory.ReleaseValue(pointType, index);
+            }
+            catch (Exception e)
+            {
+
             }
         }
 

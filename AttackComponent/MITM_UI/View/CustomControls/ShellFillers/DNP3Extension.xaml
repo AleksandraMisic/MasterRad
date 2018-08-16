@@ -9,6 +9,7 @@
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
         <converters:BoolToContentForPointsConverter x:Key="BoolToContentForPointsConverter"/>
+        <converters:BoolToContentForValueFix x:Key="BoolToContentForValueFix"/>
     </UserControl.Resources>
     <Grid Background="{StaticResource ResourceKey=DarkestColor}">
         <Grid Margin="7, 7, 7, 7" Background="{StaticResource ResourceKey=MediumColor}">
@@ -84,12 +85,21 @@
                                     </MultiBinding>
                                 </DataGridTextColumn.Binding>
                             </DataGridTextColumn>
-                            <DataGridTextColumn Header="Raw Value" Binding="{Binding RawValue}"/>
-                            <DataGridTextColumn Header="Current Value">
+                            <DataGridTextColumn Header="Raw Outstation Value" Binding="{Binding RawOutValue}"/>
+                            <DataGridTextColumn Header="Raw Master Value" Binding="{Binding RawMasterValue}"/>
+                            <DataGridTextColumn Header="Current Outstation Value">
                                 <DataGridTextColumn.Binding>
                                     <MultiBinding Converter="{StaticResource BoolToContentForPointsConverter}">
                                         <Binding Path="DataContext.IsConfigPresent" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=DataGrid}"/>
-                                        <Binding Path="DataContext.Value" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=DataGrid}"/>
+                                        <Binding Path="DataContext.OutValue" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=DataGrid}"/>
+                                    </MultiBinding>
+                                </DataGridTextColumn.Binding>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="Current Master Value">
+                                <DataGridTextColumn.Binding>
+                                    <MultiBinding Converter="{StaticResource BoolToContentForPointsConverter}">
+                                        <Binding Path="DataContext.IsConfigPresent" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=DataGrid}"/>
+                                        <Binding Path="DataContext.MasterValue" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=DataGrid}"/>
                                     </MultiBinding>
                                 </DataGridTextColumn.Binding>
                             </DataGridTextColumn>
@@ -113,10 +123,15 @@
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <Button Style="{StaticResource ButtonStyle}" 
-                                    Grid.Column="2" Margin="10, 2, 10, 2" Content="Modify" HorizontalAlignment="Center" 
+                                    Grid.Column="2" Margin="10, 2, 10, 2" Content="{Binding IsFixed, Converter={StaticResource ResourceKey=BoolToContentForValueFix}}" HorizontalAlignment="Center" 
                                     Command="{Binding DataContext.ModifyCommand, 
-                                                    RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}}"
-                                            CommandParameter="{Binding}">
+                                                    RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}}">
+                                            <Button.CommandParameter>
+                                                <MultiBinding Converter="{StaticResource BoolToContentForPointsConverter}">
+                                                    <Binding Path="Content" RelativeSource="{RelativeSource Mode=Self}"/>
+                                                    <Binding/>
+                                                </MultiBinding>
+                                            </Button.CommandParameter>
                                         </Button>
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>

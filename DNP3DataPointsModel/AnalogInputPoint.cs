@@ -12,6 +12,14 @@ namespace DNP3DataPointsModel
         private float value;
         private int rawValue;
 
+        private float outValue;
+        private int rawOutValue;
+
+        private float masterValue;
+        private int rawMasterValue;
+
+        private bool isFixed;
+
         public AnalogInputPoint()
         {
             ScaleFactor = 1;
@@ -42,6 +50,71 @@ namespace DNP3DataPointsModel
             {
                 this.rawValue = value;
                 RaisePropertyChanged("RawValue");
+            }
+        }
+
+        public float OutValue
+        {
+            get
+            {
+                return outValue;
+            }
+            set
+            {
+                this.outValue = value;
+                RaisePropertyChanged("OutValue");
+            }
+        }
+
+        public int RawOutValue
+        {
+            get
+            {
+                return rawOutValue;
+            }
+            set
+            {
+                this.rawOutValue = value;
+                RaisePropertyChanged("RawOutValue");
+            }
+        }
+
+        public float MasterValue
+        {
+            get
+            {
+                return masterValue;
+            }
+            set
+            {
+                this.masterValue = value;
+                RaisePropertyChanged("MasterValue");
+            }
+        }
+
+        public int RawMasterValue
+        {
+            get
+            {
+                return rawMasterValue;
+            }
+            set
+            {
+                this.rawMasterValue = value;
+                RaisePropertyChanged("RawMasterValue");
+            }
+        }
+
+        public bool IsFixed
+        {
+            get
+            {
+                return isFixed;
+            }
+            set
+            {
+                isFixed = value;
+                RaisePropertyChanged("IsFixed");
             }
         }
 

@@ -43,6 +43,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ARPSpoofParticipantsInfo.cs" />
+    <Compile Include="FixedValue.cs" />
     <Compile Include="Host.cs" />
     <Compile Include="MITM_Service\ConnectionInfoStruct.cs" />
     <Compile Include="MITM_Service\ConnectionState.cs" />
@@ -61,6 +62,10 @@
     <ProjectReference Include="..\DNP3DataPointsModel\DNP3DataPointsModel.csproj">
       <Project>{2A7AECFB-E992-478E-AE48-77929BF2A5E1}</Project>
       <Name>DNP3DataPointsModel</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SCADA\DNP3TCPDriver\DNP3Driver.csproj">
+      <Project>{A9DABC4C-2E57-49BE-83F3-E82A62107244}</Project>
+      <Name>DNP3Driver</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
