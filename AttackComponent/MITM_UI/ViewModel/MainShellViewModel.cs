@@ -37,6 +37,7 @@ namespace MITM_UI.ViewModel
         #region Private fields
 
         private Subscriber subscriber;
+        MITMServiceProxy mITMServiceProxy = null;
 
         #endregion
 
@@ -48,9 +49,29 @@ namespace MITM_UI.ViewModel
             TopMenu.Add(new TopMenu());
 
             subscriber = new Subscriber();
-            subscriber.Subscribe();
+            mITMServiceProxy = new MITMServiceProxy(NetTcpBindingCreator.Create());
+
+            try
+            {
+                subscriber.Subscribe();
+            }
+            catch (Exception e) { }
+
             subscriber.publishConnectionInfoEvent += ConnectionInfoChanged;
             subscriber.publishAnalogInputChangeEvent += AnalogInputChanged;
+
+            ConnectionInfoChanged(mITMServiceProxy.GetConnectionInfo());
+
+            ARPSpoofParticipantsInfo aRPSpoofParticipantsInfo = mITMServiceProxy.GetARPSpoofParticipants(out bool isAttack);
+
+            if (isAttack)
+            {
+                lock (Database.lockObject)
+                {
+                    Database.ARPSpoofParticipantsInfo = aRPSpoofParticipantsInfo;
+                    Database.IsAttack = true;
+                }
+            }
         }
 
         #endregion

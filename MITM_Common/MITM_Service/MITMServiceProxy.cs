@@ -45,6 +45,31 @@ namespace MITM_Common
             }
         }
 
+        public ARPSpoofParticipantsInfo GetARPSpoofParticipants(out bool isAttack)
+        {
+            try
+            {
+                return factory.GetARPSpoofParticipants(out isAttack);
+            }
+            catch (Exception e)
+            {
+                isAttack = false;
+                return new ARPSpoofParticipantsInfo();
+            }
+        }
+
+        public GlobalConnectionInfo GetConnectionInfo()
+        {
+            try
+            {
+                return factory.GetConnectionInfo();
+            }
+            catch (Exception e)
+            {
+                return new GlobalConnectionInfo();
+            }
+        }
+
         public void ReleaseValue(PointType pointType, int index)
         {
             try

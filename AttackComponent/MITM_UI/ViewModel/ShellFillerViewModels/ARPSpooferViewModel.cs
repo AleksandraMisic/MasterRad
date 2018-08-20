@@ -52,6 +52,8 @@ namespace MITM_UI.ViewModel.ShellFillerViewModels
 
             target1 = string.Empty;
             target2 = string.Empty;
+
+            CheckIfAttack();
         }
 
         public override bool IsOpen
@@ -201,6 +203,15 @@ namespace MITM_UI.ViewModel.ShellFillerViewModels
 
         public void ExecuteSniffForHostsCommand(object parameter)
         {
+            lock (Database.lockObject)
+            {
+                if (Database.GlobalConnectionInfo.ConnectionState == ConnectionState.DISCONNECTED)
+                {
+                    MessageBox.Show("You are not connected to a network. \nPlease connect and try again.", "Not Connected", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+            }
+
             NotSniffing = false;
 
             SniffForHostsCurrentProgress = 0;
@@ -225,6 +236,15 @@ namespace MITM_UI.ViewModel.ShellFillerViewModels
 
         public void ExecuteStartAttackCommand(object parameter)
         {
+            lock (Database.lockObject)
+            {
+                if (Database.GlobalConnectionInfo.ConnectionState == ConnectionState.DISCONNECTED)
+                {
+                    MessageBox.Show("You are not connected to a network. \nPlease connect and try again.", "Not Connected", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+            }
+
             if ((string)parameter == "Start Attack")
             {
                 ARPSpoofParticipantsInfo participants = new ARPSpoofParticipantsInfo();
@@ -259,7 +279,12 @@ namespace MITM_UI.ViewModel.ShellFillerViewModels
                 participants.MyMACAddress = Model.GlobalInfo.Database.GlobalConnectionInfo.MACAddress;
 
                 participants.Name = Model.GlobalInfo.Database.GlobalConnectionInfo.Name;
-                
+
+                lock (Database.lockObject)
+                {
+                    Database.ARPSpoofParticipantsInfo = participants;
+                }
+
                 Task.Factory.StartNew(() => mITMServiceProxy.ARPSpoof(participants));
 
                 this.NotAttack = false;
@@ -268,6 +293,37 @@ namespace MITM_UI.ViewModel.ShellFillerViewModels
             {
                 mITMServiceProxy.TerminateActiveAttack();
                 this.NotAttack = true;
+            }
+        }
+
+        public void CheckIfAttack()
+        {
+            lock (Database.lockObject)
+            {
+                NotAttack = !Database.IsAttack;
+
+                if (!NotAttack)
+                {
+                    string target1addr = string.Empty, target2addr = string.Empty;
+
+                    int i = 0;
+                    for (i = 0; i < 4; i++)
+                    {
+                        if (i != 3)
+                        {
+                            target1addr += Database.ARPSpoofParticipantsInfo.Target1IPAddress[i] + ".";
+                            target2addr += Database.ARPSpoofParticipantsInfo.Target2IPAddress[i] + ".";
+                        }
+                        else
+                        {
+                            target1addr += Database.ARPSpoofParticipantsInfo.Target1IPAddress[i];
+                            target2addr += Database.ARPSpoofParticipantsInfo.Target2IPAddress[i];
+                        }
+                    }
+
+                    Target1 = target1addr;
+                    Target2 = target2addr;
+                }
             }
         }
 
@@ -294,7 +350,7 @@ namespace MITM_UI.ViewModel.ShellFillerViewModels
         private async Task ProgressBarChange()
         {
             bool done = false;
-            while (!done)
+            while (!done && !NotSniffing)
             {
                 await Task.Delay(1000);
 

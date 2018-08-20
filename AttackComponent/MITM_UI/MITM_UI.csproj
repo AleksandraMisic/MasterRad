@@ -103,6 +103,7 @@
     <Compile Include="View\Resources\Converters\BoolToVisibility.cs" />
     <Compile Include="View\Resources\Converters\CloseControlParameters.cs" />
     <Compile Include="View\Resources\Converters\ContentToBoolConverter.cs" />
+    <Compile Include="View\Resources\Converters\MiltiboolToBool.cs" />
     <Page Include="Extensions\DNP3Extension\DNP3ExtensionMainWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

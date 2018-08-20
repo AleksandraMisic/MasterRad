@@ -24,7 +24,7 @@ namespace PubSub
             IPublisher subscriber = OperationContext.Current.GetCallbackChannel<IPublisher>();
             PubSubDatabase.AddSubscriber(subscriber);
 
-            publisher.ReturnConnectionInfo(Database.GlobalConnectionInfo);
+            //publisher.ReturnConnectionInfo(Database.GlobalConnectionInfo);
         }
 
         public void UnSubscribe()

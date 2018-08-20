@@ -15,6 +15,9 @@ namespace MITM_Common.MITM_Service
         List<Host> SniffForHosts();
 
         [OperationContract]
+        GlobalConnectionInfo GetConnectionInfo();
+
+        [OperationContract]
         void ARPSpoof(ARPSpoofParticipantsInfo participants);
 
         [OperationContract]
@@ -25,5 +28,8 @@ namespace MITM_Common.MITM_Service
 
         [OperationContract]
         void ReleaseValue(PointType pointType, int index);
+
+        [OperationContract]
+        ARPSpoofParticipantsInfo GetARPSpoofParticipants(out bool isAttack);
     }
 }

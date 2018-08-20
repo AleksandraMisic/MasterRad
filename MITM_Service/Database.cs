@@ -20,6 +20,8 @@ namespace MITM_Service
 
         public static Dictionary<Tuple<int, PointType>, FixedValue> FixedValues { get; set; }
 
+        public static bool IsAttack { get; set; }
+
         public static object lockObject;
 
         static Database()

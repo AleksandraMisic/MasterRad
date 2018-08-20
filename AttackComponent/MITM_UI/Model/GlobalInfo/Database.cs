@@ -17,9 +17,13 @@ namespace MITM_UI.Model.GlobalInfo
 
         public static Dictionary<ViewModelType, SingleShellFillerViewModel> ViewModels;
 
+        public static ARPSpoofParticipantsInfo ARPSpoofParticipantsInfo { get; set; }
+
         public static Dictionary<int, AnalogInputPoint> AnalogInputPoints { get; set; }
 
         public static object lockObject;
+
+        public static bool IsAttack { get; set; }
 
         public static Dictionary<Tuple<int, PointType>, FixedValue> FixedValues { get; set; }
 
@@ -28,6 +32,7 @@ namespace MITM_UI.Model.GlobalInfo
             GlobalConnectionInfo = new GlobalConnectionInfo();
             ViewModels = new Dictionary<ViewModelType, SingleShellFillerViewModel>();
             AnalogInputPoints = new Dictionary<int, AnalogInputPoint>();
+            ARPSpoofParticipantsInfo = new ARPSpoofParticipantsInfo();
             FixedValues = new Dictionary<Tuple<int, PointType>, FixedValue>();
             lockObject = new object();
         }

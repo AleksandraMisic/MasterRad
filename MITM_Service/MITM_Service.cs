@@ -61,6 +61,7 @@ namespace MITM_Service
             lock (Database.lockObject)
             {
                 Database.ARPSpoofParticipantsInfo = participants;
+                Database.IsAttack = true;
             }
 
             Task.Factory.StartNew(() => ARPSpoof(ref participants));
@@ -250,6 +251,11 @@ namespace MITM_Service
         {
             terminate = true;
 
+            lock (Database.lockObject)
+            {
+                Database.IsAttack = false;
+            }
+
             ARPSpoofParticipantsInfo aRPSpoofParticipantsInfo = Database.ARPSpoofParticipantsInfo;
             Terminate(ref aRPSpoofParticipantsInfo);
         }
@@ -339,6 +345,8 @@ namespace MITM_Service
                         fixedValue.Value = analogInputPoint.RawOutValue;
 
                         Database.FixedValues.Add(new Tuple<int, PointType>(index, pointType), fixedValue);
+
+                        analogInputPoint.IsFixed = true;
                     }
                 }
             }
@@ -352,6 +360,37 @@ namespace MITM_Service
                 if (Database.FixedValues.TryGetValue(new Tuple<int, PointType>(index, pointType), out fixedValue))
                 {
                     Database.FixedValues.Remove(new Tuple<int, PointType>(index, pointType));
+
+                    AnalogInputPoint analogInputPoint = null;
+                    if (Database.AnalogInputPoints.TryGetValue(index, out analogInputPoint))
+                    {
+                        analogInputPoint.IsFixed = false;
+                    }
+                }
+            }
+        }
+
+        public GlobalConnectionInfo GetConnectionInfo()
+        {
+            lock (Database.lockObject)
+            {
+                return Database.GlobalConnectionInfo;
+            }
+        }
+
+        public ARPSpoofParticipantsInfo GetARPSpoofParticipants(out bool isAttack)
+        {
+            lock (Database.lockObject)
+            {
+                if (Database.IsAttack)
+                {
+                    isAttack = true;
+                    return Database.ARPSpoofParticipantsInfo;
+                }
+                else
+                {
+                    isAttack = false;
+                    return new ARPSpoofParticipantsInfo();
                 }
             }
         }
