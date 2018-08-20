@@ -10,6 +10,7 @@
     <UserControl.Resources>
         <converters:BoolToContentForPointsConverter x:Key="BoolToContentForPointsConverter"/>
         <converters:BoolToContentForValueFix x:Key="BoolToContentForValueFix"/>
+        <converters:CloseControlParameters x:Key="CloseControlParameters"/>
     </UserControl.Resources>
     <Grid Background="{StaticResource ResourceKey=DarkestColor}">
         <Grid Margin="7, 7, 7, 7" Background="{StaticResource ResourceKey=MediumColor}">
@@ -107,7 +108,7 @@
                                 <DataGridTextColumn.Binding>
                                     <MultiBinding Converter="{StaticResource BoolToContentForPointsConverter}">
                                         <Binding Path="DataContext.IsConfigPresent" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=DataGrid}"/>
-                                        <Binding Path="DataContext.Value" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=DataGrid}"/>
+                                        <Binding Path="DataContext.Unit" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=DataGrid}"/>
                                     </MultiBinding>
                                 </DataGridTextColumn.Binding>
                             </DataGridTextColumn>
@@ -127,7 +128,7 @@
                                     Command="{Binding DataContext.ModifyCommand, 
                                                     RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}}">
                                             <Button.CommandParameter>
-                                                <MultiBinding Converter="{StaticResource BoolToContentForPointsConverter}">
+                                                <MultiBinding Converter="{StaticResource CloseControlParameters}">
                                                     <Binding Path="Content" RelativeSource="{RelativeSource Mode=Self}"/>
                                                     <Binding/>
                                                 </MultiBinding>

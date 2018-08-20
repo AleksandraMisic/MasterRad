@@ -19,5 +19,7 @@ namespace MITM_Common.MITM_Service
         public int dataOffset;
 
         public int dataLength;
+
+        public int size;
     }
 }

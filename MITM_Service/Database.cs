@@ -27,6 +27,7 @@ namespace MITM_Service
             GlobalConnectionInfo = new GlobalConnectionInfo();
             AnalogInputPoints = new Dictionary<int, AnalogInputPoint>();
             ARPSpoofParticipantsInfo = new ARPSpoofParticipantsInfo();
+            FixedValues = new Dictionary<Tuple<int, PointType>, FixedValue>();
             lockObject = new object();
         }
     }

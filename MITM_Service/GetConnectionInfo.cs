@@ -33,7 +33,11 @@ namespace MITM_Service
             {
                 ConnectionInfoStruct connectionInfo = new ConnectionInfoStruct() { MACAddress = new byte[6], IPAddress = new byte[4], SubnetMask = new byte[4] };
 
-                GetNetworkInfo(ref connectionInfo);
+                try
+                {
+                    GetNetworkInfo(ref connectionInfo);
+                }
+                catch (Exception e) { }
 
                 if (connectionInfo.IsConnected == 0)
                 {

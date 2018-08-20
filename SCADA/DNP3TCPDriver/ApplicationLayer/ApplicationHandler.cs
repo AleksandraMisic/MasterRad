@@ -58,23 +58,24 @@ namespace DNP3TCPDriver.ApplicationLayer
 
             if (applicationCtrl[7] == true)
             {
-                Fir = true;
-                if (sequence == -1)
-                {
-                    sequence = newSeq;
-                }
-                else if (functionCode != ApplicationFunctionCodes.RESPONSE)
-                {
-                    if (newSeq != sequence + 1)
-                    {
-                        // log error
-                    }
+                sequence = newSeq;
+                //Fir = true;
+                //if (sequence == -1)
+                //{
+                //    sequence = newSeq;
+                //}
+                //else if (functionCode != ApplicationFunctionCodes.RESPONSE)
+                //{
+                //    if (newSeq != sequence + 1)
+                //    {
+                //        // log error
+                //    }
 
-                    lock (lockObject)
-                    {
-                        sequence = newSeq;
-                    }
-                }
+                //    lock (lockObject)
+                //    {
+                //        sequence = newSeq;
+                //    }
+                //}
 
                 ObjectsUpProcess.Clear();
             }
@@ -494,10 +495,10 @@ namespace DNP3TCPDriver.ApplicationLayer
 
                 lock (lockObject)
                 {
-                    if (++sequence > 15)
-                    {
-                        sequence = 0;
-                    }
+                    //if (++sequence > 15)
+                    //{
+                    //    sequence = 0;
+                    //}
                     header.ApplicationControl = new BitArray(new byte[1] { BitConverter.GetBytes(sequence)[0] });
                 }
             }

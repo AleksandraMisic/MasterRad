@@ -265,8 +265,8 @@ namespace MITM_UI.ViewModel
                 {
                     ((DNP3ExtensionViewModel)singleShellFillerViewModel).AnalogInputPoints.Where(a => a.Index == newAnalogInputPoint.Index).FirstOrDefault().OutValue = newAnalogInputPoint.OutValue;
                     ((DNP3ExtensionViewModel)singleShellFillerViewModel).AnalogInputPoints.Where(a => a.Index == newAnalogInputPoint.Index).FirstOrDefault().RawOutValue = newAnalogInputPoint.RawOutValue;
-                    ((DNP3ExtensionViewModel)singleShellFillerViewModel).AnalogInputPoints.Where(a => a.Index == newAnalogInputPoint.Index).FirstOrDefault().OutValue = newAnalogInputPoint.MasterValue;
-                    ((DNP3ExtensionViewModel)singleShellFillerViewModel).AnalogInputPoints.Where(a => a.Index == newAnalogInputPoint.Index).FirstOrDefault().RawOutValue = newAnalogInputPoint.RawMasterValue;
+                    ((DNP3ExtensionViewModel)singleShellFillerViewModel).AnalogInputPoints.Where(a => a.Index == newAnalogInputPoint.Index).FirstOrDefault().MasterValue = newAnalogInputPoint.MasterValue;
+                    ((DNP3ExtensionViewModel)singleShellFillerViewModel).AnalogInputPoints.Where(a => a.Index == newAnalogInputPoint.Index).FirstOrDefault().RawMasterValue = newAnalogInputPoint.RawMasterValue;
                 }
             }
         }
