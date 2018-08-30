@@ -260,34 +260,52 @@ namespace MITM_UI.ViewModel
             }
         }
 
-        void AnalogInputChanged(AnalogInputPoint newAnalogInputPoint)
+        void AnalogInputChanged(AnalogInputPoint newAnalogInputPoint, bool isConfigPresent)
         {
             AnalogInputPoint analogInputPoint;
 
-            if (!Database.AnalogInputPoints.TryGetValue(newAnalogInputPoint.Index, out analogInputPoint))
+            lock (Database.lockObject)
             {
-                Database.AnalogInputPoints.Add(newAnalogInputPoint.Index, newAnalogInputPoint);
-            }
-            else
-            {
-                Database.AnalogInputPoints.Values.Where(a => a.Index == newAnalogInputPoint.Index).FirstOrDefault().RawOutValue = newAnalogInputPoint.RawOutValue;
-                Database.AnalogInputPoints.Values.Where(a => a.Index == newAnalogInputPoint.Index).FirstOrDefault().OutValue = newAnalogInputPoint.OutValue;
-                Database.AnalogInputPoints.Values.Where(a => a.Index == newAnalogInputPoint.Index).FirstOrDefault().RawMasterValue = newAnalogInputPoint.RawMasterValue;
-                Database.AnalogInputPoints.Values.Where(a => a.Index == newAnalogInputPoint.Index).FirstOrDefault().MasterValue = newAnalogInputPoint.MasterValue;
-            }
-
-            if (Database.ViewModels.TryGetValue(ViewModelType.DNP3_EXTENSION, out SingleShellFillerViewModel singleShellFillerViewModel) && singleShellFillerViewModel.IsOpen)
-            {
-                if((analogInputPoint = ((DNP3ExtensionViewModel)singleShellFillerViewModel).AnalogInputPoints.Where(a => a.Index == newAnalogInputPoint.Index).FirstOrDefault()) == null)
+                if (!Database.AnalogInputPoints.TryGetValue(newAnalogInputPoint.Index, out analogInputPoint))
                 {
-                    ((DNP3ExtensionViewModel)singleShellFillerViewModel).AnalogInputPoints.Add(newAnalogInputPoint);
+                    Database.AnalogInputPoints.Add(newAnalogInputPoint.Index, newAnalogInputPoint);
                 }
                 else
                 {
-                    ((DNP3ExtensionViewModel)singleShellFillerViewModel).AnalogInputPoints.Where(a => a.Index == newAnalogInputPoint.Index).FirstOrDefault().OutValue = newAnalogInputPoint.OutValue;
-                    ((DNP3ExtensionViewModel)singleShellFillerViewModel).AnalogInputPoints.Where(a => a.Index == newAnalogInputPoint.Index).FirstOrDefault().RawOutValue = newAnalogInputPoint.RawOutValue;
-                    ((DNP3ExtensionViewModel)singleShellFillerViewModel).AnalogInputPoints.Where(a => a.Index == newAnalogInputPoint.Index).FirstOrDefault().MasterValue = newAnalogInputPoint.MasterValue;
-                    ((DNP3ExtensionViewModel)singleShellFillerViewModel).AnalogInputPoints.Where(a => a.Index == newAnalogInputPoint.Index).FirstOrDefault().RawMasterValue = newAnalogInputPoint.RawMasterValue;
+                    if (isConfigPresent)
+                    {
+                        Database.AnalogInputPoints.Values.Where(a => a.Index == newAnalogInputPoint.Index).FirstOrDefault().OutValueString = newAnalogInputPoint.OutValue.ToString();
+                        Database.AnalogInputPoints.Values.Where(a => a.Index == newAnalogInputPoint.Index).FirstOrDefault().MasterValueString = newAnalogInputPoint.MasterValue.ToString();
+                    }
+
+                    Database.AnalogInputPoints.Values.Where(a => a.Index == newAnalogInputPoint.Index).FirstOrDefault().RawOutValue = newAnalogInputPoint.RawOutValue;
+                    Database.AnalogInputPoints.Values.Where(a => a.Index == newAnalogInputPoint.Index).FirstOrDefault().RawMasterValue = newAnalogInputPoint.RawMasterValue;
+                    Database.AnalogInputPoints.Values.Where(a => a.Index == newAnalogInputPoint.Index).FirstOrDefault().Name = newAnalogInputPoint.Name;
+                    Database.AnalogInputPoints.Values.Where(a => a.Index == newAnalogInputPoint.Index).FirstOrDefault().Description = newAnalogInputPoint.Description;
+                    Database.AnalogInputPoints.Values.Where(a => a.Index == newAnalogInputPoint.Index).FirstOrDefault().Description = newAnalogInputPoint.Units;
+                }
+
+                if (Database.ViewModels.TryGetValue(ViewModelType.DNP3_EXTENSION, out SingleShellFillerViewModel singleShellFillerViewModel) && singleShellFillerViewModel.IsOpen)
+                {
+                    ((DNP3ExtensionViewModel)singleShellFillerViewModel).IsConfigPresent = isConfigPresent;
+                    if ((analogInputPoint = ((DNP3ExtensionViewModel)singleShellFillerViewModel).AnalogInputPoints.Where(a => a.Index == newAnalogInputPoint.Index).FirstOrDefault()) == null)
+                    {
+                        ((DNP3ExtensionViewModel)singleShellFillerViewModel).AnalogInputPoints.Add(newAnalogInputPoint);
+                    }
+                    else
+                    {
+                        if (isConfigPresent)
+                        {
+                            ((DNP3ExtensionViewModel)singleShellFillerViewModel).AnalogInputPoints.Where(a => a.Index == newAnalogInputPoint.Index).FirstOrDefault().OutValueString = newAnalogInputPoint.OutValue.ToString();
+                            ((DNP3ExtensionViewModel)singleShellFillerViewModel).AnalogInputPoints.Where(a => a.Index == newAnalogInputPoint.Index).FirstOrDefault().MasterValueString = newAnalogInputPoint.MasterValue.ToString();
+                        }
+                        
+                        ((DNP3ExtensionViewModel)singleShellFillerViewModel).AnalogInputPoints.Where(a => a.Index == newAnalogInputPoint.Index).FirstOrDefault().RawOutValue = newAnalogInputPoint.RawOutValue;
+                        ((DNP3ExtensionViewModel)singleShellFillerViewModel).AnalogInputPoints.Where(a => a.Index == newAnalogInputPoint.Index).FirstOrDefault().RawMasterValue = newAnalogInputPoint.RawMasterValue;
+                        ((DNP3ExtensionViewModel)singleShellFillerViewModel).AnalogInputPoints.Where(a => a.Index == newAnalogInputPoint.Index).FirstOrDefault().Name = newAnalogInputPoint.Name;
+                        ((DNP3ExtensionViewModel)singleShellFillerViewModel).AnalogInputPoints.Where(a => a.Index == newAnalogInputPoint.Index).FirstOrDefault().Description = newAnalogInputPoint.Description;
+                        ((DNP3ExtensionViewModel)singleShellFillerViewModel).AnalogInputPoints.Where(a => a.Index == newAnalogInputPoint.Index).FirstOrDefault().Units = newAnalogInputPoint.Units;
+                    }
                 }
             }
         }

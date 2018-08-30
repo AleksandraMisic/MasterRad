@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 namespace PubSub
 {
     public delegate void PublishConnectionInfoEvent(GlobalConnectionInfo connectionInfoStruct);
-    public delegate void PublishAnalogInputChangeEvent(AnalogInputPoint analogInputPoint);
+    public delegate void PublishAnalogInputChangeEvent(AnalogInputPoint analogInputPoint, bool isConfigPresent);
 
     public class Subscriber : IPublisher
     { 
@@ -70,9 +70,9 @@ namespace PubSub
             }
         }
 
-        public void AnalogInputChange(AnalogInputPoint analogInputPoint)
+        public void AnalogInputChange(AnalogInputPoint analogInputPoint, bool isConfigPresent)
         {
-            publishAnalogInputChangeEvent?.Invoke(analogInputPoint);
+            publishAnalogInputChangeEvent?.Invoke(analogInputPoint, isConfigPresent);
         }
     }
 }

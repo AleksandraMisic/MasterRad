@@ -24,6 +24,8 @@ namespace MITM_Service
 
         public static object lockObject;
 
+        public static bool IsConfigAck { get; set; }
+
         static Database()
         {
             GlobalConnectionInfo = new GlobalConnectionInfo();

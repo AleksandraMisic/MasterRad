@@ -13,10 +13,16 @@ namespace DNP3DataPointsModel
         private int rawValue;
 
         private float outValue;
+        private string outValueString = "UNKNOWN";
         private int rawOutValue;
 
         private float masterValue;
+        private string masterValueString = "UNKNOWN";
         private int rawMasterValue;
+
+        private string name = "UNKNOWN";
+        private string description = "UNKNOWN";
+        private string units = "UNKNOWN";
 
         private bool isFixed;
 
@@ -66,6 +72,19 @@ namespace DNP3DataPointsModel
             }
         }
 
+        public string OutValueString
+        {
+            get
+            {
+                return outValueString;
+            }
+            set
+            {
+                this.outValueString = value;
+                RaisePropertyChanged("OutValueString");
+            }
+        }
+
         public int RawOutValue
         {
             get
@@ -89,6 +108,19 @@ namespace DNP3DataPointsModel
             {
                 this.masterValue = value;
                 RaisePropertyChanged("MasterValue");
+            }
+        }
+
+        public string MasterValueString
+        {
+            get
+            {
+                return masterValueString;
+            }
+            set
+            {
+                this.masterValueString = value;
+                RaisePropertyChanged("MasterValueString");
             }
         }
 
@@ -118,15 +150,52 @@ namespace DNP3DataPointsModel
             }
         }
 
-        public string Name { get; set; }
+        public string Name
+        {
+            get
+            {
+                return name;
+            }
+            set
+            {
+                name = value;
+                RaisePropertyChanged("Name");
+            }
+        }
+
         public int ChangeEventClass { get; set; }
         public int MinIntegerTransmittedValue { get; set; }
         public int MaxIntegerTransmittedValue { get; set; }
         public int ScaleFactor { get; set; }
         public float ScaleOffset { get; set; }
-        public string Units { get; set; }
+
+        public string Units
+        {
+            get
+            {
+                return units;
+            }
+            set
+            {
+                units = value;
+                RaisePropertyChanged("Units");
+            }
+        }
+
+        public string Description
+        {
+            get
+            {
+                return description;
+            }
+            set
+            {
+                description = value;
+                RaisePropertyChanged("Description");
+            }
+        }
+
         public int Resolution { get; set; }
-        public string Description { get; set; }
 
         public event PropertyChangedEventHandler PropertyChanged;
 

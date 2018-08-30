@@ -21,6 +21,18 @@ namespace MITM_Common
             factory = this.CreateChannel();
         }
 
+        public void AcquireOutstationConfiguration()
+        {
+            try
+            {
+                factory.AcquireOutstationConfiguration();
+            }
+            catch (Exception e)
+            {
+
+            }
+        }
+
         public void ARPSpoof(ARPSpoofParticipantsInfo participants)
         {
             try

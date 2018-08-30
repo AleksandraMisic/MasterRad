@@ -165,7 +165,7 @@ DNP3DeviceProfileJan2010.xsd">
                 </typeOfEndPoint>
                 <!-- 1.3.3) IP Address of this Device -->
                 <ipAddress>
-                  <value>192.168.0.12</value>
+                  <value>192.168.0.103</value>
                 </ipAddress>
                 <!-- 1.3.4) Subnet Mask -->
                 <subnetMask>
@@ -188,7 +188,7 @@ DNP3DeviceProfileJan2010.xsd">
                 <!-- 1.3.7) IP Address of Remote Device -->
                 <ipAddressOfRemoteDevice>
                     <currentValue>
-                        <address>192.168.0.102</address>
+                        <address>127.0.0.1</address>
                     </currentValue>
                 </ipAddressOfRemoteDevice>
                 <!-- 1.3.8) TCP Listen Port Number -->
@@ -2291,13 +2291,13 @@ DNP3DeviceProfileJan2010.xsd">
                 <value>0</value>
               </minIntegerTransmittedValue>
               <maxIntegerTransmittedValue>
-                <value>1000000</value>
+                <value>5000</value>
               </maxIntegerTransmittedValue>
               <scaleFactor>
-                <value>1</value>
+                <value>2</value>
               </scaleFactor>
               <scaleOffset>
-                <value>1</value>
+                <value>0</value>
               </scaleOffset>
               <units>
                 <value>kWh</value>

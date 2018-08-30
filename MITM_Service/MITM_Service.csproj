@@ -66,6 +66,10 @@
       <Project>{8F2C0828-C30D-414C-B7C7-8C14A9B9B5F9}</Project>
       <Name>MITM_Common</Name>
     </ProjectReference>
+    <ProjectReference Include="..\SCADA\DNP3ConfigParser\DNP3ConfigParser.csproj">
+      <Project>{2D480CA6-F26C-43C9-A6D4-2C5DEB77EBD8}</Project>
+      <Name>DNP3ConfigParser</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SCADA\DNP3TCPDriver\DNP3Driver.csproj">
       <Project>{a9dabc4c-2e57-49be-83f3-e82a62107244}</Project>
       <Name>DNP3Driver</Name>

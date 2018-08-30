@@ -12,13 +12,13 @@ namespace PubSub
 {
     public class PublishService : IPublisher
     {
-        public void AnalogInputChange(AnalogInputPoint analogInputPoint)
+        public void AnalogInputChange(AnalogInputPoint analogInputPoint, bool isConfigAck)
         {
             foreach (IPublisher subscriber in PubSubDatabase.Subscribers)
             {
                 PublishThreadData threadObj = new PublishThreadData(subscriber, analogInputPoint);
 
-                Thread thread = new Thread(() => threadObj.PublishAnalogInputChangeInfo(analogInputPoint));
+                Thread thread = new Thread(() => threadObj.PublishAnalogInputChangeInfo(analogInputPoint, isConfigAck));
                 thread.Start();
             }
         }
@@ -92,11 +92,11 @@ namespace PubSub
             }
         }
 
-        public void PublishAnalogInputChangeInfo(AnalogInputPoint analogInputPoint)
+        public void PublishAnalogInputChangeInfo(AnalogInputPoint analogInputPoint, bool isConfigAck)
         {
             try
             {
-                subscriber.AnalogInputChange(analogInputPoint);
+                subscriber.AnalogInputChange(analogInputPoint, isConfigAck);
             }
             catch (Exception e)
             {

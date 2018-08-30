@@ -16,6 +16,6 @@ namespace MITM_Common.PubSub
         void ReturnConnectionInfo(GlobalConnectionInfo connectionInfo);
 
         [OperationContract]
-        void AnalogInputChange(AnalogInputPoint analogInputPoint);
+        void AnalogInputChange(AnalogInputPoint analogInputPoint, bool isConfigPresent);
     }
 }

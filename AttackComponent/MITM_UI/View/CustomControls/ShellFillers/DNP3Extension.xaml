@@ -11,15 +11,16 @@
         <converters:BoolToContentForPointsConverter x:Key="BoolToContentForPointsConverter"/>
         <converters:BoolToContentForValueFix x:Key="BoolToContentForValueFix"/>
         <converters:CloseControlParameters x:Key="CloseControlParameters"/>
+        <converters:OpositeBool x:Key="OpositeBool"/>
     </UserControl.Resources>
     <Grid Background="{StaticResource ResourceKey=DarkestColor}">
         <Grid Margin="7, 7, 7, 7" Background="{StaticResource ResourceKey=MediumColor}">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" MinWidth="150"/>
-                <ColumnDefinition Width="7"/>
+                <!--<ColumnDefinition Width="Auto" MinWidth="150"/>
+                <ColumnDefinition Width="7"/>-->
                 <ColumnDefinition Width="*" MinWidth="150"/>
             </Grid.ColumnDefinitions>
-            <Grid Background="{StaticResource ResourceKey=MediumColor}" Width="Auto"  Margin="10,11,9,10">
+            <!--<Grid Background="{StaticResource ResourceKey=MediumColor}" Width="Auto"  Margin="10,11,9,10">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition/>
@@ -58,7 +59,7 @@
                     </TreeViewItem>
                 </TreeView>
             </Grid>
-            <GridSplitter Grid.Column="1" Width="7" VerticalAlignment="Stretch" HorizontalAlignment="Center" Background="{StaticResource DarkestColor}" Margin="0,0,0.2,0.2"/>
+            <GridSplitter Grid.Column="1" Width="7" VerticalAlignment="Stretch" HorizontalAlignment="Center" Background="{StaticResource DarkestColor}" Margin="0,0,0.2,0.2"/>-->
             <Grid Grid.Column="2" Background="{StaticResource ResourceKey=MediumColor}" Margin="10,11,9,10" Height="415" VerticalAlignment="Top">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
@@ -73,52 +74,27 @@
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
                 <Grid Background="{StaticResource DarkColor}" Margin="0, 0, 0, 10">
-                    <Label Grid.Column="0" Foreground="White" Grid.Row="0" Content="Outstation Data Points:" FontSize="15" FontWeight="Normal"/>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Label Grid.Column="0" Foreground="White" Grid.Row="0" Content="Outstation Data Points:" VerticalAlignment="Center" FontSize="15" FontWeight="Normal"/>
+                    <Button Command="{Binding AcquireConfigurationCommand}" Grid.Row="0" VerticalAlignment="Center"  Content="Acquire Outstation Configuration"  HorizontalAlignment="Right" Width="200" Height="30" Style="{StaticResource ButtonStyle}" Margin="0, 10, 10, 10" IsEnabled="{Binding IsConfigPresent, Converter={StaticResource ResourceKey=OpositeBool}}" />
                 </Grid>
                 <Expander IsExpanded="True" Header="Analog Inputs" Style="{StaticResource ExpanderStyle}" Grid.Row="1" Background="{StaticResource MediumColor}" VerticalAlignment="Top">
                     <DataGrid Name="AnalogInputs" Grid.Row="1" ItemsSource="{Binding AnalogInputPoints}" Margin="20, 01, 10, 10" Style="{StaticResource ResourceKey=DataGridStyle}" RowStyle="{StaticResource ResourceKey=DataGridRow}" ColumnHeaderStyle="{StaticResource ResourceKey=DataGridColumnHeader}" CellStyle="{StaticResource ResourceKey=DataGridCell}" AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False" CanUserDeleteRows="False" CanUserReorderColumns="False" CanUserResizeRows="False">
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="Name">
-                                <DataGridTextColumn.Binding>
-                                    <MultiBinding Converter="{StaticResource BoolToContentForPointsConverter}">
-                                        <Binding Path="DataContext.IsConfigPresent" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=DataGrid}"/>
-                                        <Binding Path="DataContext.Name" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=DataGrid}"/>
-                                    </MultiBinding>
-                                </DataGridTextColumn.Binding>
+                            <DataGridTextColumn Header="Name" x:Name="NameColumn" Binding="{Binding Name}">
                             </DataGridTextColumn>
                             <DataGridTextColumn Header="Raw Outstation Value" Binding="{Binding RawOutValue}"/>
                             <DataGridTextColumn Header="Raw Master Value" Binding="{Binding RawMasterValue}"/>
-                            <DataGridTextColumn Header="Current Outstation Value">
-                                <DataGridTextColumn.Binding>
-                                    <MultiBinding Converter="{StaticResource BoolToContentForPointsConverter}">
-                                        <Binding Path="DataContext.IsConfigPresent" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=DataGrid}"/>
-                                        <Binding Path="DataContext.OutValue" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=DataGrid}"/>
-                                    </MultiBinding>
-                                </DataGridTextColumn.Binding>
+                            <DataGridTextColumn Header="Outstation Value in EGU" Binding="{Binding OutValueString}">
                             </DataGridTextColumn>
-                            <DataGridTextColumn Header="Current Master Value">
-                                <DataGridTextColumn.Binding>
-                                    <MultiBinding Converter="{StaticResource BoolToContentForPointsConverter}">
-                                        <Binding Path="DataContext.IsConfigPresent" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=DataGrid}"/>
-                                        <Binding Path="DataContext.MasterValue" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=DataGrid}"/>
-                                    </MultiBinding>
-                                </DataGridTextColumn.Binding>
+                            <DataGridTextColumn Header="Master Value in EGU" Binding="{Binding MasterValueString}">
                             </DataGridTextColumn>
-                            <DataGridTextColumn Header="Units">
-                                <DataGridTextColumn.Binding>
-                                    <MultiBinding Converter="{StaticResource BoolToContentForPointsConverter}">
-                                        <Binding Path="DataContext.IsConfigPresent" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=DataGrid}"/>
-                                        <Binding Path="DataContext.Unit" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=DataGrid}"/>
-                                    </MultiBinding>
-                                </DataGridTextColumn.Binding>
+                            <DataGridTextColumn Header="Units" Binding="{Binding Units}">
                             </DataGridTextColumn>
-                            <DataGridTextColumn Header="Description">
-                                <DataGridTextColumn.Binding>
-                                    <MultiBinding Converter="{StaticResource BoolToContentForPointsConverter}">
-                                        <Binding Path="DataContext.IsConfigPresent" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=DataGrid}"/>
-                                        <Binding Path="DataContext.Description" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=DataGrid}"/>
-                                    </MultiBinding>
-                                </DataGridTextColumn.Binding>
+                            <DataGridTextColumn Header="Description" Binding="{Binding Description}">
                             </DataGridTextColumn>
                             <DataGridTemplateColumn Header="Modification Attack">
                                 <DataGridTemplateColumn.CellTemplate>

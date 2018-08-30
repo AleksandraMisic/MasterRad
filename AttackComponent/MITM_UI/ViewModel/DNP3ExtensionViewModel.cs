@@ -25,6 +25,7 @@ namespace MITM_UI.ViewModel
         public ObservableCollection<AnalogInputPoint> AnalogInputPoints { get; set; }
 
         private RelayCommand modifyCommand;
+        private RelayCommand acquireConfigurationCommand;
 
         public static ShellPosition Position
         {
@@ -40,6 +41,18 @@ namespace MITM_UI.ViewModel
                     (parameter) =>
                     {
                         ExecuteModifyCommand(parameter);
+                    });
+            }
+        }
+
+        public RelayCommand AcquireConfigurationCommand
+        {
+            get
+            {
+                return acquireConfigurationCommand ?? new RelayCommand(
+                    (parameter) =>
+                    {
+                        ExecuteAcquireConfigurationCommand(parameter);
                     });
             }
         }
@@ -96,6 +109,11 @@ namespace MITM_UI.ViewModel
 
                 mITMServiceProxy.ReleaseValue(PointType.ANALOG_INPUT, analogInputPoint.Index);
             }
+        }
+
+        private void ExecuteAcquireConfigurationCommand(object parameter)
+        {
+            mITMServiceProxy.AcquireOutstationConfiguration();
         }
     }
 }

@@ -20,11 +20,11 @@ namespace PubSub
             CreateProxy();
         }
 
-        public void AnalogInputChange(AnalogInputPoint analogInputPoint)
+        public void AnalogInputChange(AnalogInputPoint analogInputPoint, bool isConfigAck)
         {
             try
             {
-                proxy.AnalogInputChange(analogInputPoint);
+                proxy.AnalogInputChange(analogInputPoint, isConfigAck);
             }
             catch { }
         }

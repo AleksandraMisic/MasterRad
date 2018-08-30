@@ -1,4 +1,5 @@
-﻿using DNP3DataPointsModel;
+﻿using DNP3ConfigParser.Parsers;
+using DNP3DataPointsModel;
 using DNP3TCPDriver.ApplicationLayer;
 using DNP3TCPDriver.DataLinkLayer;
 using DNP3TCPDriver.UserLevel;
@@ -7,11 +8,13 @@ using MITM_Common.MITM_Service;
 using PubSub;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace MITM_Service
 {
@@ -191,7 +194,7 @@ namespace MITM_Service
                                         lock (Database.lockObject)
                                         {
                                             analogInputPoint.RawOutValue = BitConverter.ToInt32(userObject.Values[i], 0);
-                                            analogInputPoint.OutValue = analogInputPoint.RawValue * analogInputPoint.ScaleFactor + analogInputPoint.ScaleOffset;
+                                            analogInputPoint.OutValue = analogInputPoint.RawOutValue * analogInputPoint.ScaleFactor + analogInputPoint.ScaleOffset;
 
                                             FixedValue fixedValue = null;
                                             if (Database.FixedValues.TryGetValue(new Tuple<int, PointType>(i, PointType.ANALOG_INPUT), out fixedValue))
@@ -205,7 +208,7 @@ namespace MITM_Service
                                             }
                                         }
 
-                                        publisher.AnalogInputChange(analogInputPoint);
+                                        publisher.AnalogInputChange(analogInputPoint, Database.IsConfigAck);
                                     }
                                 }
                             }
@@ -392,6 +395,46 @@ namespace MITM_Service
                     isAttack = false;
                     return new ARPSpoofParticipantsInfo();
                 }
+            }
+        }
+
+        public void AcquireOutstationConfiguration()
+        {
+            string configPath = Directory.GetCurrentDirectory() + "..\\..\\..\\OustationConfiguration\\open_dnp3_slave.xml";
+
+            XDocument document = XDocument.Load(configPath);
+            XNamespace ns = document.Root.GetDefaultNamespace();
+
+            UniversalConfigurationParser configParser;
+
+            switch (ns.NamespaceName)
+            {
+                case "http://www.dnp3.org/DNP3/DeviceProfile/Jan2010":
+
+                    configParser = new DNP3DeviceProfileJan2010Parser(document);
+                    ((DNP3DeviceProfileJan2010Parser)configParser).Parse();
+
+                    lock (Database.lockObject)
+                    {
+                        foreach (AnalogInputPoint analog in ((DNP3DeviceProfileJan2010Parser)configParser).Configuration.DataPointsListConfiguration.AnalogInputPoints)
+                        {
+                            AnalogInputPoint analogInputPoint = null;
+                            if (Database.AnalogInputPoints.TryGetValue(analog.Index, out analogInputPoint))
+                            {
+                                analogInputPoint.Name = analog.Name;
+                                analogInputPoint.Description = analog.Description;
+                                analogInputPoint.Units = analog.Units;
+                                analogInputPoint.ScaleFactor = analog.ScaleFactor;
+                                analogInputPoint.ScaleOffset = analog.ScaleOffset;
+
+                                Database.IsConfigAck = true;
+
+                                publisher.AnalogInputChange(analogInputPoint, Database.IsConfigAck);
+                            }
+                        }
+                    }
+                    
+                    break;
             }
         }
     }

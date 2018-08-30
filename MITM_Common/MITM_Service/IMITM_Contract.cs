@@ -31,5 +31,8 @@ namespace MITM_Common.MITM_Service
 
         [OperationContract]
         ARPSpoofParticipantsInfo GetARPSpoofParticipants(out bool isAttack);
+
+        [OperationContract]
+        void AcquireOutstationConfiguration();
     }
 }
